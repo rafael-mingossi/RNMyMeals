@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text, SafeAreaView} from 'react-native';
 
-const Dashboard = () => {
+const Goals = () => {
   return (
     <SafeAreaView>
-      <Text>DASH</Text>
+      <Text>Goals</Text>
     </SafeAreaView>
   );
 };
 
-export default Dashboard;
+export default Goals;
