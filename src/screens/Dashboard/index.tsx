@@ -1,11 +1,11 @@
 import React from 'react';
-import {Text, SafeAreaView} from 'react-native';
+import {Text, View} from 'react-native';
 
 const Dashboard = () => {
   return (
-    <SafeAreaView>
+    <View style={{flex: 1, backgroundColor: '#f2f2f2'}}>
       <Text>DASH</Text>
-    </SafeAreaView>
+    </View>
   );
 };
 

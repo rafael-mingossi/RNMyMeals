@@ -6,6 +6,8 @@ import {
 } from '@react-navigation/native-stack';
 import {Login, Register} from '@screens';
 import {BottomNavigator} from '@config';
+import {useAuth} from '@providers';
+import {ActivityIndicator} from 'react-native';
 
 export type StackNavigatorParams = {
   Login: undefined;
@@ -21,9 +23,15 @@ export type RegisterStack = NativeStackScreenProps<
 const Stack = createNativeStackNavigator<StackNavigatorParams>();
 
 const ScreenNavigator = () => {
+  const {session, loading} = useAuth();
+
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName={session ? 'Home' : 'Login'}>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Home" component={BottomNavigator} />
