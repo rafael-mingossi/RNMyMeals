@@ -17,7 +17,11 @@ module.exports = {
       {
         alias: {
           '@screens': './src/screens',
+          '@constants': './src/constants',
+          '@utils': './src/utils',
+          '@components': './src/components',
           '@config': './src/config',
+          '@providers': './src/providers',
           '@services': './src/services',
           '@env': ['node_modules/react-native-dotenv'],
         },

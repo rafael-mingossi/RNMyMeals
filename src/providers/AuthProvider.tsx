@@ -12,6 +12,7 @@ import {supabase} from '@services';
 type AuthData = {
   session: Session | null;
   loading: boolean;
+  profile: Profile | null;
 };
 
 export type Profile = {
@@ -22,6 +23,7 @@ export type Profile = {
 const AuthContext = createContext<AuthData>({
   session: null,
   loading: true,
+  profile: null,
 });
 
 const AuthProvider = ({children}: PropsWithChildren) => {
@@ -32,20 +34,21 @@ const AuthProvider = ({children}: PropsWithChildren) => {
   useEffect(() => {
     const fetchSession = async () => {
       const {
+        // eslint-disable-next-line @typescript-eslint/no-shadow
         data: {session},
       } = await supabase.auth.getSession();
 
       setSession(session);
 
-      // if (session) {
-      //   // fetch profile
-      //   const {data} = await supabase
-      //     .from('profiles')
-      //     .select('*')
-      //     .eq('id', session.user.id)
-      //     .single();
-      //   setProfile(data || null);
-      // }
+      if (session) {
+        // fetch profile
+        const {data} = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        setProfile(data || null);
+      }
 
       setLoading(false);
     };
@@ -58,7 +61,7 @@ const AuthProvider = ({children}: PropsWithChildren) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{session, loading}}>
+    <AuthContext.Provider value={{session, loading, profile}}>
       {children}
     </AuthContext.Provider>
   );
