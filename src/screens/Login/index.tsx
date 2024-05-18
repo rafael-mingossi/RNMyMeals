@@ -23,10 +23,12 @@ const Login: FC<LoginStack> = ({navigation}) => {
       password,
     });
 
-    console.log('DATA =>>', data);
-
     if (error) {
       Alert.alert(error.message);
+    }
+
+    if (data) {
+      navigation.navigate('Home');
     }
 
     setLoading(false);
@@ -55,7 +57,7 @@ const Login: FC<LoginStack> = ({navigation}) => {
       />
 
       <TouchableOpacity onPress={signInWithEmail} disabled={loading}>
-        <Text>Register here!</Text>
+        <Text>Sign In</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
         <Text style={styles.textButton}>Create an account</Text>
