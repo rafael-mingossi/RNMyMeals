@@ -28,6 +28,10 @@ end
 target 'MyMeals' do
   config = use_native_modules!
 
+  if ENV['RNV_SAMPLE_VIDEO_CACHING']
+    $RNVideoUseVideoCaching = true
+  end
+
   use_react_native!(
     :path => config[:reactNativePath],
     # Enables Flipper.
@@ -43,6 +47,8 @@ target 'MyMeals' do
     inherit! :complete
     # Pods for testing
   end
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202

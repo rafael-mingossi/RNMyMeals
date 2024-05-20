@@ -21,10 +21,15 @@ export const Colours = {
   midOrange: '#fb8036',
   darkOrange: '#e35905',
 
+  /// NEUTRAL
   black: '#000000',
+  white: '#ffffff',
+  brown: '#4b4b4b',
+
+  /// Dark
+  greenDark: '#40721b',
 
   /// RULE 60-30-10
-  white: '#ffffff',
   green: '#3fae4d',
   blue: '#66a4d6',
   gray: '#6d6d6d',

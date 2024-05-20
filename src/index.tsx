@@ -6,8 +6,46 @@ import {ScreenNavigator} from '@config';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {configureFonts, MD2LightTheme, PaperProvider} from 'react-native-paper';
 import {AuthProvider} from '@providers';
-import {PortalProvider} from '@gorhom/portal';
+import {Fonts} from '@constants';
+// import {PortalProvider} from '@gorhom/portal';
+
+const fontConfig = {
+  ios: {
+    regular: {
+      fontFamily: Fonts.regular,
+    },
+    medium: {
+      fontFamily: Fonts.medium,
+    },
+    light: {
+      fontFamily: Fonts.light,
+    },
+    thin: {
+      fontFamily: Fonts.extraLight,
+    },
+  },
+  android: {
+    regular: {
+      fontFamily: Fonts.regular,
+    },
+    medium: {
+      fontFamily: Fonts.medium,
+    },
+    light: {
+      fontFamily: Fonts.light,
+    },
+    thin: {
+      fontFamily: Fonts.extraLight,
+    },
+  },
+};
+
+const theme = {
+  ...MD2LightTheme,
+  fonts: configureFonts({config: fontConfig, isV3: false}),
+};
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -18,7 +56,7 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaProvider>
-      <PortalProvider>
+      <PaperProvider theme={theme}>
         <GestureHandlerRootView style={{flex: 1}}>
           <BottomSheetModalProvider>
             <StatusBar
@@ -30,7 +68,7 @@ function App(): React.JSX.Element {
             </AuthProvider>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>
-      </PortalProvider>
+      </PaperProvider>
     </SafeAreaProvider>
   );
 }

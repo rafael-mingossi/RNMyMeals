@@ -1,11 +1,15 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {Calendar} from '@components';
+import {supabase} from '@services';
 
 const Dashboard = () => {
   return (
     <View style={{flex: 1, backgroundColor: 'red'}}>
-      <Text>DASH</Text>
+      <Pressable onPress={async () => await supabase.auth.signOut()}>
+        <Text>DASH</Text>
+      </Pressable>
+
       <Calendar />
     </View>
   );
