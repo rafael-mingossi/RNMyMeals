@@ -24,6 +24,10 @@ export const Colours = {
   /// NEUTRAL
   black: '#000000',
   white: '#ffffff',
+  brown: '#4b4b4b',
+
+  /// Dark
+  greenDark: '#40721b',
 
   /// RULE 60-30-10
   green: '#3fae4d',

@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: hS(16),
-    fontFamily: Fonts.medium,
+    fontFamily: Fonts.bold,
   },
 });
 

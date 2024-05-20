@@ -11,7 +11,8 @@ import {TextInput} from 'react-native-paper';
 import {RegisterStack} from '@config';
 import {supabase} from '@services';
 import styles from './register.styles.ts';
-import {ButtonRound, ScreenTitle} from '@components';
+import {ButtonRound, ScreenTitle, TextInputIcon} from '@components';
+import {Colours} from '@constants';
 
 const Register: FC<RegisterStack> = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -30,6 +31,8 @@ const Register: FC<RegisterStack> = ({navigation}) => {
 
     setLoading(false);
   }
+  const Label = <Text style={styles.label}>E-mail</Text>;
+
   return (
     <View style={styles.container}>
       <ScreenTitle title={'Create Account'} />
@@ -44,20 +47,20 @@ const Register: FC<RegisterStack> = ({navigation}) => {
         </View>
       </View>
       <View>
-        <TextInput
+        <TextInputIcon
           mode="flat"
           label="E-mail"
           value={email}
-          left={<TextInput.Icon icon="email" />}
+          left={<TextInput.Icon icon="email" color={Colours.brown} />}
           keyboardType={'email-address'}
           onChangeText={setEmail}
-          style={styles.input}
           onSubmitEditing={() => passwordRef.current?.focus()}
         />
-        <TextInput
+        <TextInputIcon
           mode="flat"
           label="Password"
           value={password}
+          ref={passwordRef}
           secureTextEntry={revealPass}
           onChangeText={setPassword}
           onSubmitEditing={() => signUpWithEmail()}
@@ -66,11 +69,11 @@ const Register: FC<RegisterStack> = ({navigation}) => {
               <TextInput.Icon
                 icon={!revealPass ? 'eye' : 'eye-off'}
                 onPress={() => setRevealPass(!revealPass)}
+                color={Colours.brown}
               />
             ) : null
           }
-          left={<TextInput.Icon icon="lock" />}
-          style={styles.input}
+          left={<TextInput.Icon icon="lock" color={Colours.brown} />}
         />
       </View>
       <ButtonRound
@@ -80,7 +83,7 @@ const Register: FC<RegisterStack> = ({navigation}) => {
         Create
       </ButtonRound>
 
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={styles.backToLoginTxt}>
           Already have an account? Sign In!
         </Text>

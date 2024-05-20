@@ -10,23 +10,23 @@ const styles = StyleSheet.create({
     backgroundColor: Colours.white,
     rowGap: vS(15),
   },
-  input: {
-    borderBottomWidth: 0.5,
-    backgroundColor: 'white',
-    borderColor: Colours.gray,
-    marginBottom: 10,
+  leftIcon: {
+    color: Colours.gray,
   },
   backToLoginTxt: {
     alignSelf: 'center',
     color: Colours.green,
     textDecorationLine: 'underline',
   },
+  label: {
+    fontFamily: Fonts.bold,
+  },
 
   logoWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
-    columnGap: vS(5),
+    columnGap: vS(9),
   },
   logo: {
     width: hS(45),
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   },
   logoTxt2: {
     fontFamily: Fonts.bold,
+    color: Colours.greenDark,
   },
 });
 
