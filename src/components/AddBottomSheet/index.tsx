@@ -1,16 +1,11 @@
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import * as React from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, Dimensions, TouchableOpacity} from 'react-native';
 import {Portal, PortalHost} from '@gorhom/portal';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {useCallback, useMemo} from 'react';
+import styles from './addBottomSheet.styles.ts';
 
 const AddBottomSheet = () => {
   // Creates a reference to the DOM element that we can interact with
@@ -74,30 +69,3 @@ const AddBottomSheet = () => {
 };
 
 export default AddBottomSheet;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: 'grey',
-  },
-  contentContainer: {
-    flex: 1,
-    paddingLeft: 50,
-  },
-  bottomSheetTitle: {
-    fontSize: 24,
-    fontWeight: '500',
-  },
-  addButtonWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#16247d',
-    width: 50,
-    height: 50,
-    top: -15,
-    borderRadius: 30,
-    borderWidth: 3,
-    borderColor: '#f2f2f2',
-  },
-});
