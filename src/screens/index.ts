@@ -4,3 +4,5 @@ export {default as Goals} from './Goals/index.tsx';
 export {default as Login} from './Login/index.tsx';
 export {default as Register} from './Register/index.tsx';
 export {default as Initial} from './Initial/index.tsx';
+export {default as AddFood} from './AddFood/index.tsx';
+export {default as AddNutrients} from './AddNutrients/index.tsx';

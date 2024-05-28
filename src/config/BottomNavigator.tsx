@@ -13,6 +13,7 @@ import {faChartLine, faBullseye} from '@fortawesome/free-solid-svg-icons';
 import {Dashboard, Recipes, Goals} from '@screens';
 import {AddBottomSheet} from '../components';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
+import BottomSheet from '@gorhom/bottom-sheet';
 
 export type BottomStackParams = {
   Dashboard: undefined;
@@ -52,7 +53,6 @@ const screenOptions: BottomTabNavigationOptions = {
 const AddScreenComponent = () => {
   return null;
 };
-
 const BottomIconWrapper = ({focused, icon, label}: IconWrapperProps) => {
   return (
     <View style={styles.iconWrapper}>
@@ -67,7 +67,9 @@ const BottomIconWrapper = ({focused, icon, label}: IconWrapperProps) => {
 };
 
 ///BOTTOM SCREEN OPTIONS
-const bottomTabAddButtonOptions = {tabBarButton: () => <AddBottomSheet />};
+const bottomTabAddButtonOptions = {
+  tabBarButton: () => <AddBottomSheet />,
+};
 const bottomTabHome = {
   tabBarIcon: (focused: FocusedProps) => (
     <BottomIconWrapper focused={focused} icon={faChartLine} label={'HOME'} />

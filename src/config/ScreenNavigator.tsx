@@ -2,10 +2,11 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
+  NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {Login, Register, Initial} from '@screens';
-import {BottomNavigator} from '@config';
+import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth} from '@providers';
 import {ActivityIndicator} from 'react-native';
 
@@ -14,6 +15,7 @@ export type StackNavigatorParams = {
   Register: undefined;
   Home: undefined;
   Initial: undefined;
+  AddFoodRoot: undefined;
 };
 
 export type InitialStack = NativeStackScreenProps<
@@ -26,6 +28,12 @@ export type RegisterStack = NativeStackScreenProps<
   'Register'
 >;
 
+////NAVIGATION FOR NON-SCREENS
+export type BottomSheetPropsNavigation = NativeStackNavigationProp<
+  StackNavigatorParams,
+  'AddFoodRoot'
+>;
+
 const Stack = createNativeStackNavigator<StackNavigatorParams>();
 
 const ScreenNavigator = () => {
@@ -35,15 +43,27 @@ const ScreenNavigator = () => {
     return <ActivityIndicator />;
   }
 
+  // if (!session) {
+  //   return;
+  // }
+
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={session ? 'Home' : 'Initial'}
+        initialRouteName={'Initial'}
         screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Initial" component={Initial} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Home" component={BottomNavigator} />
+        {session ? (
+          <>
+            <Stack.Screen name="Home" component={BottomNavigator} />
+            <Stack.Screen name="AddFoodRoot" component={AddFoodNavigator} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Initial" component={Initial} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
