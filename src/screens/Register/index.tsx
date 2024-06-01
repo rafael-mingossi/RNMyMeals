@@ -23,7 +23,12 @@ const Register: FC<RegisterStack> = ({navigation}) => {
   const passwordRef = useRef<TI | null>(null);
   async function signUpWithEmail() {
     setLoading(true);
-    const {error} = await supabase.auth.signUp({email, password});
+    const {error, data} = await supabase.auth.signUp({email, password});
+
+    if (data) {
+      console.log('SUCCESS =>>', data);
+      navigation.navigate('Login');
+    }
 
     if (error) {
       Alert.alert(error.message);
@@ -31,7 +36,6 @@ const Register: FC<RegisterStack> = ({navigation}) => {
 
     setLoading(false);
   }
-  const Label = <Text style={styles.label}>E-mail</Text>;
 
   return (
     <View style={styles.container}>

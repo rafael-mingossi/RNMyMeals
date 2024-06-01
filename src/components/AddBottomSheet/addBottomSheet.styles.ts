@@ -1,31 +1,54 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import {hS, mS, vS} from '@utils';
-import {Colours} from '@constants';
+import {Colours, Fonts} from '@constants';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: mS(24),
-    backgroundColor: Colours.gray,
-  },
   contentContainer: {
     flex: 1,
-    paddingLeft: hS(50),
+    padding: mS(30),
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    flexWrap: 'wrap',
+    columnGap: hS(10),
+    rowGap: vS(15),
   },
+  wrapper: {},
   bottomSheetTitle: {
-    fontSize: hS(24),
-    fontWeight: '500',
+    fontSize: hS(18),
+    fontFamily: Fonts.medium,
+    alignSelf: 'center',
+  },
+  iconWrapper: {
+    borderWidth: 1,
+    borderColor: Colours.black,
+    height: Dimensions.get('window').width * 0.18,
+    width: Dimensions.get('window').width * 0.18,
+    borderRadius: Math.round(
+      (Dimensions.get('window').height + Dimensions.get('window').width) / 2,
+    ),
+    padding: mS(5),
+    alignSelf: 'center',
+  },
+  icon: {
+    width: '100%',
+    height: '100%',
+    borderRadius: Math.round(
+      (Dimensions.get('window').height + Dimensions.get('window').width) / 2,
+    ),
   },
   addButtonWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#16247d',
-    width: hS(50),
-    height: vS(50),
-    top: -15,
-    borderRadius: 30,
-    borderWidth: 3,
-    borderColor: '#f2f2f2',
+    backgroundColor: Colours.green,
+    height: Dimensions.get('window').width * hS(0.18),
+    width: Dimensions.get('window').width * hS(0.18),
+    top: vS(-25),
+    borderRadius: Math.round(
+      (Dimensions.get('window').height + Dimensions.get('window').width) / 2,
+    ),
+    borderWidth: 6,
+    borderColor: Colours.white,
   },
 });
 

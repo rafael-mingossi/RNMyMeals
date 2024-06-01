@@ -1,98 +1,44 @@
-import React from 'react';
-import {View, Text, StyleSheet, Pressable} from 'react-native';
-import {Calendar} from '@components';
-import {supabase} from '@services';
+import React, {useEffect, useMemo, useState} from 'react';
+
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+} from 'react-native';
+import {useAuth} from '@providers';
+import {PieChart} from 'react-native-gifted-charts';
 
 const Dashboard = () => {
-  return (
-    <View style={{flex: 1, backgroundColor: 'red'}}>
-      <Pressable onPress={async () => await supabase.auth.signOut()}>
-        <Text>DASH</Text>
-      </Pressable>
+  const data = [{value: 50}, {value: 80}, {value: 90}];
+  const {userLogOut} = useAuth();
 
-      <Calendar />
-    </View>
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <ScrollView>
+        <Pressable
+          onPress={async () => {
+            userLogOut();
+          }}>
+          <Text>DASH</Text>
+        </Pressable>
+
+        {/*<Calendar />*/}
+
+        <PieChart data={data} donut />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  calendarContainer: {
-    flex: 1,
+  container: {
+    height: 300,
+    width: 300,
+    borderRadius: 10,
     backgroundColor: 'white',
-  },
-  day: {
-    // marginVertical: 30,
-    // padding: 10,
-  },
-  selectedDay: {
-    backgroundColor: 'red',
-    borderRadius: 100,
-    color: 'black',
-    width: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-    aspectRatio: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 20,
-    alignItems: 'center',
-  },
-  dayText: {
-    color: 'blue',
-    padding: 10,
-  },
-
-  daysContainer: {
-    padding: 15,
-  },
-  headerText: {
-    fontSize: 18,
-  },
-  selected: {
-    backgroundColor: 'green',
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  textSelected: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  nonSelected: {
-    padding: 7,
-  },
-  monthsList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 20,
-    justifyContent: 'center',
-  },
-  singleMonth: {
-    padding: 7,
-  },
-  outerView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Set outer view opacity
-  },
-  innerView: {
-    backgroundColor: 'white', // No opacity for inner view
-    padding: 20,
-    borderRadius: 10,
-    width: '87%',
-  },
-  bottomModalButtons: {
-    marginTop: 25,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  buttons: {
-    backgroundColor: 'yellow',
-    borderWidth: 1,
-    borderRadius: 7,
-    padding: 5,
   },
 });
 
