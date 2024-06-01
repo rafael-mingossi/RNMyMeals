@@ -3,3 +3,4 @@ export {default as ScreenNavigator} from './ScreenNavigator.tsx';
 export {default as AddFoodNavigator} from './AddFoodNavigator.tsx';
 
 export * from './ScreenNavigator.tsx';
+export * from './AddFoodNavigator.tsx';

@@ -12,7 +12,11 @@ import {Icon} from 'react-native-paper';
 
 export type AddFoodStackNavigatorParams = {
   AddFood: undefined;
-  AddNutrients: undefined;
+  AddNutrients: {
+    foodName: string;
+    calories: string;
+    serving: string;
+  };
 };
 
 export type AddFoodStack = NativeStackScreenProps<
