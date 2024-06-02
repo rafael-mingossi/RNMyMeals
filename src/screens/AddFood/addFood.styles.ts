@@ -19,7 +19,15 @@ const styles = StyleSheet.create({
     color: Colours.gray,
     marginBottom: vS(10),
   },
-
+  modalText: {
+    fontFamily: Fonts.regular,
+    fontSize: hS(15),
+    color: Colours.black,
+  },
+  closeModalBtn: {
+    marginTop: vS(15),
+    marginLeft: 'auto',
+  },
   buttonsWrapper: {
     borderTopWidth: 1,
     borderColor: Colours.gray,
