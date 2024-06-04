@@ -1,5 +1,12 @@
 import React, {FC, useEffect, useRef, useState} from 'react';
-import {ScrollView, StatusBar, Text, View, TextInput as TI} from 'react-native';
+import {
+  ScrollView,
+  StatusBar,
+  Text,
+  View,
+  TextInput as TI,
+  Platform,
+} from 'react-native';
 import {Colours} from '@constants';
 import {TextInput} from 'react-native-paper';
 import styles from './addFood.styles.ts';
@@ -10,73 +17,137 @@ type ErrorsType = {
   name: boolean;
   calories: boolean;
   serving: boolean;
+  unit: boolean;
+};
+
+type FormType = {
+  foodName: string;
+  calories: string;
+  serving: string;
+  unit: string;
 };
 
 const AddFood: FC<AddFoodStack> = ({navigation}) => {
-  const [foodName, setFoodName] = useState('');
-  const [calories, setCalories] = useState('');
-  const [serving, setServing] = useState('');
+  const [formData, setFormData] = useState<FormType>({
+    foodName: '',
+    calories: '',
+    serving: '',
+    unit: '',
+  });
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalErrorMsg, setModalErrorMsg] = useState<string | null>(null);
   const [errors, setErrors] = useState<ErrorsType>({
     name: false,
     calories: false,
     serving: false,
+    unit: false,
   });
 
   const caloriesRef = useRef<TI | null>(null);
   const servingRef = useRef<TI | null>(null);
+  const unitRef = useRef<TI | null>(null);
 
-  const handleNext = () => {
-    if (!foodName) {
-      setErrors({...errors, name: true});
-      setIsModalOpen(true);
-    } else if (!calories) {
-      setErrors({...errors, calories: true});
-      setIsModalOpen(true);
-    } else if (!serving) {
-      setErrors({...errors, serving: true});
-      setIsModalOpen(true);
-    } else {
-      navigation.navigate('AddNutrients', {
-        foodName,
-        calories,
-        serving,
-      });
-    }
+  const handleInputChange = (name: string, value: string) => {
+    setFormData({...formData, [name]: value});
   };
 
+  //VALIDATE FORM DATA AND ADD ERROR MESSAGES
+  const validateForm = () => {
+    if (!formData.foodName) {
+      setErrors({...errors, name: true});
+      setIsModalOpen(true);
+      setModalErrorMsg('Food name cannot be empty!');
+      return false;
+    }
+
+    if (!formData.calories) {
+      setErrors({...errors, calories: true});
+      setIsModalOpen(true);
+      setModalErrorMsg('Calories cannot be empty!');
+      return false;
+    }
+
+    if (!formData.serving) {
+      setErrors({...errors, serving: true});
+      setIsModalOpen(true);
+      setModalErrorMsg('Serving size cannot be empty!');
+      return false;
+    }
+
+    if (!formData.unit) {
+      setErrors({...errors, unit: true});
+      setIsModalOpen(true);
+      setModalErrorMsg('Serving unit cannot be empty!');
+      return false;
+    }
+
+    navigation.navigate('AddNutrients', {
+      foodName: formData.foodName,
+      calories: formData.calories,
+      serving: formData.serving,
+      unit: formData.unit,
+    });
+    return true;
+  };
+
+  //VALIDATE CALORIES AND SERVING TO BE NUMBER ONLY
   const handleCaloriesInput = (inputText: string) => {
     const numericText = inputText.replace(/[^0-9]/g, '');
-    setCalories(numericText);
+    handleInputChange('calories', numericText);
   };
 
   const handleServingInput = (inputText: string) => {
     const numericText = inputText.replace(/[^0-9]/g, '');
-    setServing(numericText);
+    handleInputChange('serving', numericText);
   };
 
+  //HANDLE NEXT BUTTON
+  const handleNextScreen = () => {
+    if (validateForm()) {
+      navigation.navigate('AddNutrients', {
+        foodName: formData.foodName,
+        calories: formData.calories,
+        serving: formData.serving,
+        unit: formData.unit,
+      });
+    }
+  };
+
+  //CLEAR INPUTS AFTER USER TAPS
   useEffect(() => {
     if (errors.name || errors.calories || errors.serving) {
-      setErrors({...errors, name: false, calories: false, serving: false});
+      setModalErrorMsg('');
+      setIsModalOpen(false);
+      setErrors({name: false, calories: false, serving: false, unit: false});
     }
-  }, [foodName, calories, serving]);
+  }, [formData]);
 
   return (
     <View style={styles.container}>
+      <StatusBar backgroundColor={Colours.green} />
       <ScrollView style={styles.scrollWrapper}>
-        <StatusBar backgroundColor={Colours.green} />
         <View>
           <TextInput
             label="Food Name"
-            value={foodName}
-            error={isModalOpen}
-            onChangeText={val => setFoodName(val)}
+            value={formData.foodName}
+            enterKeyHint={'next'}
+            returnKeyType={'done'}
+            onChangeText={val => handleInputChange('foodName', val)}
             right={
               errors.name ? (
                 <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />
               ) : null
             }
-            onSubmitEditing={() => caloriesRef.current?.focus()}
+            onSubmitEditing={() => {
+              if (!formData.foodName) {
+                setErrors({...errors, name: true});
+                setIsModalOpen(true);
+                setModalErrorMsg('Food name cannot be empty!');
+                return false;
+              }
+              setIsModalOpen(false);
+              caloriesRef.current?.focus();
+            }}
           />
           <Text style={styles.subLabel}>
             Choose a name for the food that you want to log
@@ -87,7 +158,9 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
           <TextInput
             ref={caloriesRef}
             label="Food Calories, (Cal)"
-            value={calories}
+            value={formData.calories}
+            enterKeyHint={Platform.OS === 'ios' ? 'done' : 'next'}
+            returnKeyType={'done'}
             keyboardType={'numeric'}
             onChangeText={val => handleCaloriesInput(val)}
             right={
@@ -95,7 +168,16 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
                 <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />
               ) : null
             }
-            onSubmitEditing={() => servingRef.current?.focus()}
+            onSubmitEditing={() => {
+              if (!formData.calories) {
+                setErrors({...errors, calories: true});
+                setIsModalOpen(true);
+                setModalErrorMsg('Calories cannot be empty!');
+                return false;
+              }
+              setIsModalOpen(false);
+              servingRef.current?.focus();
+            }}
           />
           <Text style={styles.subLabel}>
             Enter the value correspondent in Calories
@@ -106,41 +188,81 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
           <TextInput
             ref={servingRef}
             label="Serving Size, (grams)"
-            value={serving}
+            value={formData.serving}
             keyboardType={'numeric'}
+            returnKeyType={'done'}
             onChangeText={val => handleServingInput(val)}
             right={
               errors.serving ? (
                 <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />
               ) : null
             }
-            onSubmitEditing={() => handleNext()}
+            onSubmitEditing={() => {
+              if (!formData.serving) {
+                setErrors({...errors, serving: true});
+                setIsModalOpen(true);
+                setModalErrorMsg('Serving size cannot be empty!');
+                return false;
+              }
+              setIsModalOpen(false);
+              unitRef.current?.focus();
+            }}
           />
           <Text style={styles.subLabel}>
             Serving size in grams to be used in the calculation
           </Text>
         </View>
-        {isModalOpen && (
-          <CustomModal
-            isOpen={isModalOpen}
-            setIsOpen={setIsModalOpen}
-            children={
-              <>
-                <Text style={styles.modalText}>Value cannot be empty!</Text>
-                <ButtonText
-                  children={'OK'}
-                  style={styles.closeModalBtn}
-                  onPress={() => setIsModalOpen(false)}
-                />
-              </>
+        <View>
+          <TextInput
+            ref={unitRef}
+            label="Serving unit, (grams, slice, spoon, etc...)"
+            value={formData.unit}
+            returnKeyType={'done'}
+            onChangeText={val => handleInputChange('unit', val)}
+            right={
+              errors.unit ? (
+                <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />
+              ) : null
             }
+            onSubmitEditing={() => {
+              if (!formData.unit) {
+                setErrors({...errors, unit: true});
+                setIsModalOpen(true);
+                setModalErrorMsg('Serving unit cannot be empty!');
+                return false;
+              }
+              setIsModalOpen(false);
+              navigation.navigate('AddNutrients', {
+                foodName: formData.foodName,
+                calories: formData.calories,
+                serving: formData.serving,
+                unit: formData.unit,
+              });
+            }}
           />
-        )}
+          <Text style={styles.subLabel}>
+            Units such as grams, slice, spoon, sachet, bag, etc...
+          </Text>
+        </View>
+        <CustomModal
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          children={
+            <>
+              <Text style={styles.modalText}>{modalErrorMsg}</Text>
+              <ButtonText
+                children={'OK'}
+                style={styles.closeModalBtn}
+                onPress={() => setIsModalOpen(false)}
+              />
+            </>
+          }
+        />
       </ScrollView>
       <View style={styles.buttonsWrapper}>
         <ButtonText children={'Cancel'} onPress={() => navigation.goBack()} />
 
-        <ButtonText children={'Next'} onPress={() => handleNext()} />
+        <ButtonText children={'Next'} onPress={() => handleNextScreen()} />
       </View>
     </View>
   );

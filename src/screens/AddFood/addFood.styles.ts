@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {hS, vS} from '@utils';
+import {hS, vS, mS} from '@utils';
 import {Colours, Fonts} from '@constants';
 
 const styles = StyleSheet.create({
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: hS(15),
   },
   subLabel: {
-    fontSize: hS(11),
+    fontSize: mS(12),
     marginLeft: hS(10),
     marginTop: vS(5),
     color: Colours.gray,
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontFamily: Fonts.regular,
-    fontSize: hS(15),
+    fontSize: mS(16),
     color: Colours.black,
   },
   closeModalBtn: {

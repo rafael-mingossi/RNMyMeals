@@ -1,13 +1,14 @@
 import React from 'react';
 import {
   createNativeStackNavigator,
+  NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {AddFood, AddNutrients} from '@screens';
 import {TouchableOpacity} from 'react-native';
 import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation} from '@react-navigation/native';
 import {Icon} from 'react-native-paper';
 
 export type AddFoodStackNavigatorParams = {
@@ -16,16 +17,28 @@ export type AddFoodStackNavigatorParams = {
     foodName: string;
     calories: string;
     serving: string;
+    unit: string;
   };
+};
+
+type NutrientsNavigationProp = NativeStackNavigationProp<
+  AddFoodStackNavigatorParams,
+  'AddNutrients'
+>;
+
+type NutrientsRouteProp = RouteProp<
+  AddFoodStackNavigatorParams,
+  'AddNutrients'
+>;
+
+export type AddNutrientsStack = {
+  navigation: NutrientsNavigationProp;
+  route: NutrientsRouteProp;
 };
 
 export type AddFoodStack = NativeStackScreenProps<
   AddFoodStackNavigatorParams,
   'AddFood'
->;
-export type AddNutrientsStack = NativeStackScreenProps<
-  AddFoodStackNavigatorParams,
-  'AddNutrients'
 >;
 
 const Stack = createNativeStackNavigator<AddFoodStackNavigatorParams>();
