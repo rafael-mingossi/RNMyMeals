@@ -190,6 +190,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
             label="Serving Size, (grams)"
             value={formData.serving}
             keyboardType={'numeric'}
+            enterKeyHint={Platform.OS === 'ios' ? 'done' : 'next'}
             returnKeyType={'done'}
             onChangeText={val => handleServingInput(val)}
             right={

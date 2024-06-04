@@ -71,6 +71,18 @@ const styles = StyleSheet.create({
     fontSize: hS(16),
     color: Colours.black,
   },
+  right: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    columnGap: hS(6),
+    justifyContent: 'flex-end',
+    flex: 1,
+  },
+  labelG: {
+    fontFamily: Fonts.bold,
+    fontSize: hS(14),
+    color: Colours.black,
+  },
   input: {
     width: '50%',
     backgroundColor: Colours.white,

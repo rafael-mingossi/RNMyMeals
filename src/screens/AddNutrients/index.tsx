@@ -1,16 +1,37 @@
 import React, {FC, useState} from 'react';
 import {Image, ScrollView, StatusBar, Text, View} from 'react-native';
 import {Colours} from '@constants';
-import {ButtonText} from '@components';
+import {ButtonText, TextInputLabel} from '@components';
 import {AddNutrientsStack} from '@config';
 import styles from './addNutrients.styles.ts';
-import {TextInput} from 'react-native-paper';
+
+type ErrorsType = {
+  fat: boolean;
+  carbs: boolean;
+  protein: boolean;
+};
+
+type FormType = {
+  fat: string;
+  carbs: string;
+  protein: string;
+  sodium: string;
+  fibre: string;
+};
 
 const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
   const {foodName, calories, serving, unit} = route?.params;
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormType>({
     fat: '',
     carbs: '',
+    protein: '',
+    sodium: '',
+    fibre: '',
+  });
+  const [errors, setErrors] = useState<ErrorsType>({
+    fat: false,
+    carbs: false,
+    protein: false,
   });
 
   const temp_img = require('../../assets/images/default_food.png');
@@ -21,6 +42,20 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
 
   const handleInputChange = (name: string, value: string) => {
     setFormData({...formData, [name]: value});
+  };
+
+  const validateForm = () => {
+    if (!formData.fat || !formData.carbs || !formData.protein) {
+      setErrors({...errors, fat: true, carbs: true, protein: true});
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmitForm = () => {
+    if (!validateForm()) {
+      return;
+    }
   };
 
   return (
@@ -40,45 +75,49 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
       </View>
       <View style={styles.line} />
       <ScrollView style={styles.scrollWrapper}>
-        <View style={styles.inputWrapper}>
-          <Text style={styles.label}>Total Fat</Text>
-          <TextInput
-            mode={'flat'}
-            value={formData.fat}
-            enterKeyHint={'next'}
-            returnKeyType={'done'}
-            style={styles.input}
-            onChangeText={val => handleInputChange('fat', val)}
-            // right={
-            //   errors.name ? (
-            //     <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />
-            //   ) : null
-            // }
-            onSubmitEditing={() => {}}
-          />
-        </View>
-        <View style={styles.inputWrapper}>
-          <Text style={styles.label}>Total Carbs</Text>
-          <TextInput
-            mode={'flat'}
-            value={formData.fat}
-            enterKeyHint={'next'}
-            returnKeyType={'done'}
-            style={styles.input}
-            onChangeText={val => handleInputChange('carbs', val)}
-            // right={
-            //   errors.name ? (
-            //     <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />
-            //   ) : null
-            // }
-            onSubmitEditing={() => {}}
-          />
-        </View>
+        <TextInputLabel
+          label={'Total Fat'}
+          value={formData.fat}
+          returnKeyType={'done'}
+          onChangeText={val => handleInputChange('fat', val)}
+          error={errors.fat}
+          onSubmitEditing={() => {}}
+        />
+        <TextInputLabel
+          label={'Total Carbs'}
+          value={formData.carbs}
+          returnKeyType={'done'}
+          onChangeText={val => handleInputChange('carbs', val)}
+          error={errors.carbs}
+          onSubmitEditing={() => {}}
+        />
+        <TextInputLabel
+          label={'Protein'}
+          value={formData.protein}
+          returnKeyType={'done'}
+          onChangeText={val => handleInputChange('protein', val)}
+          error={errors.protein}
+          onSubmitEditing={() => {}}
+        />
+        <TextInputLabel
+          label={'Sodium'}
+          value={formData.sodium}
+          returnKeyType={'done'}
+          onChangeText={val => handleInputChange('sodium', val)}
+          onSubmitEditing={() => {}}
+        />
+        <TextInputLabel
+          label={'Fibre'}
+          value={formData.fibre}
+          returnKeyType={'done'}
+          onChangeText={val => handleInputChange('fibre', val)}
+          onSubmitEditing={() => {}}
+        />
       </ScrollView>
       <View style={styles.buttonsWrapper}>
-        <ButtonText children={'Cancel'} onPress={() => navigation.goBack()} />
+        <ButtonText children={'Return'} onPress={() => navigation.goBack()} />
 
-        <ButtonText children={'Next'} onPress={() => {}} />
+        <ButtonText children={'Submit'} onPress={() => handleSubmitForm()} />
       </View>
     </View>
   );
