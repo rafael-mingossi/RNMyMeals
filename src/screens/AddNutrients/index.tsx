@@ -3,7 +3,9 @@ import {Image, ScrollView, StatusBar, Text, View} from 'react-native';
 import {Colours} from '@constants';
 import {ButtonText, TextInputLabel} from '@components';
 import {AddNutrientsStack} from '@config';
+import {useAddFood} from '../../api/index.ts';
 import styles from './addNutrients.styles.ts';
+import {useAuth} from '@providers';
 
 type ErrorsType = {
   fat: boolean;
@@ -20,7 +22,9 @@ type FormType = {
 };
 
 const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
-  const {foodName, calories, serving, unit} = route?.params;
+  const {foodName, calories, serving, unit, img} = route?.params;
+  const {mutate: addFood} = useAddFood();
+  const {session} = useAuth();
   const [formData, setFormData] = useState<FormType>({
     fat: '',
     carbs: '',
@@ -45,6 +49,11 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
   };
 
   const validateForm = () => {
+    setErrors({
+      fat: false,
+      carbs: false,
+      protein: false,
+    });
     if (!formData.fat || !formData.carbs || !formData.protein) {
       setErrors({...errors, fat: true, carbs: true, protein: true});
       return false;
@@ -56,13 +65,37 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     if (!validateForm()) {
       return;
     }
+
+    addFood(
+      {
+        protein: formData.protein,
+        carbs: formData.carbs,
+        fat: formData.fat,
+        calories,
+        fibre: formData.fibre,
+        sodium: formData.sodium,
+        serv_size: serving,
+        serv_unit: unit,
+        label: foodName,
+        food_img: img || temp_img,
+        user_id: session?.user.id,
+      },
+      {
+        onSuccess: () => {
+          navigation.goBack();
+        },
+        onError: e => {
+          console.log('Error =>>', e);
+        },
+      },
+    );
   };
 
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
       <View style={styles.topWrapper}>
-        <Image source={temp_img} style={styles.foodImg} />
+        <Image source={img ? {uri: img} : temp_img} style={styles.foodImg} />
         {/*<View style={styles.imgWrapper}>*/}
         {/*</View>*/}
         <View style={styles.paramsWrapper}>

@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     height: vS(60),
     aspectRatio: 1,
     width: hS(56),
+    borderRadius: 5,
   },
   paramsWrapper: {
     flexDirection: 'column',

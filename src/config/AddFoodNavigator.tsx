@@ -18,6 +18,7 @@ export type AddFoodStackNavigatorParams = {
     calories: string;
     serving: string;
     unit: string;
+    img: string;
   };
 };
 

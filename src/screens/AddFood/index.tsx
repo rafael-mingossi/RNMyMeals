@@ -6,12 +6,20 @@ import {
   View,
   TextInput as TI,
   Platform,
+  Image,
 } from 'react-native';
-import {Colours} from '@constants';
 import {TextInput} from 'react-native-paper';
-import styles from './addFood.styles.ts';
+import {
+  launchCamera,
+  launchImageLibrary,
+  PhotoQuality,
+  Asset,
+  ErrorCode,
+} from 'react-native-image-picker';
+import {Colours} from '@constants';
 import {ButtonText, CustomModal} from '@components';
 import {AddFoodStack} from '@config';
+import styles from './addFood.styles.ts';
 
 type ErrorsType = {
   name: boolean;
@@ -25,6 +33,25 @@ type FormType = {
   calories: string;
   serving: string;
   unit: string;
+};
+
+interface ImagePickerOptions {
+  title?: string;
+  storageOptions: {
+    skipBackup: boolean;
+    path?: string; // Optional: Custom path for camera photos on Android (external storage permission required)
+  };
+  allowsEditing: boolean;
+  quality: PhotoQuality;
+  mediaType: 'photo'; // Only allow images
+}
+
+type CameraTypes = {
+  didCancel?: boolean;
+  error?: ErrorCode;
+  errorMessage?: string;
+  assets?: Asset[];
+  uri?: string;
 };
 
 const AddFood: FC<AddFoodStack> = ({navigation}) => {
@@ -42,10 +69,57 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
     serving: false,
     unit: false,
   });
+  const [selectedImg, setSelectedImg] = useState<string | undefined>();
 
   const caloriesRef = useRef<TI | null>(null);
   const servingRef = useRef<TI | null>(null);
   const unitRef = useRef<TI | null>(null);
+
+  const handleCamera = () => {
+    let options: ImagePickerOptions = {
+      storageOptions: {
+        skipBackup: true, // Prevent photos from being backed up to iCloud/Google Photos
+        path: 'image', // Optional: Custom path for camera photos on Android (external storage permission required)
+      },
+      mediaType: 'photo' as const,
+      allowsEditing: true,
+      // aspect: [4, 3],
+      quality: 0.5,
+    };
+
+    launchCamera(options).then((response: CameraTypes) => {
+      if (response.didCancel) {
+        console.log('User cancelled image selection');
+      } else if (response.error) {
+        console.error('ImagePicker Error:', response.error);
+      } else {
+        response?.assets ? setSelectedImg(response?.assets[0]?.uri) : null;
+      }
+    });
+  };
+
+  const handleImagePicker = () => {
+    let options: ImagePickerOptions = {
+      storageOptions: {
+        skipBackup: true, // Prevent photos from being backed up to iCloud/Google Photos
+        path: 'image', // Optional: Custom path for camera photos on Android (external storage permission required)
+      },
+      mediaType: 'photo' as const,
+      allowsEditing: true,
+      // aspect: [4, 3],
+      quality: 0.5,
+    };
+
+    launchImageLibrary(options).then((response: CameraTypes) => {
+      if (response.didCancel) {
+        console.log('User cancelled image selection');
+      } else if (response.error) {
+        console.error('ImagePicker Error:', response.error);
+      } else {
+        response?.assets ? setSelectedImg(response?.assets[0]?.uri) : null;
+      }
+    });
+  };
 
   const handleInputChange = (name: string, value: string) => {
     setFormData({...formData, [name]: value});
@@ -86,6 +160,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
       calories: formData.calories,
       serving: formData.serving,
       unit: formData.unit,
+      img: selectedImg || '',
     });
     return true;
   };
@@ -109,6 +184,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
         calories: formData.calories,
         serving: formData.serving,
         unit: formData.unit,
+        img: selectedImg || '',
       });
     }
   };
@@ -238,6 +314,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
                 calories: formData.calories,
                 serving: formData.serving,
                 unit: formData.unit,
+                img: selectedImg || '',
               });
             }}
           />
@@ -245,6 +322,14 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
             Units such as grams, slice, spoon, sachet, bag, etc...
           </Text>
         </View>
+        {selectedImg && (
+          <Image
+            style={{height: 100, width: 150}}
+            source={{uri: selectedImg || ''}}
+          />
+        )}
+        <ButtonText children={'Gallery'} onPress={() => handleImagePicker()} />
+        <ButtonText children={'Camera'} onPress={() => handleCamera()} />
         <CustomModal
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
