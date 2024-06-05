@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colours.white,
     paddingHorizontal: 0,
     height: vS(45),
+    textAlign: 'center',
   },
 });
 

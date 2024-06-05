@@ -10,15 +10,16 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faChartLine, faBullseye} from '@fortawesome/free-solid-svg-icons';
 
 ////SCREENS
-import {Dashboard, Recipes, Goals} from '@screens';
+import {Dashboard, Profile, Goals, Foods} from '@screens';
 import {AddBottomSheet} from '../components';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
-import BottomSheet from '@gorhom/bottom-sheet';
 
 export type BottomStackParams = {
   Dashboard: undefined;
   Recipes: undefined;
   Goals: undefined;
+  Profile: undefined;
+  Foods: undefined;
   AddScreenComponent: undefined;
 };
 
@@ -80,6 +81,16 @@ const bottomTabGoals = {
     <BottomIconWrapper focused={focused} icon={faBullseye} label={'GOALS'} />
   ),
 };
+const bottomTabProfile = {
+  tabBarIcon: (focused: FocusedProps) => (
+    <BottomIconWrapper focused={focused} icon={faBullseye} label={'PROFILE'} />
+  ),
+};
+const bottomTabFoods = {
+  tabBarIcon: (focused: FocusedProps) => (
+    <BottomIconWrapper focused={focused} icon={faBullseye} label={'FOODS'} />
+  ),
+};
 
 const BottomNavigator = () => {
   return (
@@ -92,12 +103,18 @@ const BottomNavigator = () => {
         component={Dashboard}
         options={bottomTabHome}
       />
+      <Bottom.Screen name="Foods" component={Foods} options={bottomTabFoods} />
       <Bottom.Screen
         name="AddScreenComponent"
         component={AddScreenComponent}
         options={bottomTabAddButtonOptions}
       />
       <Bottom.Screen name="Goals" component={Goals} options={bottomTabGoals} />
+      <Bottom.Screen
+        name="Profile"
+        component={Profile}
+        options={bottomTabProfile}
+      />
     </Bottom.Navigator>
   );
 };

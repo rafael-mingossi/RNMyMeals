@@ -72,8 +72,8 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
         carbs: formData.carbs,
         fat: formData.fat,
         calories,
-        fibre: formData.fibre,
-        sodium: formData.sodium,
+        fibre: formData.fibre || 0,
+        sodium: formData.sodium || 0,
         serv_size: serving,
         serv_unit: unit,
         label: foodName,
@@ -82,7 +82,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
       },
       {
         onSuccess: () => {
-          navigation.goBack();
+          navigation.navigate('Foods');
         },
         onError: e => {
           console.log('Error =>>', e);

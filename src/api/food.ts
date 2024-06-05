@@ -1,11 +1,21 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {supabase} from '@services';
+import {useAuth} from '@providers';
 
-export const useFoodsList = () => {
+export const useFoodsById = () => {
+  const {session} = useAuth();
+  const id = session?.user.id;
+
   return useQuery({
-    queryKey: ['foods'],
+    queryKey: ['foods', {userId: id}],
     queryFn: async () => {
-      const {data, error} = await supabase.from('foods').select('*');
+      if (!id) return null;
+
+      const {data, error} = await supabase
+        .from('foods')
+        .select('*')
+        .eq('user_id', id)
+        .order('created_at', {ascending: false});
 
       if (error) {
         throw new Error(error.message);

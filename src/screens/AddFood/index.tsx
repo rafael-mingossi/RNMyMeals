@@ -322,14 +322,23 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
             Units such as grams, slice, spoon, sachet, bag, etc...
           </Text>
         </View>
-        {selectedImg && (
-          <Image
-            style={{height: 100, width: 150}}
-            source={{uri: selectedImg || ''}}
-          />
-        )}
-        <ButtonText children={'Gallery'} onPress={() => handleImagePicker()} />
-        <ButtonText children={'Camera'} onPress={() => handleCamera()} />
+        <View style={styles.imgCameraWrapper}>
+          {selectedImg ? (
+            <Image style={styles.cameraImg} source={{uri: selectedImg || ''}} />
+          ) : (
+            <Image
+              style={styles.cameraImg}
+              source={require('../../assets/images/camera_placeholder.png')}
+            />
+          )}
+          <View style={styles.cameraBtnWrapper}>
+            <ButtonText
+              children={'Gallery'}
+              onPress={() => handleImagePicker()}
+            />
+            <ButtonText children={'Camera'} onPress={() => handleCamera()} />
+          </View>
+        </View>
         <CustomModal
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}

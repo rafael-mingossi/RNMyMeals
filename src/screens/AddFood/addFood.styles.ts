@@ -37,6 +37,20 @@ const styles = StyleSheet.create({
     paddingRight: hS(25),
     height: vS(70),
   },
+  imgCameraWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  cameraImg: {
+    width: hS(150),
+    height: vS(100),
+    borderRadius: 5,
+    objectFit: 'contain',
+  },
+  cameraBtnWrapper: {
+    flexDirection: 'column',
+  },
 });
 
 export default styles;

@@ -20,6 +20,7 @@ export type AddFoodStackNavigatorParams = {
     unit: string;
     img: string;
   };
+  Foods: undefined;
 };
 
 type NutrientsNavigationProp = NativeStackNavigationProp<

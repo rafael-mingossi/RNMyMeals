@@ -19,6 +19,7 @@ const TextInputLabel = forwardRef<TI, TextInputIconProps>(
           <TextInput
             {...rest}
             ref={ref}
+            textAlign={'center'}
             mode={'flat'}
             enterKeyHint={'next'}
             style={styles.input}
