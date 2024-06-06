@@ -10,7 +10,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faChartLine, faBullseye} from '@fortawesome/free-solid-svg-icons';
 
 ////SCREENS
-import {Dashboard, Recipes, Goals} from '@screens';
+import {Dashboard, Profile, Goals, Foods} from '@screens';
 import {AddBottomSheet} from '../components';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
 
@@ -18,6 +18,8 @@ export type BottomStackParams = {
   Dashboard: undefined;
   Recipes: undefined;
   Goals: undefined;
+  Profile: undefined;
+  Foods: undefined;
   AddScreenComponent: undefined;
 };
 
@@ -52,7 +54,6 @@ const screenOptions: BottomTabNavigationOptions = {
 const AddScreenComponent = () => {
   return null;
 };
-
 const BottomIconWrapper = ({focused, icon, label}: IconWrapperProps) => {
   return (
     <View style={styles.iconWrapper}>
@@ -67,7 +68,9 @@ const BottomIconWrapper = ({focused, icon, label}: IconWrapperProps) => {
 };
 
 ///BOTTOM SCREEN OPTIONS
-const bottomTabAddButtonOptions = {tabBarButton: () => <AddBottomSheet />};
+const bottomTabAddButtonOptions = {
+  tabBarButton: () => <AddBottomSheet />,
+};
 const bottomTabHome = {
   tabBarIcon: (focused: FocusedProps) => (
     <BottomIconWrapper focused={focused} icon={faChartLine} label={'HOME'} />
@@ -76,6 +79,16 @@ const bottomTabHome = {
 const bottomTabGoals = {
   tabBarIcon: (focused: FocusedProps) => (
     <BottomIconWrapper focused={focused} icon={faBullseye} label={'GOALS'} />
+  ),
+};
+const bottomTabProfile = {
+  tabBarIcon: (focused: FocusedProps) => (
+    <BottomIconWrapper focused={focused} icon={faBullseye} label={'PROFILE'} />
+  ),
+};
+const bottomTabFoods = {
+  tabBarIcon: (focused: FocusedProps) => (
+    <BottomIconWrapper focused={focused} icon={faBullseye} label={'FOODS'} />
   ),
 };
 
@@ -90,12 +103,18 @@ const BottomNavigator = () => {
         component={Dashboard}
         options={bottomTabHome}
       />
+      <Bottom.Screen name="Foods" component={Foods} options={bottomTabFoods} />
       <Bottom.Screen
         name="AddScreenComponent"
         component={AddScreenComponent}
         options={bottomTabAddButtonOptions}
       />
       <Bottom.Screen name="Goals" component={Goals} options={bottomTabGoals} />
+      <Bottom.Screen
+        name="Profile"
+        component={Profile}
+        options={bottomTabProfile}
+      />
     </Bottom.Navigator>
   );
 };

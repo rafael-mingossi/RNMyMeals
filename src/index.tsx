@@ -7,7 +7,7 @@ import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {configureFonts, MD2LightTheme, PaperProvider} from 'react-native-paper';
-import {AuthProvider} from '@providers';
+import {AuthProvider, QueryProvider} from '@providers';
 import {Fonts} from '@constants';
 // import {PortalProvider} from '@gorhom/portal';
 
@@ -64,7 +64,9 @@ function App(): React.JSX.Element {
               backgroundColor={backgroundStyle.backgroundColor}
             />
             <AuthProvider>
-              <ScreenNavigator />
+              <QueryProvider>
+                <ScreenNavigator />
+              </QueryProvider>
             </AuthProvider>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>
