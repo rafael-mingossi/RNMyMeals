@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {useFoodsById} from '../../api/index.ts';
+import {useFoodsById} from '@api';
 
 const Foods = () => {
   const {data: foods, isLoading, error} = useFoodsById();

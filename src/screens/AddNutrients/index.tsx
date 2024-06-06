@@ -3,7 +3,7 @@ import {Image, ScrollView, StatusBar, Text, View} from 'react-native';
 import {Colours} from '@constants';
 import {ButtonText, TextInputLabel} from '@components';
 import {AddNutrientsStack} from '@config';
-import {useAddFood} from '../../api/index.ts';
+import {useAddFood} from '@api';
 import styles from './addNutrients.styles.ts';
 import {useAuth} from '@providers';
 
