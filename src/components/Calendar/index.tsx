@@ -154,6 +154,7 @@ const Calendar = () => {
         animationType="fade"
         transparent={true}
         visible={showMonthModal}
+        statusBarTranslucent={true}
         onRequestClose={handleOnCloseModal}>
         <Pressable style={styles.outerView} onPress={handleOnCloseModal}>
           <View style={styles.innerView}>

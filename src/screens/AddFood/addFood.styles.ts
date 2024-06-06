@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {hS, vS} from '@utils';
+import {hS, vS, mS} from '@utils';
 import {Colours, Fonts} from '@constants';
 
 const styles = StyleSheet.create({
@@ -13,13 +13,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: hS(15),
   },
   subLabel: {
-    fontSize: hS(11),
+    fontSize: mS(12),
     marginLeft: hS(10),
     marginTop: vS(5),
     color: Colours.gray,
     marginBottom: vS(10),
   },
-
+  modalText: {
+    fontFamily: Fonts.regular,
+    fontSize: mS(16),
+    color: Colours.black,
+  },
+  closeModalBtn: {
+    marginTop: vS(15),
+    marginLeft: 'auto',
+  },
   buttonsWrapper: {
     borderTopWidth: 1,
     borderColor: Colours.gray,
@@ -28,6 +36,20 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingRight: hS(25),
     height: vS(70),
+  },
+  imgCameraWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  cameraImg: {
+    width: hS(150),
+    height: vS(100),
+    borderRadius: 5,
+    objectFit: 'contain',
+  },
+  cameraBtnWrapper: {
+    flexDirection: 'column',
   },
 });
 
