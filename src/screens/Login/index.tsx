@@ -20,6 +20,7 @@ const Login: FC<LoginStack> = ({navigation}) => {
   const [revealPass, setRevealPass] = useState(true);
 
   const passwordRef = useRef<TI | null>(null);
+
   async function signInWithEmail() {
     setLoading(true);
     const {error, data} = await supabase.auth.signInWithPassword({
@@ -32,7 +33,7 @@ const Login: FC<LoginStack> = ({navigation}) => {
     }
 
     if (data) {
-      navigation.navigate('Home');
+      navigation.navigate('BottomNavigator');
     }
 
     setLoading(false);

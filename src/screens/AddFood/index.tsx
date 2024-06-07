@@ -54,6 +54,9 @@ type CameraTypes = {
   uri?: string;
 };
 
+const temp_img =
+  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
+
 const AddFood: FC<AddFoodStack> = ({navigation}) => {
   const [formData, setFormData] = useState<FormType>({
     foodName: '',
@@ -324,7 +327,10 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
         </View>
         <View style={styles.imgCameraWrapper}>
           {selectedImg ? (
-            <Image style={styles.cameraImg} source={{uri: selectedImg || ''}} />
+            <Image
+              style={styles.cameraImg}
+              source={{uri: selectedImg || temp_img}}
+            />
           ) : (
             <Image
               style={styles.cameraImg}

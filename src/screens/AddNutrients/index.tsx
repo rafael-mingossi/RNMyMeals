@@ -6,6 +6,7 @@ import {AddNutrientsStack} from '@config';
 import {useAddFood} from '@api';
 import styles from './addNutrients.styles.ts';
 import {useAuth} from '@providers';
+import {uploadImage} from '@utils';
 
 type ErrorsType = {
   fat: boolean;
@@ -38,7 +39,8 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     protein: false,
   });
 
-  const temp_img = require('../../assets/images/default_food.png');
+  const temp_img =
+    'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
 
   if (!foodName || !calories || !serving || !unit) {
     navigation.goBack();
@@ -61,10 +63,12 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     return true;
   };
 
-  const handleSubmitForm = () => {
+  const handleSubmitForm = async () => {
     if (!validateForm()) {
       return;
     }
+
+    const imagePath = await uploadImage(img);
 
     addFood(
       {
@@ -77,7 +81,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
         serv_size: serving,
         serv_unit: unit,
         label: foodName,
-        food_img: img || temp_img,
+        food_img: imagePath ? imagePath : temp_img,
         user_id: session?.user.id,
       },
       {
@@ -95,7 +99,10 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
       <View style={styles.topWrapper}>
-        <Image source={img ? {uri: img} : temp_img} style={styles.foodImg} />
+        <Image
+          source={img ? {uri: img} : {uri: temp_img}}
+          style={styles.foodImg}
+        />
         {/*<View style={styles.imgWrapper}>*/}
         {/*</View>*/}
         <View style={styles.paramsWrapper}>

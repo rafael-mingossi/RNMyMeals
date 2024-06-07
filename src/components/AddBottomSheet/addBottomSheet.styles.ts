@@ -4,16 +4,22 @@ import {Colours, Fonts} from '@constants';
 
 const styles = StyleSheet.create({
   contentContainer: {
-    flex: 1,
-    padding: mS(30),
+    // flex: 1,
+    paddingHorizontal: hS(30),
+    paddingTop: vS(10),
+    paddingBottom: vS(40),
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     flexWrap: 'wrap',
-    columnGap: hS(10),
-    rowGap: vS(15),
+    columnGap: hS(20),
   },
   wrapper: {},
+  bottomIcons: {
+    marginBottom: vS(45),
+    flexDirection: 'row',
+    columnGap: hS(20),
+  },
   bottomSheetTitle: {
     fontSize: hS(18),
     fontFamily: Fonts.medium,
