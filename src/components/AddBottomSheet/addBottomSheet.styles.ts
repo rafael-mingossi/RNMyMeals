@@ -13,8 +13,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexWrap: 'wrap',
     columnGap: hS(20),
+    backgroundColor: Colours.white,
   },
-  wrapper: {},
+  wrapper: {backgroundColor: Colours.white},
   bottomIcons: {
     marginBottom: vS(45),
     flexDirection: 'row',
@@ -28,6 +29,7 @@ const styles = StyleSheet.create({
   iconWrapper: {
     borderWidth: 1,
     borderColor: Colours.black,
+    backgroundColor: Colours.white,
     height: Dimensions.get('window').width * 0.18,
     width: Dimensions.get('window').width * 0.18,
     borderRadius: Math.round(

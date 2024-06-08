@@ -205,6 +205,29 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
       <ScrollView style={styles.scrollWrapper}>
+        <Text style={styles.imgLabel}>
+          You can select an image for your food:
+        </Text>
+        <View style={styles.imgCameraWrapper}>
+          {selectedImg ? (
+            <Image
+              style={styles.cameraImg}
+              source={{uri: selectedImg || temp_img}}
+            />
+          ) : (
+            <Image
+              style={styles.cameraImg}
+              source={require('../../assets/images/camera_placeholder.png')}
+            />
+          )}
+          <View style={styles.cameraBtnWrapper}>
+            <ButtonText
+              children={'Gallery'}
+              onPress={() => handleImagePicker()}
+            />
+            <ButtonText children={'Camera'} onPress={() => handleCamera()} />
+          </View>
+        </View>
         <View>
           <TextInput
             label="Food Name"
@@ -325,26 +348,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
             Units such as grams, slice, spoon, sachet, bag, etc...
           </Text>
         </View>
-        <View style={styles.imgCameraWrapper}>
-          {selectedImg ? (
-            <Image
-              style={styles.cameraImg}
-              source={{uri: selectedImg || temp_img}}
-            />
-          ) : (
-            <Image
-              style={styles.cameraImg}
-              source={require('../../assets/images/camera_placeholder.png')}
-            />
-          )}
-          <View style={styles.cameraBtnWrapper}>
-            <ButtonText
-              children={'Gallery'}
-              onPress={() => handleImagePicker()}
-            />
-            <ButtonText children={'Camera'} onPress={() => handleCamera()} />
-          </View>
-        </View>
+
         <CustomModal
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}

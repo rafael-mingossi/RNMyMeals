@@ -1,4 +1,4 @@
-import {Image} from 'react-native';
+import {Image, ActivityIndicator} from 'react-native';
 import React, {ComponentProps, useEffect, useState} from 'react';
 import {supabase} from '@services';
 
@@ -9,10 +9,12 @@ type RemoteImageProps = {
 
 const RemoteImage = ({path, fallback, ...imageProps}: RemoteImageProps) => {
   const [image, setImage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!path) return;
     (async () => {
+      setIsLoading(true);
       setImage('');
       const {data, error} = await supabase.storage
         .from('food-images')
@@ -20,6 +22,7 @@ const RemoteImage = ({path, fallback, ...imageProps}: RemoteImageProps) => {
 
       if (error) {
         console.log(error);
+        setIsLoading(false);
       }
 
       if (data) {
@@ -27,7 +30,9 @@ const RemoteImage = ({path, fallback, ...imageProps}: RemoteImageProps) => {
         fr.readAsDataURL(data);
         fr.onload = () => {
           setImage(fr.result as string);
+          setIsLoading(false);
         };
+        setIsLoading(false);
       }
     })();
   }, [path]);
@@ -35,7 +40,11 @@ const RemoteImage = ({path, fallback, ...imageProps}: RemoteImageProps) => {
   if (!image) {
   }
 
-  return <Image source={{uri: image || fallback}} {...imageProps} />;
+  return isLoading ? (
+    <ActivityIndicator />
+  ) : (
+    <Image source={{uri: image || fallback}} {...imageProps} />
+  );
 };
 
 export default RemoteImage;

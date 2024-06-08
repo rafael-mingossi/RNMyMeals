@@ -42,71 +42,69 @@ const AddBottomSheet = () => {
         <FontAwesomeIcon icon={faPlus} color={'#fff'} size={30} />
       </TouchableOpacity>
       <Portal>
-        {childHeight !== 0 ? (
-          <BottomSheet
-            ref={sheetRef}
-            backdropMaskColor={'#00000072'}
-            height={childHeight}
-            closeDuration={300}>
-            <View
-              style={styles.contentContainer}
-              ref={layoutRef}
-              onLayout={handleLayout}>
-              <TouchableOpacity>
-                <View style={styles.iconWrapper}>
-                  <Image
-                    source={require('../../assets/images/img_breakie.png')}
-                    style={styles.icon}
-                  />
-                </View>
-                <Text style={styles.bottomSheetTitle}>Breakfast</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View style={styles.iconWrapper}>
-                  <Image
-                    source={require('../../assets/images/img_lunch.png')}
-                    style={styles.icon}
-                  />
-                </View>
-                <Text style={styles.bottomSheetTitle}>Lunch</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View style={styles.iconWrapper}>
-                  <Image
-                    source={require('../../assets/images/img_dinner.png')}
-                    style={styles.icon}
-                  />
-                </View>
-                <Text style={styles.bottomSheetTitle}>Dinner</Text>
-              </TouchableOpacity>
-              <View style={styles.bottomIcons}>
-                <TouchableOpacity>
-                  <View style={styles.iconWrapper}>
-                    <Image
-                      source={require('../../assets/images/img_snack.png')}
-                      style={styles.icon}
-                    />
-                  </View>
-                  <Text style={styles.bottomSheetTitle}>Snacks</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.wrapper}
-                  onPress={() => {
-                    onModalClose();
-                    navigation.navigate('AddFoodRoot');
-                  }}>
-                  <View style={styles.iconWrapper}>
-                    <Image
-                      source={require('../../assets/images/img_add_food.png')}
-                      style={styles.icon}
-                    />
-                  </View>
-                  <Text style={styles.bottomSheetTitle}>Add Food</Text>
-                </TouchableOpacity>
+        <BottomSheet
+          ref={sheetRef}
+          backdropMaskColor={'#00000072'}
+          height={childHeight}
+          style={styles.wrapper}
+          closeDuration={300}>
+          <View
+            style={styles.contentContainer}
+            ref={layoutRef}
+            onLayout={handleLayout}>
+            <TouchableOpacity>
+              <View style={styles.iconWrapper}>
+                <Image
+                  source={require('../../assets/images/img_breakie.png')}
+                  style={styles.icon}
+                />
               </View>
+              <Text style={styles.bottomSheetTitle}>Breakfast</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.iconWrapper}>
+                <Image
+                  source={require('../../assets/images/img_lunch.png')}
+                  style={styles.icon}
+                />
+              </View>
+              <Text style={styles.bottomSheetTitle}>Lunch</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.iconWrapper}>
+                <Image
+                  source={require('../../assets/images/img_dinner.png')}
+                  style={styles.icon}
+                />
+              </View>
+              <Text style={styles.bottomSheetTitle}>Dinner</Text>
+            </TouchableOpacity>
+            <View style={styles.bottomIcons}>
+              <TouchableOpacity>
+                <View style={styles.iconWrapper}>
+                  <Image
+                    source={require('../../assets/images/img_snack.png')}
+                    style={styles.icon}
+                  />
+                </View>
+                <Text style={styles.bottomSheetTitle}>Snacks</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  onModalClose();
+                  navigation.navigate('AddFoodRoot');
+                }}>
+                <View style={styles.iconWrapper}>
+                  <Image
+                    source={require('../../assets/images/img_add_food.png')}
+                    style={styles.icon}
+                  />
+                </View>
+                <Text style={styles.bottomSheetTitle}>Add Food</Text>
+              </TouchableOpacity>
             </View>
-          </BottomSheet>
-        ) : null}
+          </View>
+        </BottomSheet>
       </Portal>
       <PortalHost name={'custom_host'} />
     </>

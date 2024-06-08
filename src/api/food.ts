@@ -31,7 +31,6 @@ export const useAddFood = () => {
 
   return useMutation({
     async mutationFn(userInput: any) {
-      console.log('HERE');
       const {data, error} = await supabase
         .from('foods')
         .insert({
