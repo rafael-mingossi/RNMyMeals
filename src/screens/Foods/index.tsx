@@ -2,13 +2,15 @@ import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   SafeAreaView,
   Text,
   View,
 } from 'react-native';
 import {useFoodsById} from '@api';
+import RemoteImage from '../../components/RemoteImg';
 
+const temp_img =
+  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
 const Foods = () => {
   const {data: foods, isLoading, error} = useFoodsById();
 
@@ -25,17 +27,11 @@ const Foods = () => {
           <View>
             <Text>Name: {item.label}</Text>
             <Text>Protein: {item.protein}</Text>
-            {item.food_img.toString().includes('file') ? (
-              <Image
-                source={{uri: item.food_img}}
-                style={{width: 100, height: 80}}
-              />
-            ) : (
-              <Image
-                source={item.food_img.toString()}
-                style={{width: 100, height: 80}}
-              />
-            )}
+            <RemoteImage
+              path={item.food_img}
+              fallback={temp_img}
+              style={{width: 100, height: 80}}
+            />
           </View>
         )}
       />

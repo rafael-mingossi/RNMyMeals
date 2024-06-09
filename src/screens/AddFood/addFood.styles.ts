@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     marginTop: vS(5),
     color: Colours.gray,
     marginBottom: vS(10),
+    fontFamily: Fonts.regular,
   },
   modalText: {
     fontFamily: Fonts.regular,
@@ -37,14 +38,16 @@ const styles = StyleSheet.create({
     paddingRight: hS(25),
     height: vS(70),
   },
+  imgLabel: {fontSize: mS(14), fontFamily: Fonts.medium, marginBottom: vS(10)},
   imgCameraWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
+    marginBottom: vS(15),
   },
   cameraImg: {
-    width: hS(150),
-    height: vS(100),
+    width: hS(120),
+    height: vS(70),
     borderRadius: 5,
     objectFit: 'contain',
   },

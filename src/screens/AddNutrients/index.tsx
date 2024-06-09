@@ -1,11 +1,19 @@
-import React, {FC, useState} from 'react';
-import {Image, ScrollView, StatusBar, Text, View} from 'react-native';
+import React, {FC, useRef, useState, useEffect} from 'react';
+import {
+  Image,
+  ScrollView,
+  StatusBar,
+  Text,
+  TextInput as TI,
+  View,
+} from 'react-native';
 import {Colours} from '@constants';
 import {ButtonText, TextInputLabel} from '@components';
 import {AddNutrientsStack} from '@config';
 import {useAddFood} from '@api';
 import styles from './addNutrients.styles.ts';
 import {useAuth} from '@providers';
+import {uploadImage} from '@utils';
 
 type ErrorsType = {
   fat: boolean;
@@ -38,7 +46,19 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     protein: false,
   });
 
-  const temp_img = require('../../assets/images/default_food.png');
+  const inputRefs = {
+    carbs: useRef<TI | null>(null),
+    protein: useRef<TI | null>(null),
+    sodium: useRef<TI | null>(null),
+    fibre: useRef<TI | null>(null),
+  };
+
+  const handleNextInput = (key: keyof typeof inputRefs) => {
+    inputRefs[key]?.current?.focus();
+  };
+
+  const temp_img =
+    'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
 
   if (!foodName || !calories || !serving || !unit) {
     navigation.goBack();
@@ -61,10 +81,12 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     return true;
   };
 
-  const handleSubmitForm = () => {
+  const handleSubmitForm = async () => {
     if (!validateForm()) {
       return;
     }
+
+    const imagePath = await uploadImage(img);
 
     addFood(
       {
@@ -77,7 +99,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
         serv_size: serving,
         serv_unit: unit,
         label: foodName,
-        food_img: img || temp_img,
+        food_img: imagePath ? imagePath : temp_img,
         user_id: session?.user.id,
       },
       {
@@ -91,13 +113,18 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     );
   };
 
+  useEffect(() => {
+    setErrors({...errors, fat: false, carbs: false, protein: false});
+  }, [formData]);
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
       <View style={styles.topWrapper}>
-        <Image source={img ? {uri: img} : temp_img} style={styles.foodImg} />
-        {/*<View style={styles.imgWrapper}>*/}
-        {/*</View>*/}
+        <Image
+          source={img ? {uri: img} : {uri: temp_img}}
+          style={styles.foodImg}
+        />
         <View style={styles.paramsWrapper}>
           <Text style={styles.name}>{foodName}</Text>
           <Text style={styles.serving}>
@@ -109,42 +136,47 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
       <View style={styles.line} />
       <ScrollView style={styles.scrollWrapper}>
         <TextInputLabel
+          autoFocus={true}
           label={'Total Fat'}
+          enablesReturnKeyAutomatically={true}
           value={formData.fat}
-          returnKeyType={'done'}
           onChangeText={val => handleInputChange('fat', val)}
-          error={errors.fat}
-          onSubmitEditing={() => {}}
+          error={errors.fat && formData.fat === ''}
+          onSubmitEditing={() => handleNextInput('carbs')}
         />
         <TextInputLabel
+          ref={inputRefs.carbs}
           label={'Total Carbs'}
+          enablesReturnKeyAutomatically={true}
           value={formData.carbs}
-          returnKeyType={'done'}
           onChangeText={val => handleInputChange('carbs', val)}
-          error={errors.carbs}
-          onSubmitEditing={() => {}}
+          error={errors.carbs && formData.carbs === ''}
+          onSubmitEditing={() => handleNextInput('protein')}
         />
         <TextInputLabel
+          ref={inputRefs.protein}
           label={'Protein'}
+          enablesReturnKeyAutomatically={true}
           value={formData.protein}
-          returnKeyType={'done'}
           onChangeText={val => handleInputChange('protein', val)}
-          error={errors.protein}
-          onSubmitEditing={() => {}}
+          error={errors.protein && formData.protein === ''}
+          onSubmitEditing={() => handleNextInput('sodium')}
         />
         <TextInputLabel
+          ref={inputRefs.sodium}
           label={'Sodium'}
+          enablesReturnKeyAutomatically={true}
           value={formData.sodium}
-          returnKeyType={'done'}
           onChangeText={val => handleInputChange('sodium', val)}
-          onSubmitEditing={() => {}}
+          onSubmitEditing={() => handleNextInput('fibre')}
         />
         <TextInputLabel
+          ref={inputRefs.fibre}
+          enablesReturnKeyAutomatically={true}
           label={'Fibre'}
           value={formData.fibre}
-          returnKeyType={'done'}
           onChangeText={val => handleInputChange('fibre', val)}
-          onSubmitEditing={() => {}}
+          onSubmitEditing={() => handleSubmitForm()}
         />
       </ScrollView>
       <View style={styles.buttonsWrapper}>

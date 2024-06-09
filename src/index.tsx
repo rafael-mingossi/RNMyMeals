@@ -3,13 +3,12 @@ import React from 'react';
 import {StatusBar, useColorScheme} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {ScreenNavigator} from '@config';
-import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {configureFonts, MD2LightTheme, PaperProvider} from 'react-native-paper';
 import {AuthProvider, QueryProvider} from '@providers';
 import {Fonts} from '@constants';
-// import {PortalProvider} from '@gorhom/portal';
+import {PortalProvider} from '@gorhom/portal';
 
 const fontConfig = {
   ios: {
@@ -58,7 +57,7 @@ function App(): React.JSX.Element {
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
         <GestureHandlerRootView style={{flex: 1}}>
-          <BottomSheetModalProvider>
+          <PortalProvider>
             <StatusBar
               barStyle={isDarkMode ? 'light-content' : 'dark-content'}
               backgroundColor={backgroundStyle.backgroundColor}
@@ -68,7 +67,7 @@ function App(): React.JSX.Element {
                 <ScreenNavigator />
               </QueryProvider>
             </AuthProvider>
-          </BottomSheetModalProvider>
+          </PortalProvider>
         </GestureHandlerRootView>
       </PaperProvider>
     </SafeAreaProvider>

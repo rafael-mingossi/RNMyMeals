@@ -1,99 +1,59 @@
-import BottomSheet, {
-  BottomSheetBackdrop,
-  useBottomSheet,
-  useBottomSheetTimingConfigs,
-} from '@gorhom/bottom-sheet';
-import * as React from 'react';
-import {View, Text, Dimensions, TouchableOpacity, Image} from 'react-native';
-import {Portal, PortalHost} from '@gorhom/portal';
-import {faPlus} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {useCallback, useMemo, useState} from 'react';
+import React, {useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  LayoutChangeEvent,
+} from 'react-native';
+import {Icon} from 'react-native-paper';
+import {Portal} from 'react-native-paper';
 import styles from './addBottomSheet.styles.ts';
 import {BottomSheetPropsNavigation} from '@config';
 import {useNavigation} from '@react-navigation/native';
-import {runOnJS, useAnimatedReaction, Easing} from 'react-native-reanimated';
+import BottomSheet, {BottomSheetMethods} from '@devvie/bottom-sheet';
+import {hS} from '@utils';
+import {Colours} from '@constants';
 
 const AddBottomSheet = () => {
-  // Creates a reference to the DOM element that we can interact with
-  const bottomSheetRef = React.useRef<BottomSheet>(null);
+  const sheetRef = useRef<BottomSheetMethods>(null);
   const navigation: BottomSheetPropsNavigation = useNavigation();
 
-  const deviceHeight = Dimensions.get('window').height;
-  const snapPoints = useMemo(
-    () => (deviceHeight >= 800 ? ['43%'] : ['55%']),
-    [deviceHeight],
-  );
+  const layoutRef = useRef<View>(null);
+  const [childHeight, setChildHeight] = useState(0);
 
-  function useBottomSheetBoundary(boundary: number) {
-    const {animatedPosition} = useBottomSheet();
-    const [isBelowBoundary, setIsBelowBoundary] = useState(true);
-
-    useAnimatedReaction(
-      () => deviceHeight - animatedPosition.value,
-      (estimatedHeight, previous) => {
-        if (estimatedHeight < (previous ?? 0) && estimatedHeight < boundary) {
-          runOnJS(setIsBelowBoundary)(true);
-        } else if (
-          estimatedHeight > (previous ?? 0) &&
-          estimatedHeight > boundary
-        ) {
-          runOnJS(setIsBelowBoundary)(false);
-        }
-      },
-    );
-
-    return isBelowBoundary ? 'below' : 'above';
-  }
-
-  console.log(useBottomSheetBoundary);
-
-  // Expands the bottom sheet when our button is pressed
-  const onAddButtonPress = () => {
-    bottomSheetRef?.current?.expand();
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const {height} = event.nativeEvent.layout;
+    setChildHeight(height);
   };
 
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
-  }, []);
+  const onAddButtonPress = () => {
+    sheetRef.current?.open();
+  };
 
   const onModalClose = () => {
-    bottomSheetRef?.current?.close();
+    sheetRef?.current?.close();
   };
-  const renderBackdrop = useCallback(
-    (newProps: any) => (
-      <BottomSheetBackdrop
-        appearsOnIndex={0}
-        disappearsOnIndex={-1}
-        {...newProps}
-      />
-    ),
-    [],
-  );
-
-  const animationConfigs = useBottomSheetTimingConfigs({
-    duration: 200,
-    easing: Easing.exp,
-  });
 
   return (
     <>
       <TouchableOpacity
         onPress={onAddButtonPress}
         style={styles.addButtonWrapper}>
-        <FontAwesomeIcon icon={faPlus} color={'#fff'} size={30} />
+        <Icon size={hS(40)} source={'plus'} color={Colours.white} />
       </TouchableOpacity>
       <Portal>
         <BottomSheet
-          ref={bottomSheetRef}
-          index={-1} // Hide the bottom sheet when we first load our component
-          snapPoints={snapPoints}
-          backdropComponent={renderBackdrop}
-          enablePanDownToClose={true}
-          animationConfigs={animationConfigs}
-          onChange={handleSheetChanges}>
-          <View style={styles.contentContainer}>
-            <TouchableOpacity style={styles.wrapper}>
+          ref={sheetRef}
+          backdropMaskColor={'#00000072'}
+          height={childHeight}
+          style={styles.wrapper}
+          closeDuration={300}>
+          <View
+            style={styles.contentContainer}
+            ref={layoutRef}
+            onLayout={handleLayout}>
+            <TouchableOpacity>
               <View style={styles.iconWrapper}>
                 <Image
                   source={require('../../assets/images/img_breakie.png')}
@@ -102,7 +62,7 @@ const AddBottomSheet = () => {
               </View>
               <Text style={styles.bottomSheetTitle}>Breakfast</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.wrapper}>
+            <TouchableOpacity>
               <View style={styles.iconWrapper}>
                 <Image
                   source={require('../../assets/images/img_lunch.png')}
@@ -111,7 +71,7 @@ const AddBottomSheet = () => {
               </View>
               <Text style={styles.bottomSheetTitle}>Lunch</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.wrapper}>
+            <TouchableOpacity>
               <View style={styles.iconWrapper}>
                 <Image
                   source={require('../../assets/images/img_dinner.png')}
@@ -120,33 +80,34 @@ const AddBottomSheet = () => {
               </View>
               <Text style={styles.bottomSheetTitle}>Dinner</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.wrapper}>
-              <View style={styles.iconWrapper}>
-                <Image
-                  source={require('../../assets/images/img_snack.png')}
-                  style={styles.icon}
-                />
-              </View>
-              <Text style={styles.bottomSheetTitle}>Snacks</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.wrapper}
-              onPress={() => {
-                onModalClose();
-                navigation.navigate('AddFoodRoot');
-              }}>
-              <View style={styles.iconWrapper}>
-                <Image
-                  source={require('../../assets/images/img_add_food.png')}
-                  style={styles.icon}
-                />
-              </View>
-              <Text style={styles.bottomSheetTitle}>Add Food</Text>
-            </TouchableOpacity>
+            <View style={styles.bottomIcons}>
+              <TouchableOpacity>
+                <View style={styles.iconWrapper}>
+                  <Image
+                    source={require('../../assets/images/img_snack.png')}
+                    style={styles.icon}
+                  />
+                </View>
+                <Text style={styles.bottomSheetTitle}>Snacks</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  onModalClose();
+                  navigation.navigate('AddFoodRoot');
+                }}>
+                <View style={styles.iconWrapper}>
+                  <Image
+                    source={require('../../assets/images/img_add_food.png')}
+                    style={styles.icon}
+                  />
+                </View>
+                <Text style={styles.bottomSheetTitle}>Add Food</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </BottomSheet>
       </Portal>
-      <PortalHost name={'custom_host'} />
+      {/*<PortalHost name={'custom_host'} />*/}
     </>
   );
 };

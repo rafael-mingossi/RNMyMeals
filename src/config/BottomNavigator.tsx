@@ -4,15 +4,13 @@ import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-
-//// ICONS
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faChartLine, faBullseye} from '@fortawesome/free-solid-svg-icons';
+import {Icon} from 'react-native-paper';
 
 ////SCREENS
 import {Dashboard, Profile, Goals, Foods} from '@screens';
 import {AddBottomSheet} from '../components';
-import {IconProp} from '@fortawesome/fontawesome-svg-core';
+import {hS, mS, vS} from '@utils';
+import {Colours, Fonts} from '@constants';
 
 export type BottomStackParams = {
   Dashboard: undefined;
@@ -31,7 +29,7 @@ type FocusedProps = {
 
 type IconWrapperProps = {
   focused: FocusedProps;
-  icon: IconProp;
+  icon: string;
   label: string;
 };
 
@@ -46,8 +44,8 @@ const screenOptions: BottomTabNavigationOptions = {
     right: 0,
     left: 0,
     elevation: 0,
-    height: 85,
-    backgroundColor: '#fff',
+    height: vS(75),
+    backgroundColor: Colours.white,
   },
 };
 
@@ -57,12 +55,21 @@ const AddScreenComponent = () => {
 const BottomIconWrapper = ({focused, icon, label}: IconWrapperProps) => {
   return (
     <View style={styles.iconWrapper}>
-      <FontAwesomeIcon
-        icon={icon}
-        color={focused.focused ? '#16247d' : '#111'}
-        size={24}
+      <Icon
+        size={hS(24)}
+        source={icon}
+        color={focused.focused ? Colours.green : Colours.gray}
       />
-      <Text style={styles.iconText}>{label}</Text>
+      <Text
+        style={[
+          styles.iconText,
+          {
+            color: focused.focused ? Colours.green : Colours.gray,
+            fontFamily: focused.focused ? Fonts.bold : Fonts.regular,
+          },
+        ]}>
+        {label}
+      </Text>
     </View>
   );
 };
@@ -73,22 +80,26 @@ const bottomTabAddButtonOptions = {
 };
 const bottomTabHome = {
   tabBarIcon: (focused: FocusedProps) => (
-    <BottomIconWrapper focused={focused} icon={faChartLine} label={'HOME'} />
+    <BottomIconWrapper focused={focused} icon={'chart-line'} label={'HOME'} />
   ),
 };
 const bottomTabGoals = {
   tabBarIcon: (focused: FocusedProps) => (
-    <BottomIconWrapper focused={focused} icon={faBullseye} label={'GOALS'} />
+    <BottomIconWrapper
+      focused={focused}
+      icon={'book-open-page-variant-outline'}
+      label={'RECIPES'}
+    />
   ),
 };
 const bottomTabProfile = {
   tabBarIcon: (focused: FocusedProps) => (
-    <BottomIconWrapper focused={focused} icon={faBullseye} label={'PROFILE'} />
+    <BottomIconWrapper focused={focused} icon={'account'} label={'ME'} />
   ),
 };
 const bottomTabFoods = {
   tabBarIcon: (focused: FocusedProps) => (
-    <BottomIconWrapper focused={focused} icon={faBullseye} label={'FOODS'} />
+    <BottomIconWrapper focused={focused} icon={'pasta'} label={'FOODS'} />
   ),
 };
 
@@ -121,7 +132,7 @@ const BottomNavigator = () => {
 
 const styles = StyleSheet.create({
   iconWrapper: {alignItems: 'center', justifyContent: 'center'},
-  iconText: {fontSize: 12, color: '#16247d'},
+  iconText: {fontSize: mS(12)},
 });
 
 export default BottomNavigator;
