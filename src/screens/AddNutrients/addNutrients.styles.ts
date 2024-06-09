@@ -1,7 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {hS, mS, vS} from '@utils';
 import {Colours, Fonts} from '@constants';
-import {center} from '@shopify/react-native-skia';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,15 +30,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: hS(15),
     alignItems: 'center',
   },
-  // imgWrapper: {
-  //   height: vS(75),
-  //   width: hS(70),
-  //   borderWidth: 1,
-  //   borderColor: Colours.gray,
-  //   borderRadius: 5,
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  // },
   name: {
     fontFamily: Fonts.bold,
     fontSize: mS(17),

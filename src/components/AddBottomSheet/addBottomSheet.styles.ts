@@ -4,16 +4,23 @@ import {Colours, Fonts} from '@constants';
 
 const styles = StyleSheet.create({
   contentContainer: {
-    flex: 1,
-    padding: mS(30),
+    // flex: 1,
+    paddingHorizontal: hS(30),
+    paddingTop: vS(10),
+    paddingBottom: vS(40),
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     flexWrap: 'wrap',
-    columnGap: hS(10),
-    rowGap: vS(15),
+    columnGap: hS(20),
+    backgroundColor: Colours.white,
   },
-  wrapper: {},
+  wrapper: {backgroundColor: Colours.white},
+  bottomIcons: {
+    marginBottom: vS(45),
+    flexDirection: 'row',
+    columnGap: hS(20),
+  },
   bottomSheetTitle: {
     fontSize: hS(18),
     fontFamily: Fonts.medium,
@@ -22,6 +29,7 @@ const styles = StyleSheet.create({
   iconWrapper: {
     borderWidth: 1,
     borderColor: Colours.black,
+    backgroundColor: Colours.white,
     height: Dimensions.get('window').width * 0.18,
     width: Dimensions.get('window').width * 0.18,
     borderRadius: Math.round(
@@ -32,6 +40,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     width: '100%',
+    aspectRatio: 1,
     height: '100%',
     borderRadius: Math.round(
       (Dimensions.get('window').height + Dimensions.get('window').width) / 2,
@@ -41,14 +50,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colours.green,
-    height: Dimensions.get('window').width * hS(0.18),
-    width: Dimensions.get('window').width * hS(0.18),
+    aspectRatio: 1,
+    // height: Dimensions.get('window').width * vS(0.158),
+    width: Dimensions.get('window').width * hS(0.158),
     top: vS(-25),
     borderRadius: Math.round(
       (Dimensions.get('window').height + Dimensions.get('window').width) / 2,
     ),
-    borderWidth: 6,
-    borderColor: Colours.white,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
 
