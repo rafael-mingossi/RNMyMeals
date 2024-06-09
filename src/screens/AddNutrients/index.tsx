@@ -125,8 +125,6 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           source={img ? {uri: img} : {uri: temp_img}}
           style={styles.foodImg}
         />
-        {/*<View style={styles.imgWrapper}>*/}
-        {/*</View>*/}
         <View style={styles.paramsWrapper}>
           <Text style={styles.name}>{foodName}</Text>
           <Text style={styles.serving}>

@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     width: '100%',
+    aspectRatio: 1,
     height: '100%',
     borderRadius: Math.round(
       (Dimensions.get('window').height + Dimensions.get('window').width) / 2,
@@ -49,14 +50,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colours.green,
-    height: Dimensions.get('window').width * hS(0.18),
-    width: Dimensions.get('window').width * hS(0.18),
+    aspectRatio: 1,
+    // height: Dimensions.get('window').width * vS(0.158),
+    width: Dimensions.get('window').width * hS(0.158),
     top: vS(-25),
     borderRadius: Math.round(
       (Dimensions.get('window').height + Dimensions.get('window').width) / 2,
     ),
-    borderWidth: 6,
-    borderColor: Colours.white,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
 

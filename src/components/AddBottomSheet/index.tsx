@@ -6,13 +6,14 @@ import {
   Image,
   LayoutChangeEvent,
 } from 'react-native';
-import {Portal, PortalHost} from '@gorhom/portal';
-import {faPlus} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {Icon} from 'react-native-paper';
+import {Portal} from 'react-native-paper';
 import styles from './addBottomSheet.styles.ts';
 import {BottomSheetPropsNavigation} from '@config';
 import {useNavigation} from '@react-navigation/native';
 import BottomSheet, {BottomSheetMethods} from '@devvie/bottom-sheet';
+import {hS} from '@utils';
+import {Colours} from '@constants';
 
 const AddBottomSheet = () => {
   const sheetRef = useRef<BottomSheetMethods>(null);
@@ -39,7 +40,7 @@ const AddBottomSheet = () => {
       <TouchableOpacity
         onPress={onAddButtonPress}
         style={styles.addButtonWrapper}>
-        <FontAwesomeIcon icon={faPlus} color={'#fff'} size={30} />
+        <Icon size={hS(40)} source={'plus'} color={Colours.white} />
       </TouchableOpacity>
       <Portal>
         <BottomSheet
@@ -106,7 +107,7 @@ const AddBottomSheet = () => {
           </View>
         </BottomSheet>
       </Portal>
-      <PortalHost name={'custom_host'} />
+      {/*<PortalHost name={'custom_host'} />*/}
     </>
   );
 };

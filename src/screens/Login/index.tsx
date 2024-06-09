@@ -12,6 +12,7 @@ import {ButtonRound, ScreenTitle, TextInputIcon} from '@components';
 import styles from './login.styles.ts';
 import {TextInput} from 'react-native-paper';
 import {Colours} from '@constants';
+import {useAuth} from '@providers';
 
 const Login: FC<LoginStack> = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -20,6 +21,7 @@ const Login: FC<LoginStack> = ({navigation}) => {
   const [revealPass, setRevealPass] = useState(true);
 
   const passwordRef = useRef<TI | null>(null);
+  const {session} = useAuth();
 
   async function signInWithEmail() {
     setLoading(true);
@@ -33,7 +35,7 @@ const Login: FC<LoginStack> = ({navigation}) => {
     }
 
     if (data) {
-      navigation.navigate('BottomNavigator');
+      session && navigation.navigate('Home');
     }
 
     setLoading(false);

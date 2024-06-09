@@ -13,7 +13,7 @@ import {ActivityIndicator} from 'react-native';
 export type StackNavigatorParams = {
   Login: undefined;
   Register: undefined;
-  BottomNavigator: undefined;
+  Home: undefined;
   Initial: undefined;
   AddFoodRoot: undefined;
 };
@@ -54,7 +54,7 @@ const ScreenNavigator = () => {
         screenOptions={{headerShown: false}}>
         {session ? (
           <>
-            <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
+            <Stack.Screen name="Home" component={BottomNavigator} />
             <Stack.Screen name="AddFoodRoot" component={AddFoodNavigator} />
           </>
         ) : (
