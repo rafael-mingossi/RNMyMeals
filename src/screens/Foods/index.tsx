@@ -1,40 +1,131 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
   SafeAreaView,
+  StatusBar,
   Text,
   View,
 } from 'react-native';
-import {useFoodsById} from '@api';
-import RemoteImage from '../../components/RemoteImg';
+import {useFoods} from '@api';
+import {SingleFood} from '@components';
+import {Searchbar} from 'react-native-paper';
+import styles from './foods.styles.ts';
+import {Colours} from '@constants';
+import {foodStore} from '../../stores/foodStore.ts';
+import {supabase} from '@services';
 
-const temp_img =
-  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
+type FoodsType = {
+  calories: number;
+  carbs: number;
+  created_at: string;
+  fat: number;
+  fibre: number;
+  food_img: string;
+  id: number;
+  label: string;
+  protein: number;
+  serv_size: number;
+  serv_unit: string;
+  sodium: number;
+  user_id: string;
+};
+
 const Foods = () => {
-  const {data: foods, isLoading, error} = useFoodsById();
+  const {getFoodsById, foods, useDeleteFood} = useFoods();
+  // getFoodsById().then(res => console.log('==>>', res));
+  const {mutate: deleteFood} = useDeleteFood();
+  // const {deleteFood} = foodStore();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredFoods, setFilteredFoods] = useState<FoodsType[] | undefined>(
+    [],
+  );
+  console.log('FOODS STORE =>>', foods);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const filterFoods = () => {
+    const filtered: FoodsType[] | undefined = foods?.filter(item =>
+      item.label.includes(searchQuery),
+    );
 
-  if (isLoading) return <ActivityIndicator />;
+    setFilteredFoods(filtered);
+  };
 
-  if (error) return <Text>Failed to fetch</Text>;
+  const onDelete = (id: number) => {
+    setLoadingDelete(true);
+    deleteFood(id);
+    setLoadingDelete(false);
+  };
+
+  useEffect(() => {
+    filterFoods();
+  }, [searchQuery]);
+
+  useEffect(() => {
+    // getFoodsById().then(() => {});
+    setFilteredFoods(foods);
+  }, []);
+
+  // if (error)
+  //   return (
+  //     <View style={styles.noResults}>
+  //       <Text style={styles.noResultsTxt}>Failed to fetch...</Text>
+  //     </View>
+  //   );
 
   return (
-    <SafeAreaView>
-      <Text>FOODS</Text>
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={Colours.green} />
+
+      <View style={styles.searchWrapper}>
+        <Searchbar
+          placeholder="Search a food name"
+          onChangeText={setSearchQuery}
+          value={searchQuery}
+          style={styles.search}
+        />
+      </View>
       <FlatList
-        data={foods}
-        renderItem={({item}) => (
-          <View>
-            <Text>Name: {item.label}</Text>
-            <Text>Protein: {item.protein}</Text>
-            <RemoteImage
-              path={item.food_img}
-              fallback={temp_img}
-              style={{width: 100, height: 80}}
-            />
-          </View>
+        data={filteredFoods}
+        keyExtractor={item => item.id.toString()}
+        // contentContainerStyle={{marginBottom: 50}}
+        style={styles.wrapper}
+        // contentInset={{bottom: 90}}
+        renderItem={({item, index}) => (
+          <SingleFood
+            item={item}
+            index={index}
+            foods={filteredFoods}
+            onDelete={onDelete}
+            loadingDel={loadingDelete}
+          />
         )}
+        ListFooterComponent={<View />}
+        ListFooterComponentStyle={{height: 90}}
       />
+      {/*{filteredFoods?.length && searchQuery === '' ? (*/}
+      {/*  <FlatList*/}
+      {/*    data={filteredFoods}*/}
+      {/*    keyExtractor={item => item.id.toString()}*/}
+      {/*    // contentContainerStyle={{marginBottom: 50}}*/}
+      {/*    style={styles.wrapper}*/}
+      {/*    // contentInset={{bottom: 90}}*/}
+      {/*    renderItem={({item, index}) => (*/}
+      {/*      <SingleFood*/}
+      {/*        item={item}*/}
+      {/*        index={index}*/}
+      {/*        foods={filteredFoods}*/}
+      {/*        onDelete={onDelete}*/}
+      {/*        loadingDel={loadingDelete}*/}
+      {/*      />*/}
+      {/*    )}*/}
+      {/*    ListFooterComponent={<View />}*/}
+      {/*    ListFooterComponentStyle={{height: 90}}*/}
+      {/*  />*/}
+      {/*) : (*/}
+      {/*  <View style={styles.noResults}>*/}
+      {/*    <Text style={styles.noResultsTxt}>No results found...</Text>*/}
+      {/*  </View>*/}
+      {/*)}*/}
     </SafeAreaView>
   );
 };
