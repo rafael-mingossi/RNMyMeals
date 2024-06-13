@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import {useAuth} from '@providers';
 import {PieChart} from 'react-native-gifted-charts';
-import {useFoods} from '@api';
+import {getFoodsById} from '@api';
 
 const Dashboard = () => {
   const data = [{value: 50}, {value: 80}, {value: 90}];
-  const {getFoodsById} = useFoods();
+  // const {getFoodsById} = useFoods();
   const {userLogOut} = useAuth();
   return (
     <SafeAreaView style={{flex: 1}}>

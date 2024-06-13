@@ -12,6 +12,7 @@ import styles from './singleFood.styles.ts';
 import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
 import {Icon} from 'react-native-paper';
+import {foodStore} from '../../stores';
 // import {useDeleteFood} from '@api';
 
 type SingleFoodProps = {
@@ -51,6 +52,7 @@ const SingleFood: FC<SingleFoodProps> = ({
 }) => {
   const [selected, setSelected] = useState<FoodsType[]>();
   const [items, setItems] = useState<FoodsType[]>(foods!);
+  const {deleteFood: del} = foodStore();
   // const {mutate: deleteFood} = useDeleteFood();
 
   // const onDelete = () => {
@@ -68,7 +70,7 @@ const SingleFood: FC<SingleFoodProps> = ({
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: () => onDelete(item.id),
+          onPress: () => del(item.id),
         },
       ],
     );
@@ -127,7 +129,7 @@ const SingleFood: FC<SingleFoodProps> = ({
         {/*    <Icon size={hS(27)} source={'delete'} color={Colours.gray} />*/}
         {/*  )}*/}
         {/*</TouchableOpacity>*/}
-        <TouchableOpacity>
+        <TouchableOpacity onPress={confirmDelete}>
           <Icon size={hS(25)} source={'pencil'} color={Colours.gray} />
         </TouchableOpacity>
       </View>

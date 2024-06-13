@@ -1,1 +1,1 @@
-export {useFoods} from './food.ts';
+export * from './food.ts';
