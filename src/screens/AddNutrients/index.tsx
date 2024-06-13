@@ -10,10 +10,11 @@ import {
 import {Colours} from '@constants';
 import {ButtonText, TextInputLabel} from '@components';
 import {AddNutrientsStack} from '@config';
-import {useAddFood} from '@api';
+import {useFoods} from '@api';
 import styles from './addNutrients.styles.ts';
 import {useAuth} from '@providers';
 import {uploadImage} from '@utils';
+import {supabase} from '@services';
 
 type ErrorsType = {
   fat: boolean;
@@ -31,6 +32,7 @@ type FormType = {
 
 const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
   const {foodName, calories, serving, unit, img} = route?.params;
+  const {useAddFood} = useFoods();
   const {mutate: addFood} = useAddFood();
   const {session} = useAuth();
   const [formData, setFormData] = useState<FormType>({
@@ -45,7 +47,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     carbs: false,
     protein: false,
   });
-
+  console.log('=x=>', img);
   const inputRefs = {
     carbs: useRef<TI | null>(null),
     protein: useRef<TI | null>(null),
@@ -87,30 +89,36 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     }
 
     const imagePath = await uploadImage(img);
+    console.log('imagePath ==>', imagePath);
+    const {data} = supabase.storage
+      .from('food-images')
+      .getPublicUrl(`${imagePath}`);
 
-    addFood(
-      {
-        protein: formData.protein,
-        carbs: formData.carbs,
-        fat: formData.fat,
-        calories,
-        fibre: formData.fibre || 0,
-        sodium: formData.sodium || 0,
-        serv_size: serving,
-        serv_unit: unit,
-        label: foodName,
-        food_img: imagePath ? imagePath : temp_img,
-        user_id: session?.user.id,
-      },
-      {
+    const addFoodVars = {
+      protein: formData.protein,
+      carbs: formData.carbs,
+      fat: formData.fat,
+      calories,
+      fibre: formData.fibre || 0,
+      sodium: formData.sodium || 0,
+      serv_size: serving,
+      serv_unit: unit,
+      label: foodName,
+      food_img: data ? data.publicUrl : temp_img,
+      user_id: session?.user.id,
+    };
+
+    if (data) {
+      addFood(addFoodVars, {
         onSuccess: () => {
+          // TODO: ADD TOAST MAYBE
           navigation.navigate('Foods');
         },
         onError: e => {
-          console.log('Error =>>', e);
+          console.log('Error addFood API =>>', e);
         },
-      },
-    );
+      });
+    }
   };
 
   useEffect(() => {
