@@ -1,8 +1,30 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {supabase} from '@services';
 import {useAuth} from '@providers';
+// import {foodStore} from '../stores/foodStore.ts';
+//
+// export function useFoods() {
+//   const {foods, setFoods, deleteFood} = foodStore();
 
-export const useFoodsById = () => {
+type FoodsType = [
+  {
+    calories: number;
+    carbs: number;
+    created_at: string;
+    fat: number;
+    fibre: number;
+    food_img: string;
+    id: number;
+    label: string;
+    protein: number;
+    serv_size: number;
+    serv_unit: string;
+    sodium: number;
+    user_id: string;
+  },
+];
+
+export const getFoodsById = () => {
   const {session} = useAuth();
   const id = session?.user.id;
 
@@ -20,7 +42,7 @@ export const useFoodsById = () => {
       if (error) {
         throw new Error(error.message);
       }
-
+      // setFoods(data);
       return data;
     },
   });
@@ -51,7 +73,6 @@ export const useAddFood = () => {
       if (error) {
         throw new Error(error.message);
       }
-
       return data;
     },
     async onSuccess() {
@@ -59,3 +80,63 @@ export const useAddFood = () => {
     },
   });
 };
+
+export const useUpdateFood = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn(userInput: any) {
+      const {data, error} = await supabase
+        .from('foods')
+        .update({
+          protein: userInput.protein,
+          carbs: userInput.carbs,
+          fat: userInput.fat,
+          calories: userInput.calories,
+          fibre: userInput.fibre,
+          sodium: userInput.sodium,
+          serv_size: userInput.serv_size,
+          serv_unit: userInput.serv_unit,
+          label: userInput.label,
+          food_img: userInput.food_img,
+          user_id: userInput.user_id,
+        })
+        .eq('id', userInput.id)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    async onSuccess({id}) {
+      await queryClient.invalidateQueries({queryKey: ['foods']});
+      await queryClient.invalidateQueries({queryKey: ['foods', id]});
+    },
+  });
+};
+
+export const useDeleteFood = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn(id: number) {
+      const {error} = await supabase.from('foods').delete().eq('id', id);
+
+      // deleteFood(id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    },
+
+    async onSuccess() {
+      await queryClient.invalidateQueries({queryKey: ['foods']});
+    },
+  });
+};
+
+//   return {foods, getFoodsById, useAddFood, useUpdateFood, useDeleteFood};
+// }

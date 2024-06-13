@@ -1,13 +1,13 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import {StatusBar, useColorScheme} from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+// import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {ScreenNavigator} from '@config';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {configureFonts, MD2LightTheme, PaperProvider} from 'react-native-paper';
 import {AuthProvider, QueryProvider} from '@providers';
-import {Fonts} from '@constants';
+import {Colours, Fonts} from '@constants';
 import {PortalProvider} from '@gorhom/portal';
 
 const fontConfig = {
@@ -49,9 +49,9 @@ const theme = {
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  // const backgroundStyle = {
+  //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  // };
 
   return (
     <SafeAreaProvider>
@@ -60,7 +60,7 @@ function App(): React.JSX.Element {
           <PortalProvider>
             <StatusBar
               barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-              backgroundColor={backgroundStyle.backgroundColor}
+              backgroundColor={Colours.green}
             />
             <AuthProvider>
               <QueryProvider>

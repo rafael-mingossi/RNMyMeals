@@ -5,6 +5,7 @@ export {default as RemoteImg} from './RemoteImg';
 export {default as CustomModal} from './CustomModal';
 export {default as TextInputIcon} from './TextInputIcon';
 export {default as TextInputLabel} from './TextInputLabel';
+export {default as SingleFood} from './SingleFood';
 
 //BUTTONS
 export {default as ButtonRound} from './ButtonRound';

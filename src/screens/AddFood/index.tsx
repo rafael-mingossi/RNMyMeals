@@ -43,7 +43,8 @@ interface ImagePickerOptions {
   };
   allowsEditing: boolean;
   quality: PhotoQuality;
-  mediaType: 'photo'; // Only allow images
+  mediaType: 'photo';
+  aspect: [number, number];
 }
 
 type CameraTypes = {
@@ -86,7 +87,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
       },
       mediaType: 'photo' as const,
       allowsEditing: true,
-      // aspect: [4, 3],
+      aspect: [4, 3],
       quality: 0.5,
     };
 
@@ -109,7 +110,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
       },
       mediaType: 'photo' as const,
       allowsEditing: true,
-      // aspect: [4, 3],
+      aspect: [4, 3],
       quality: 0.5,
     };
 
