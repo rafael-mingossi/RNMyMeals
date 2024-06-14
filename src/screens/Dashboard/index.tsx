@@ -1,7 +1,5 @@
-import React, {useEffect, useMemo, useState} from 'react';
-
+import React from 'react';
 import {
-  View,
   Text,
   StyleSheet,
   Pressable,
@@ -10,11 +8,9 @@ import {
 } from 'react-native';
 import {useAuth} from '@providers';
 import {PieChart} from 'react-native-gifted-charts';
-import {getFoodsById} from '@api';
 
 const Dashboard = () => {
   const data = [{value: 50}, {value: 80}, {value: 90}];
-  // const {getFoodsById} = useFoods();
   const {userLogOut} = useAuth();
   return (
     <SafeAreaView style={{flex: 1}}>

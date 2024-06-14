@@ -290,7 +290,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
         <View>
           <TextInput
             ref={servingRef}
-            label="Serving Size, (grams)"
+            label="Serving Size, (grams, slice, spoon, etc...)"
             value={formData.serving}
             keyboardType={'numeric'}
             enterKeyHint={Platform.OS === 'ios' ? 'done' : 'next'}

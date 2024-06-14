@@ -12,25 +12,7 @@ import {SingleFood} from '@components';
 import {Searchbar} from 'react-native-paper';
 import styles from './foods.styles.ts';
 import {Colours} from '@constants';
-import {foodStore} from '../../stores/foodStore.ts';
-import {supabase} from '@services';
-import {getFoodsByUser} from '../../hooks/getFoodsByUser.ts';
-
-type FoodsType = {
-  calories: number;
-  carbs: number;
-  created_at: string;
-  fat: number;
-  fibre: number;
-  food_img: string;
-  id: number;
-  label: string;
-  protein: number;
-  serv_size: number;
-  serv_unit: string;
-  sodium: number;
-  user_id: string;
-};
+import {FoodsType} from '@types';
 
 const Foods = () => {
   // const {getFoodsById, foods, useDeleteFood} = useFoods();
@@ -42,7 +24,6 @@ const Foods = () => {
   const [filteredFoods, setFilteredFoods] = useState<FoodsType[] | undefined>(
     [],
   );
-  console.log('FOODS STORE =>>', foods);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const filterFoods = () => {
     if (!foods) return;
@@ -63,16 +44,13 @@ const Foods = () => {
     filterFoods();
   }, [searchQuery, foods]);
 
-  // useEffect(() => {
-  //   setFilteredFoods(foods);
-  // }, []);
-
-  if (error)
+  if (error) {
     return (
       <View style={styles.noResults}>
         <Text style={styles.noResultsTxt}>Failed to fetch...</Text>
       </View>
     );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -116,31 +94,6 @@ const Foods = () => {
           )}
         </>
       )}
-
-      {/*{filteredFoods?.length && searchQuery === '' ? (*/}
-      {/*  <FlatList*/}
-      {/*    data={filteredFoods}*/}
-      {/*    keyExtractor={item => item.id.toString()}*/}
-      {/*    // contentContainerStyle={{marginBottom: 50}}*/}
-      {/*    style={styles.wrapper}*/}
-      {/*    // contentInset={{bottom: 90}}*/}
-      {/*    renderItem={({item, index}) => (*/}
-      {/*      <SingleFood*/}
-      {/*        item={item}*/}
-      {/*        index={index}*/}
-      {/*        foods={filteredFoods}*/}
-      {/*        onDelete={onDelete}*/}
-      {/*        loadingDel={loadingDelete}*/}
-      {/*      />*/}
-      {/*    )}*/}
-      {/*    ListFooterComponent={<View />}*/}
-      {/*    ListFooterComponentStyle={{height: 90}}*/}
-      {/*  />*/}
-      {/*) : (*/}
-      {/*  <View style={styles.noResults}>*/}
-      {/*    <Text style={styles.noResultsTxt}>No results found...</Text>*/}
-      {/*  </View>*/}
-      {/*)}*/}
     </SafeAreaView>
   );
 };

@@ -10,7 +10,7 @@ import {
 import {Colours} from '@constants';
 import {ButtonText, TextInputLabel} from '@components';
 import {AddNutrientsStack} from '@config';
-import {useFoods} from '@api';
+import {useAddFood} from '@api';
 import styles from './addNutrients.styles.ts';
 import {useAuth} from '@providers';
 import {uploadImage} from '@utils';
@@ -32,7 +32,6 @@ type FormType = {
 
 const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
   const {foodName, calories, serving, unit, img} = route?.params;
-  const {useAddFood} = useFoods();
   const {mutate: addFood} = useAddFood();
   const {session} = useAuth();
   const [formData, setFormData] = useState<FormType>({
@@ -47,7 +46,6 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     carbs: false,
     protein: false,
   });
-  console.log('=x=>', img);
   const inputRefs = {
     carbs: useRef<TI | null>(null),
     protein: useRef<TI | null>(null),
@@ -175,6 +173,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           label={'Sodium'}
           enablesReturnKeyAutomatically={true}
           value={formData.sodium}
+          unit={'mg'}
           onChangeText={val => handleInputChange('sodium', val)}
           onSubmitEditing={() => handleNextInput('fibre')}
         />

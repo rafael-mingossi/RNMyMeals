@@ -2,6 +2,7 @@ import React, {FC, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Image,
   Text,
   TouchableOpacity,
   View,
@@ -12,32 +13,18 @@ import styles from './singleFood.styles.ts';
 import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
 import {Icon} from 'react-native-paper';
-import {foodStore} from '../../stores';
+import {foodStore} from '@stores';
+import {SingleFoodComponentPropsNavigation} from '@config';
+import {useNavigation} from '@react-navigation/native';
+import {SingleFoodType} from '@types';
 // import {useDeleteFood} from '@api';
 
 type SingleFoodProps = {
   index: number;
-  item: FoodsType;
-  foods: FoodsType[] | undefined;
+  item: SingleFoodType;
+  foods: SingleFoodType[] | undefined;
   onDelete: (id: number) => void;
   loadingDel: boolean;
-};
-
-type FoodsType = {
-  calories: number;
-  carbs: number;
-  created_at: string;
-  fat: number;
-  fibre: number;
-  food_img: string;
-  id: number;
-  label: string;
-  protein: number;
-  serv_size: number;
-  serv_unit: string;
-  sodium: number;
-  user_id: string;
-  checked?: boolean;
 };
 
 const temp_img =
@@ -50,31 +37,15 @@ const SingleFood: FC<SingleFoodProps> = ({
   onDelete,
   loadingDel,
 }) => {
-  const [selected, setSelected] = useState<FoodsType[]>();
-  const [items, setItems] = useState<FoodsType[]>(foods!);
+  const navigation: SingleFoodComponentPropsNavigation = useNavigation();
+  const [selected, setSelected] = useState<SingleFoodType[]>();
+  const [items, setItems] = useState<SingleFoodType[]>(foods!);
   const {deleteFood: del} = foodStore();
   // const {mutate: deleteFood} = useDeleteFood();
 
   // const onDelete = () => {
   //   deleteFood(item.id, {onSuccess: () => console.log('DELETED')});
   // };
-
-  const confirmDelete = () => {
-    Alert.alert(
-      'Confirm Deletion',
-      'Are you sure you want to delete this product',
-      [
-        {
-          text: 'Cancel',
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => del(item.id),
-        },
-      ],
-    );
-  };
 
   useEffect(() => {
     const selectedItems = items?.filter(item => item.checked);
@@ -113,23 +84,18 @@ const SingleFood: FC<SingleFoodProps> = ({
         innerIconStyle={{borderColor: Colours.green, borderRadius: 4}}
       />
 
-      <RemoteImg path={item.food_img} fallback={temp_img} style={styles.img} />
+      {/*<RemoteImg path={item.food_img} fallback={temp_img} style={styles.img} />*/}
+      <Image source={{uri: item.food_img}} style={styles.img} />
       <View style={styles.textWrapper}>
         <Text style={styles.text}>{item.label}</Text>
         <Text style={styles.text}>{item.calories} cals</Text>
       </View>
       <View style={styles.icons}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation?.navigate('SingleFoodScreen', {item})}>
           <Icon size={hS(27)} source={'eye'} color={Colours.gray} />
         </TouchableOpacity>
-        {/*<TouchableOpacity onPress={confirmDelete}>*/}
-        {/*  {loadingDel ? (*/}
-        {/*    <ActivityIndicator />*/}
-        {/*  ) : (*/}
-        {/*    <Icon size={hS(27)} source={'delete'} color={Colours.gray} />*/}
-        {/*  )}*/}
-        {/*</TouchableOpacity>*/}
-        <TouchableOpacity onPress={confirmDelete}>
+        <TouchableOpacity>
           <Icon size={hS(25)} source={'pencil'} color={Colours.gray} />
         </TouchableOpacity>
       </View>
