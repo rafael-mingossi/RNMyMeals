@@ -4,17 +4,19 @@ import {SingleFoodEditPropsNavigation} from '@config';
 import styles from './singleFoodEdit.styles.ts';
 import {ButtonText, TextInputLabel} from '@components';
 import {handleImagePicker, handleCamera} from '@utils';
+import {useUpdateFood} from '@api';
+import {useAuth} from '@providers';
 
 type FormType = {
   foodName: string;
-  calories: string;
-  serving: string;
+  calories: number;
+  serving: number;
   unit: string;
-  fat: string;
-  carbs: string;
-  protein: string;
-  sodium: string;
-  fibre: string;
+  fat: number;
+  carbs: number;
+  protein: number;
+  sodium: number;
+  fibre: number;
 };
 
 type ErrorsType = {
@@ -31,16 +33,18 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
   route,
 }) => {
   const val = route.params.item;
+  const {mutate: updateFood} = useUpdateFood();
+  const {session} = useAuth();
   const [formData, setFormData] = useState<FormType>({
     foodName: val.label,
-    calories: String(val.calories),
-    serving: String(val.serv_size),
+    calories: val.calories,
+    serving: val.serv_size,
     unit: val.serv_unit,
-    fat: String(val.fat),
-    carbs: String(val.carbs),
-    protein: String(val.protein),
-    sodium: String(val.sodium),
-    fibre: String(val.fibre),
+    fat: val.fat,
+    carbs: val.carbs,
+    protein: val.protein,
+    sodium: val.sodium,
+    fibre: val.fibre,
   });
   const [errors, setErrors] = useState<ErrorsType>({
     fat: false,
@@ -71,8 +75,39 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
     return true;
   };
 
-  const handleInputChange = (name: string, value: string) => {
+  const handleUpdateFood = () => {
+    const updateVars = {
+      protein: formData.protein,
+      carbs: formData.carbs,
+      fat: formData.fat,
+      calories: formData.calories,
+      fibre: formData.fibre,
+      sodium: formData.sodium,
+      serv_size: formData.serving,
+      serv_unit: formData.unit,
+      id: val.id,
+      label: formData.foodName,
+      food_img: selectedImg || val.food_img,
+      user_id: session?.user.id!,
+    };
+
+    const items = {...updateVars, created_at: val.created_at};
+
+    updateFood(updateVars, {
+      onSuccess: () => navigation.navigate('SingleFoodScreen', {item: items}),
+      onError: e => console.log('ERROR UPDATING =>>', e),
+    });
+  };
+
+  const handleTextInput = (name: string, value: string) => {
     setFormData({...formData, [name]: value});
+  };
+
+  const handleNumberInput = (name: string, value: string) => {
+    const parsedNumber = parseFloat(value); // Parse the string to a number
+    if (!isNaN(parsedNumber)) {
+      setFormData({...formData, [name]: parsedNumber});
+    }
   };
 
   const handleNextInput = (key: keyof typeof inputRefs) => {
@@ -109,25 +144,25 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
         enablesReturnKeyAutomatically={true}
         value={formData.foodName}
         unit={''}
-        onChangeText={val => handleInputChange('foodName', val)}
+        onChangeText={val => handleTextInput('foodName', val)}
         // error={errors.fat && formData.fat === ''}
         // onSubmitEditing={() => handleNextInput('carbs')}
       />
       <TextInputLabel
         label={'Calories'}
         enablesReturnKeyAutomatically={true}
-        value={formData.calories}
+        value={formData.calories.toString()}
         unit={''}
-        onChangeText={val => handleInputChange('calories', val)}
+        onChangeText={val => handleNumberInput('calories', val)}
         // error={errors.fat && formData.fat === ''}
         // onSubmitEditing={() => handleNextInput('carbs')}
       />
       <TextInputLabel
         label={'Serving'}
         enablesReturnKeyAutomatically={true}
-        value={formData.serving}
+        value={formData.serving.toString()}
         unit={''}
-        onChangeText={val => handleInputChange('serving', val)}
+        onChangeText={val => handleNumberInput('serving', val)}
         // error={errors.fat && formData.fat === ''}
         // onSubmitEditing={() => handleNextInput('carbs')}
       />
@@ -136,53 +171,58 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
         enablesReturnKeyAutomatically={true}
         value={formData.unit}
         unit={''}
-        onChangeText={val => handleInputChange('unit', val)}
+        onChangeText={val => handleTextInput('unit', val)}
         // error={errors.fat && formData.fat === ''}
         // onSubmitEditing={() => handleNextInput('carbs')}
       />
       <TextInputLabel
         label={'Total Fat'}
         enablesReturnKeyAutomatically={true}
-        value={formData.fat}
-        onChangeText={val => handleInputChange('fat', val)}
-        error={errors.fat && formData.fat === ''}
+        value={formData.fat.toString()}
+        onChangeText={val => handleNumberInput('fat', val)}
+        error={errors.fat && !formData.fat}
         onSubmitEditing={() => handleNextInput('carbs')}
       />
       <TextInputLabel
         ref={inputRefs.carbs}
         label={'Total Carbs'}
         enablesReturnKeyAutomatically={true}
-        value={formData.carbs}
-        onChangeText={val => handleInputChange('carbs', val)}
-        error={errors.carbs && formData.carbs === ''}
+        value={formData.carbs.toString()}
+        onChangeText={val => handleNumberInput('carbs', val)}
+        error={errors.carbs && !formData.carbs}
         onSubmitEditing={() => handleNextInput('protein')}
       />
       <TextInputLabel
         ref={inputRefs.protein}
         label={'Protein'}
         enablesReturnKeyAutomatically={true}
-        value={formData.protein}
-        onChangeText={val => handleInputChange('protein', val)}
-        error={errors.protein && formData.protein === ''}
+        value={formData.protein.toString()}
+        onChangeText={val => handleNumberInput('protein', val)}
+        error={errors.protein && !formData.protein}
         onSubmitEditing={() => handleNextInput('sodium')}
       />
       <TextInputLabel
         ref={inputRefs.sodium}
         label={'Sodium'}
         enablesReturnKeyAutomatically={true}
-        value={formData.sodium}
+        value={formData.sodium.toString()}
         unit={'mg'}
-        onChangeText={val => handleInputChange('sodium', val)}
+        onChangeText={val => handleNumberInput('sodium', val)}
         onSubmitEditing={() => handleNextInput('fibre')}
       />
       <TextInputLabel
         ref={inputRefs.fibre}
         enablesReturnKeyAutomatically={true}
         label={'Fibre'}
-        value={formData.fibre}
-        onChangeText={val => handleInputChange('fibre', val)}
+        value={formData.fibre.toString()}
+        onChangeText={val => handleNumberInput('fibre', val)}
         onSubmitEditing={() => handleSubmitForm()}
       />
+      <View style={styles.buttonsWrapper}>
+        <ButtonText children={'Return'} onPress={() => navigation.goBack()} />
+
+        <ButtonText children={'Submit'} onPress={() => handleUpdateFood()} />
+      </View>
     </ScrollView>
   );
 };

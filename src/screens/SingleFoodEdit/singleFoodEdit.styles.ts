@@ -24,6 +24,15 @@ const styles = StyleSheet.create({
   cameraBtnWrapper: {
     flexDirection: 'column',
   },
+  buttonsWrapper: {
+    borderTopWidth: 1,
+    borderColor: Colours.gray,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingRight: hS(25),
+    height: vS(70),
+  },
 });
 
 export default styles;
