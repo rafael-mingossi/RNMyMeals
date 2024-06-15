@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {getFoodsById, useDeleteFood} from '@api';
+import {getFoodsById} from '@api';
 import {SingleFood} from '@components';
 import {Searchbar} from 'react-native-paper';
 import styles from './foods.styles.ts';
@@ -15,16 +15,11 @@ import {Colours} from '@constants';
 import {FoodsType} from '@types';
 
 const Foods = () => {
-  // const {getFoodsById, foods, useDeleteFood} = useFoods();
-  // const {foods, isLoading} = getFoodsByUser();
-  const {mutate: deleteFood} = useDeleteFood();
-  // const {deleteFood} = foodStore();
   const {data: foods, error, isLoading, isFetching} = getFoodsById();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredFoods, setFilteredFoods] = useState<FoodsType[] | undefined>(
     [],
   );
-  const [loadingDelete, setLoadingDelete] = useState(false);
   const filterFoods = () => {
     if (!foods) return;
     const filtered: FoodsType[] | undefined = foods?.filter(item =>
@@ -32,12 +27,6 @@ const Foods = () => {
     );
 
     setFilteredFoods(filtered);
-  };
-
-  const onDelete = (id: number) => {
-    setLoadingDelete(true);
-    deleteFood(id);
-    setLoadingDelete(false);
   };
 
   useEffect(() => {
@@ -76,13 +65,7 @@ const Foods = () => {
               style={styles.wrapper}
               // contentInset={{bottom: 90}}
               renderItem={({item, index}) => (
-                <SingleFood
-                  item={item}
-                  index={index}
-                  foods={filteredFoods}
-                  onDelete={onDelete}
-                  loadingDel={loadingDelete}
-                />
+                <SingleFood item={item} index={index} foods={filteredFoods} />
               )}
               ListFooterComponent={<View />}
               ListFooterComponentStyle={{height: 90}}

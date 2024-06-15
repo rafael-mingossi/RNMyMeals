@@ -9,17 +9,11 @@ import {
   Image,
 } from 'react-native';
 import {TextInput} from 'react-native-paper';
-import {
-  launchCamera,
-  launchImageLibrary,
-  PhotoQuality,
-  Asset,
-  ErrorCode,
-} from 'react-native-image-picker';
 import {Colours} from '@constants';
 import {ButtonText, CustomModal} from '@components';
 import {AddFoodStack} from '@config';
 import styles from './addFood.styles.ts';
+import {handleCamera, handleImagePicker} from '@utils';
 
 type ErrorsType = {
   name: boolean;
@@ -35,28 +29,8 @@ type FormType = {
   unit: string;
 };
 
-interface ImagePickerOptions {
-  title?: string;
-  storageOptions: {
-    skipBackup: boolean;
-    path?: string; // Optional: Custom path for camera photos on Android (external storage permission required)
-  };
-  allowsEditing: boolean;
-  quality: PhotoQuality;
-  mediaType: 'photo';
-  aspect: [number, number];
-}
-
-type CameraTypes = {
-  didCancel?: boolean;
-  error?: ErrorCode;
-  errorMessage?: string;
-  assets?: Asset[];
-  uri?: string;
-};
-
 const temp_img =
-  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
+  'https://lzvknmgwnxlojtpfprid.supabase.co/storage/v1/object/public/food-images/camera_placeholder.png';
 
 const AddFood: FC<AddFoodStack> = ({navigation}) => {
   const [formData, setFormData] = useState<FormType>({
@@ -78,52 +52,6 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
   const caloriesRef = useRef<TI | null>(null);
   const servingRef = useRef<TI | null>(null);
   const unitRef = useRef<TI | null>(null);
-
-  const handleCamera = () => {
-    let options: ImagePickerOptions = {
-      storageOptions: {
-        skipBackup: true, // Prevent photos from being backed up to iCloud/Google Photos
-        path: 'image', // Optional: Custom path for camera photos on Android (external storage permission required)
-      },
-      mediaType: 'photo' as const,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-    };
-
-    launchCamera(options).then((response: CameraTypes) => {
-      if (response.didCancel) {
-        console.log('User cancelled image selection');
-      } else if (response.error) {
-        console.error('ImagePicker Error:', response.error);
-      } else {
-        response?.assets ? setSelectedImg(response?.assets[0]?.uri) : null;
-      }
-    });
-  };
-
-  const handleImagePicker = () => {
-    let options: ImagePickerOptions = {
-      storageOptions: {
-        skipBackup: true, // Prevent photos from being backed up to iCloud/Google Photos
-        path: 'image', // Optional: Custom path for camera photos on Android (external storage permission required)
-      },
-      mediaType: 'photo' as const,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-    };
-
-    launchImageLibrary(options).then((response: CameraTypes) => {
-      if (response.didCancel) {
-        console.log('User cancelled image selection');
-      } else if (response.error) {
-        console.error('ImagePicker Error:', response.error);
-      } else {
-        response?.assets ? setSelectedImg(response?.assets[0]?.uri) : null;
-      }
-    });
-  };
 
   const handleInputChange = (name: string, value: string) => {
     setFormData({...formData, [name]: value});
@@ -224,9 +152,12 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
           <View style={styles.cameraBtnWrapper}>
             <ButtonText
               children={'Gallery'}
-              onPress={() => handleImagePicker()}
+              onPress={() => handleImagePicker(setSelectedImg)}
             />
-            <ButtonText children={'Camera'} onPress={() => handleCamera()} />
+            <ButtonText
+              children={'Camera'}
+              onPress={() => handleCamera(setSelectedImg)}
+            />
           </View>
         </View>
         <View>

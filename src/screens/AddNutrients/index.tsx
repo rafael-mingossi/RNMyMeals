@@ -58,7 +58,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
   };
 
   const temp_img =
-    'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
+    'https://lzvknmgwnxlojtpfprid.supabase.co/storage/v1/object/public/food-images/camera_placeholder.png';
 
   if (!foodName || !calories || !serving || !unit) {
     navigation.goBack();
@@ -87,7 +87,6 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     }
 
     const imagePath = await uploadImage(img);
-    console.log('imagePath ==>', imagePath);
     const {data} = supabase.storage
       .from('food-images')
       .getPublicUrl(`${imagePath}`);

@@ -1,51 +1,24 @@
 import React, {FC, useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {RemoteImg} from '@components';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import styles from './singleFood.styles.ts';
 import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
 import {Icon} from 'react-native-paper';
-import {foodStore} from '@stores';
 import {SingleFoodComponentPropsNavigation} from '@config';
 import {useNavigation} from '@react-navigation/native';
 import {SingleFoodType} from '@types';
-// import {useDeleteFood} from '@api';
 
 type SingleFoodProps = {
   index: number;
   item: SingleFoodType;
   foods: SingleFoodType[] | undefined;
-  onDelete: (id: number) => void;
-  loadingDel: boolean;
 };
 
-const temp_img =
-  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
-
-const SingleFood: FC<SingleFoodProps> = ({
-  item,
-  index,
-  foods,
-  onDelete,
-  loadingDel,
-}) => {
+const SingleFood: FC<SingleFoodProps> = ({item, index, foods}) => {
   const navigation: SingleFoodComponentPropsNavigation = useNavigation();
   const [selected, setSelected] = useState<SingleFoodType[]>();
   const [items, setItems] = useState<SingleFoodType[]>(foods!);
-  const {deleteFood: del} = foodStore();
-  // const {mutate: deleteFood} = useDeleteFood();
-
-  // const onDelete = () => {
-  //   deleteFood(item.id, {onSuccess: () => console.log('DELETED')});
-  // };
 
   useEffect(() => {
     const selectedItems = items?.filter(item => item.checked);
@@ -84,7 +57,6 @@ const SingleFood: FC<SingleFoodProps> = ({
         innerIconStyle={{borderColor: Colours.green, borderRadius: 4}}
       />
 
-      {/*<RemoteImg path={item.food_img} fallback={temp_img} style={styles.img} />*/}
       <Image source={{uri: item.food_img}} style={styles.img} />
       <View style={styles.textWrapper}>
         <Text style={styles.text}>{item.label}</Text>
@@ -95,7 +67,8 @@ const SingleFood: FC<SingleFoodProps> = ({
           onPress={() => navigation?.navigate('SingleFoodScreen', {item})}>
           <Icon size={hS(27)} source={'eye'} color={Colours.gray} />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation?.navigate('SingleFoodEdit', {item})}>
           <Icon size={hS(25)} source={'pencil'} color={Colours.gray} />
         </TouchableOpacity>
       </View>

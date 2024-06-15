@@ -1,29 +1,16 @@
-import React, {FC, useEffect, useState} from 'react';
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-  Image,
-  Alert,
-} from 'react-native';
-// import {SafeAreaView} from 'react-native-safe-area-context';
+import React, {FC} from 'react';
+import {Text, View, SafeAreaView, StatusBar, Alert} from 'react-native';
 import Animated, {
   FadeIn,
   FadeInDown,
   FadeInLeft,
   FadeInRight,
-  FadeInUp,
 } from 'react-native-reanimated';
 import {useDeleteFood} from '@api';
 import {SingleFoodPropsNavigation} from '@config';
 import styles from './singleFoodScreen.styles.ts';
 import {Colours} from '@constants';
 import {ButtonText} from '@components';
-
-const temp_img =
-  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
 
 const SingleFoodScreen: FC<SingleFoodPropsNavigation> = ({
   navigation,
