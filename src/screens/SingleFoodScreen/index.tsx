@@ -11,6 +11,7 @@ import {SingleFoodPropsNavigation} from '@config';
 import styles from './singleFoodScreen.styles.ts';
 import {Colours} from '@constants';
 import {ButtonText} from '@components';
+import {supabase} from '@services';
 
 const SingleFoodScreen: FC<SingleFoodPropsNavigation> = ({
   navigation,
@@ -18,6 +19,24 @@ const SingleFoodScreen: FC<SingleFoodPropsNavigation> = ({
 }) => {
   const {mutate: deleteFood} = useDeleteFood();
   let val = route.params.item;
+  const handleDelete = async () => {
+    const filename = val.food_img.split('/').pop();
+
+    if (filename) {
+      const {error} = await supabase.storage
+        .from('food-images')
+        .remove([filename]);
+
+      if (error) {
+        console.log('ERROR DELETING IMAGE IN BUCKET =>>', error);
+      }
+
+      deleteFood(val.id, {
+        onSuccess: () => navigation.goBack(),
+        onError: e => console.log('ERROR DELETING =>>', e),
+      });
+    }
+  };
 
   const confirmDelete = () => {
     Alert.alert(
@@ -30,11 +49,7 @@ const SingleFoodScreen: FC<SingleFoodPropsNavigation> = ({
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: () =>
-            deleteFood(val.id, {
-              onSuccess: () => navigation.goBack(),
-              onError: e => console.log('ERROR DELETING =>>', e),
-            }),
+          onPress: () => handleDelete(),
         },
       ],
     );

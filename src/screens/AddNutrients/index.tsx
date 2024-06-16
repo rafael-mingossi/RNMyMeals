@@ -148,6 +148,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           label={'Total Fat'}
           enablesReturnKeyAutomatically={true}
           value={formData.fat?.toString()}
+          keyboardType={'decimal-pad'}
           onChangeText={val => handleNumberInput('fat', val)}
           error={errors.fat && !formData.fat}
           onSubmitEditing={() => handleNextInput('carbs')}
@@ -157,6 +158,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           label={'Total Carbs'}
           enablesReturnKeyAutomatically={true}
           value={formData.carbs?.toString()}
+          keyboardType={'decimal-pad'}
           onChangeText={val => handleNumberInput('carbs', val)}
           error={errors.carbs && !formData.carbs}
           onSubmitEditing={() => handleNextInput('protein')}
@@ -165,6 +167,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           ref={inputRefs.protein}
           label={'Protein'}
           enablesReturnKeyAutomatically={true}
+          keyboardType={'decimal-pad'}
           value={formData.protein?.toString()}
           onChangeText={val => handleNumberInput('protein', val)}
           error={errors.protein && !formData.protein}
@@ -174,6 +177,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           ref={inputRefs.sodium}
           label={'Sodium'}
           enablesReturnKeyAutomatically={true}
+          keyboardType={'decimal-pad'}
           value={formData.sodium?.toString()}
           unit={'mg'}
           onChangeText={val => handleNumberInput('sodium', val)}
@@ -182,6 +186,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
         <TextInputLabel
           ref={inputRefs.fibre}
           enablesReturnKeyAutomatically={true}
+          keyboardType={'decimal-pad'}
           label={'Fibre'}
           value={formData.fibre?.toString()}
           onChangeText={val => handleNumberInput('fibre', val)}

@@ -21,10 +21,10 @@ const TextInputLabel = forwardRef<TI, TextInputIconProps>(
             ref={ref}
             textAlign={'center'}
             mode={'flat'}
-            returnKeyType={'done'}
-            enterKeyHint={'next'}
+            autoCapitalize="none"
             style={styles.input}
-            keyboardType={'numeric'}
+            returnKeyType={'go'}
+            enterKeyHint={'next'}
             right={
               error ? (
                 <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />

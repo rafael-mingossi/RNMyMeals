@@ -3,6 +3,10 @@ import {hS, vS} from '@utils';
 import {Colours} from '@constants';
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colours.white,
+  },
   scrollWrapper: {
     paddingHorizontal: hS(15),
     flex: 1,

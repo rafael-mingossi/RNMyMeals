@@ -3,9 +3,10 @@ import {Text, View, TextInput as TI, ScrollView, Image} from 'react-native';
 import {SingleFoodEditPropsNavigation} from '@config';
 import styles from './singleFoodEdit.styles.ts';
 import {ButtonText, TextInputLabel} from '@components';
-import {handleImagePicker, handleCamera} from '@utils';
+import {handleImagePicker, handleCamera, uploadImage} from '@utils';
 import {useUpdateFood} from '@api';
 import {useAuth} from '@providers';
+import {supabase} from '@services';
 
 type FormType = {
   foodName: string;
@@ -20,13 +21,14 @@ type FormType = {
 };
 
 type ErrorsType = {
+  foodName: boolean;
+  calories: boolean;
+  serving: boolean;
+  unit: boolean;
   fat: boolean;
   carbs: boolean;
   protein: boolean;
 };
-
-const temp_img =
-  'https://lzvknmgwnxlojtpfprid.supabase.co/storage/v1/object/public/food-images/camera_placeholder.png';
 
 const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
   navigation,
@@ -47,6 +49,10 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
     fibre: val.fibre,
   });
   const [errors, setErrors] = useState<ErrorsType>({
+    foodName: false,
+    calories: false,
+    serving: false,
+    unit: false,
     fat: false,
     carbs: false,
     protein: false,
@@ -56,6 +62,7 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
     calories: useRef<TI | null>(null),
     serving: useRef<TI | null>(null),
     unit: useRef<TI | null>(null),
+    fat: useRef<TI | null>(null),
     carbs: useRef<TI | null>(null),
     protein: useRef<TI | null>(null),
     sodium: useRef<TI | null>(null),
@@ -64,30 +71,52 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
 
   const validateForm = () => {
     setErrors({
+      foodName: false,
+      calories: false,
+      serving: false,
+      unit: false,
       fat: false,
       carbs: false,
       protein: false,
     });
     if (!formData.fat || !formData.carbs || !formData.protein) {
-      setErrors({...errors, fat: true, carbs: true, protein: true});
+      setErrors({
+        ...errors,
+        foodName: true,
+        calories: true,
+        serving: true,
+        unit: true,
+        fat: true,
+        carbs: true,
+        protein: true,
+      });
       return false;
     }
     return true;
   };
 
-  const handleUpdateFood = () => {
+  const handleUpdateFood = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    const imagePath = await uploadImage(selectedImg || val.food_img);
+    const {data} = supabase.storage
+      .from('food-images')
+      .getPublicUrl(`${imagePath}`);
+
     const updateVars = {
       protein: formData.protein,
       carbs: formData.carbs,
       fat: formData.fat,
       calories: formData.calories,
-      fibre: formData.fibre,
-      sodium: formData.sodium,
+      fibre: formData.fibre || 0,
+      sodium: formData.sodium || 0,
       serv_size: formData.serving,
       serv_unit: formData.unit,
       id: val.id,
       label: formData.foodName,
-      food_img: selectedImg || val.food_img,
+      food_img: data.publicUrl,
       user_id: session?.user.id!,
     };
 
@@ -114,116 +143,124 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
     inputRefs[key]?.current?.focus();
   };
 
-  const handleSubmitForm = () => {
-    if (!validateForm()) {
-      return;
-    }
-  };
-
   return (
-    <ScrollView style={styles.scrollWrapper}>
-      <View style={styles.imgCameraWrapper}>
-        {selectedImg ? (
-          <Image style={styles.cameraImg} source={{uri: selectedImg}} />
-        ) : (
-          <Image style={styles.cameraImg} source={{uri: val.food_img}} />
-        )}
-        <View style={styles.cameraBtnWrapper}>
-          <ButtonText
-            children={'Gallery'}
-            onPress={() => handleImagePicker(setSelectedImg)}
-          />
-          <ButtonText
-            children={'Camera'}
-            onPress={() => handleCamera(setSelectedImg)}
-          />
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollWrapper}>
+        <View style={styles.imgCameraWrapper}>
+          {selectedImg ? (
+            <Image style={styles.cameraImg} source={{uri: selectedImg}} />
+          ) : (
+            <Image style={styles.cameraImg} source={{uri: val.food_img}} />
+          )}
+          <View style={styles.cameraBtnWrapper}>
+            <ButtonText
+              children={'Gallery'}
+              onPress={() => handleImagePicker(setSelectedImg)}
+            />
+            <ButtonText
+              children={'Camera'}
+              onPress={() => handleCamera(setSelectedImg)}
+            />
+          </View>
         </View>
-      </View>
-      <TextInputLabel
-        label={'Food Name'}
-        enablesReturnKeyAutomatically={true}
-        value={formData.foodName}
-        unit={''}
-        onChangeText={val => handleTextInput('foodName', val)}
-        // error={errors.fat && formData.fat === ''}
-        // onSubmitEditing={() => handleNextInput('carbs')}
-      />
-      <TextInputLabel
-        label={'Calories'}
-        enablesReturnKeyAutomatically={true}
-        value={formData.calories.toString()}
-        unit={''}
-        onChangeText={val => handleNumberInput('calories', val)}
-        // error={errors.fat && formData.fat === ''}
-        // onSubmitEditing={() => handleNextInput('carbs')}
-      />
-      <TextInputLabel
-        label={'Serving'}
-        enablesReturnKeyAutomatically={true}
-        value={formData.serving.toString()}
-        unit={''}
-        onChangeText={val => handleNumberInput('serving', val)}
-        // error={errors.fat && formData.fat === ''}
-        // onSubmitEditing={() => handleNextInput('carbs')}
-      />
-      <TextInputLabel
-        label={'Serving Unit'}
-        enablesReturnKeyAutomatically={true}
-        value={formData.unit}
-        unit={''}
-        onChangeText={val => handleTextInput('unit', val)}
-        // error={errors.fat && formData.fat === ''}
-        // onSubmitEditing={() => handleNextInput('carbs')}
-      />
-      <TextInputLabel
-        label={'Total Fat'}
-        enablesReturnKeyAutomatically={true}
-        value={formData.fat.toString()}
-        onChangeText={val => handleNumberInput('fat', val)}
-        error={errors.fat && !formData.fat}
-        onSubmitEditing={() => handleNextInput('carbs')}
-      />
-      <TextInputLabel
-        ref={inputRefs.carbs}
-        label={'Total Carbs'}
-        enablesReturnKeyAutomatically={true}
-        value={formData.carbs.toString()}
-        onChangeText={val => handleNumberInput('carbs', val)}
-        error={errors.carbs && !formData.carbs}
-        onSubmitEditing={() => handleNextInput('protein')}
-      />
-      <TextInputLabel
-        ref={inputRefs.protein}
-        label={'Protein'}
-        enablesReturnKeyAutomatically={true}
-        value={formData.protein.toString()}
-        onChangeText={val => handleNumberInput('protein', val)}
-        error={errors.protein && !formData.protein}
-        onSubmitEditing={() => handleNextInput('sodium')}
-      />
-      <TextInputLabel
-        ref={inputRefs.sodium}
-        label={'Sodium'}
-        enablesReturnKeyAutomatically={true}
-        value={formData.sodium.toString()}
-        unit={'mg'}
-        onChangeText={val => handleNumberInput('sodium', val)}
-        onSubmitEditing={() => handleNextInput('fibre')}
-      />
-      <TextInputLabel
-        ref={inputRefs.fibre}
-        enablesReturnKeyAutomatically={true}
-        label={'Fibre'}
-        value={formData.fibre.toString()}
-        onChangeText={val => handleNumberInput('fibre', val)}
-        onSubmitEditing={() => handleSubmitForm()}
-      />
+        <TextInputLabel
+          label={'Food Name'}
+          enablesReturnKeyAutomatically={true}
+          value={formData.foodName}
+          unit={''}
+          onChangeText={value => handleTextInput('foodName', value)}
+          error={errors.foodName && !formData.foodName}
+          onSubmitEditing={() => handleNextInput('calories')}
+        />
+        <TextInputLabel
+          ref={inputRefs.calories}
+          label={'Calories'}
+          enablesReturnKeyAutomatically={true}
+          value={formData.calories.toString()}
+          unit={''}
+          keyboardType={'decimal-pad'}
+          onChangeText={value => handleNumberInput('calories', value)}
+          error={errors.calories && !formData.calories}
+          onSubmitEditing={() => handleNextInput('serving')}
+          autoCapitalize="none"
+        />
+        <TextInputLabel
+          ref={inputRefs.serving}
+          label={'Serving'}
+          enablesReturnKeyAutomatically={true}
+          value={formData.serving.toString()}
+          unit={''}
+          keyboardType={'decimal-pad'}
+          onChangeText={value => handleNumberInput('serving', value)}
+          error={errors.serving && !formData.serving}
+          onSubmitEditing={() => handleNextInput('unit')}
+        />
+        <TextInputLabel
+          ref={inputRefs.unit}
+          label={'Serving Unit'}
+          enablesReturnKeyAutomatically={true}
+          value={formData.unit}
+          unit={''}
+          onChangeText={value => handleTextInput('unit', value)}
+          error={errors.unit && !formData.unit}
+          onSubmitEditing={() => handleNextInput('fat')}
+        />
+        <TextInputLabel
+          ref={inputRefs.fat}
+          label={'Total Fat'}
+          enablesReturnKeyAutomatically={true}
+          value={formData.fat.toString()}
+          keyboardType={'decimal-pad'}
+          onChangeText={value => handleNumberInput('fat', value)}
+          error={errors.fat && !formData.fat}
+          onSubmitEditing={() => handleNextInput('carbs')}
+        />
+        <TextInputLabel
+          ref={inputRefs.carbs}
+          label={'Total Carbs'}
+          enablesReturnKeyAutomatically={true}
+          value={formData.carbs.toString()}
+          keyboardType={'decimal-pad'}
+          onChangeText={value => handleNumberInput('carbs', value)}
+          error={errors.carbs && !formData.carbs}
+          onSubmitEditing={() => handleNextInput('protein')}
+        />
+        <TextInputLabel
+          ref={inputRefs.protein}
+          label={'Protein'}
+          enablesReturnKeyAutomatically={true}
+          value={formData.protein.toString()}
+          keyboardType={'decimal-pad'}
+          onChangeText={value => handleNumberInput('protein', value)}
+          error={errors.protein && !formData.protein}
+          onSubmitEditing={() => handleNextInput('sodium')}
+        />
+        <TextInputLabel
+          ref={inputRefs.sodium}
+          label={'Sodium'}
+          enablesReturnKeyAutomatically={true}
+          value={formData.sodium.toString()}
+          keyboardType={'decimal-pad'}
+          unit={'mg'}
+          onChangeText={value => handleNumberInput('sodium', value)}
+          onSubmitEditing={() => handleNextInput('fibre')}
+        />
+        <TextInputLabel
+          ref={inputRefs.fibre}
+          enablesReturnKeyAutomatically={true}
+          label={'Fibre'}
+          value={formData.fibre.toString()}
+          keyboardType={'decimal-pad'}
+          onChangeText={value => handleNumberInput('fibre', value)}
+          onSubmitEditing={() => handleUpdateFood()}
+        />
+      </ScrollView>
       <View style={styles.buttonsWrapper}>
         <ButtonText children={'Return'} onPress={() => navigation.goBack()} />
 
         <ButtonText children={'Submit'} onPress={() => handleUpdateFood()} />
       </View>
-    </ScrollView>
+    </View>
   );
 };
 

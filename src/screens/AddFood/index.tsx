@@ -29,9 +29,6 @@ type FormType = {
   unit: string | null;
 };
 
-const temp_img =
-  'https://lzvknmgwnxlojtpfprid.supabase.co/storage/v1/object/public/food-images/camera_placeholder.png';
-
 const AddFood: FC<AddFoodStack> = ({navigation}) => {
   const [formData, setFormData] = useState<FormType>({
     foodName: null,
@@ -136,7 +133,6 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
       setErrors({name: false, calories: false, serving: false, unit: false});
     }
   }, [formData]);
-
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
@@ -146,10 +142,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
         </Text>
         <View style={styles.imgCameraWrapper}>
           {selectedImg ? (
-            <Image
-              style={styles.cameraImg}
-              source={{uri: selectedImg || temp_img}}
-            />
+            <Image style={styles.cameraImg} source={{uri: selectedImg}} />
           ) : (
             <Image
               style={styles.cameraImg}
@@ -202,7 +195,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
             value={formData.calories?.toString()}
             enterKeyHint={Platform.OS === 'ios' ? 'done' : 'next'}
             returnKeyType={'done'}
-            keyboardType={'numeric'}
+            keyboardType={'decimal-pad'}
             onChangeText={val => handleNumberInput('calories', val)}
             right={
               errors.calories ? (
@@ -230,7 +223,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
             ref={servingRef}
             label="Serving Size, (grams, slice, spoon, etc...)"
             value={formData.serving?.toString()}
-            keyboardType={'numeric'}
+            keyboardType={'decimal-pad'}
             enterKeyHint={Platform.OS === 'ios' ? 'done' : 'next'}
             returnKeyType={'done'}
             onChangeText={val => handleNumberInput('serving', val)}

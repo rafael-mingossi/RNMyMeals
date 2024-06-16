@@ -21,7 +21,7 @@ const SingleFood: FC<SingleFoodProps> = ({item, index, foods}) => {
   const [items, setItems] = useState<SingleFoodType[]>(foods!);
 
   useEffect(() => {
-    const selectedItems = items?.filter(item => item.checked);
+    const selectedItems = items?.filter(res => res.checked);
     // console.log('selectedItems =>>', selectedItems);
     setSelected(selectedItems);
   }, [items]);
