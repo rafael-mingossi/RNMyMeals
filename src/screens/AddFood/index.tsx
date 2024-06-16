@@ -9,17 +9,11 @@ import {
   Image,
 } from 'react-native';
 import {TextInput} from 'react-native-paper';
-import {
-  launchCamera,
-  launchImageLibrary,
-  PhotoQuality,
-  Asset,
-  ErrorCode,
-} from 'react-native-image-picker';
 import {Colours} from '@constants';
 import {ButtonText, CustomModal} from '@components';
 import {AddFoodStack} from '@config';
 import styles from './addFood.styles.ts';
+import {handleCamera, handleImagePicker} from '@utils';
 
 type ErrorsType = {
   name: boolean;
@@ -29,41 +23,18 @@ type ErrorsType = {
 };
 
 type FormType = {
-  foodName: string;
-  calories: string;
-  serving: string;
-  unit: string;
+  foodName: string | null;
+  calories: number | null;
+  serving: number | null;
+  unit: string | null;
 };
-
-interface ImagePickerOptions {
-  title?: string;
-  storageOptions: {
-    skipBackup: boolean;
-    path?: string; // Optional: Custom path for camera photos on Android (external storage permission required)
-  };
-  allowsEditing: boolean;
-  quality: PhotoQuality;
-  mediaType: 'photo';
-  aspect: [number, number];
-}
-
-type CameraTypes = {
-  didCancel?: boolean;
-  error?: ErrorCode;
-  errorMessage?: string;
-  assets?: Asset[];
-  uri?: string;
-};
-
-const temp_img =
-  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
 
 const AddFood: FC<AddFoodStack> = ({navigation}) => {
   const [formData, setFormData] = useState<FormType>({
-    foodName: '',
-    calories: '',
-    serving: '',
-    unit: '',
+    foodName: null,
+    calories: null,
+    serving: null,
+    unit: null,
   });
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalErrorMsg, setModalErrorMsg] = useState<string | null>(null);
@@ -79,54 +50,15 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
   const servingRef = useRef<TI | null>(null);
   const unitRef = useRef<TI | null>(null);
 
-  const handleCamera = () => {
-    let options: ImagePickerOptions = {
-      storageOptions: {
-        skipBackup: true, // Prevent photos from being backed up to iCloud/Google Photos
-        path: 'image', // Optional: Custom path for camera photos on Android (external storage permission required)
-      },
-      mediaType: 'photo' as const,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-    };
-
-    launchCamera(options).then((response: CameraTypes) => {
-      if (response.didCancel) {
-        console.log('User cancelled image selection');
-      } else if (response.error) {
-        console.error('ImagePicker Error:', response.error);
-      } else {
-        response?.assets ? setSelectedImg(response?.assets[0]?.uri) : null;
-      }
-    });
-  };
-
-  const handleImagePicker = () => {
-    let options: ImagePickerOptions = {
-      storageOptions: {
-        skipBackup: true, // Prevent photos from being backed up to iCloud/Google Photos
-        path: 'image', // Optional: Custom path for camera photos on Android (external storage permission required)
-      },
-      mediaType: 'photo' as const,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-    };
-
-    launchImageLibrary(options).then((response: CameraTypes) => {
-      if (response.didCancel) {
-        console.log('User cancelled image selection');
-      } else if (response.error) {
-        console.error('ImagePicker Error:', response.error);
-      } else {
-        response?.assets ? setSelectedImg(response?.assets[0]?.uri) : null;
-      }
-    });
-  };
-
-  const handleInputChange = (name: string, value: string) => {
+  const handleTextInput = (name: string, value: string) => {
     setFormData({...formData, [name]: value});
+  };
+
+  const handleNumberInput = (name: string, value: string) => {
+    const parsedNumber = parseFloat(value); // Parse the string to a number
+    if (!isNaN(parsedNumber)) {
+      setFormData({...formData, [name]: parsedNumber});
+    }
   };
 
   //VALIDATE FORM DATA AND ADD ERROR MESSAGES
@@ -170,15 +102,15 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
   };
 
   //VALIDATE CALORIES AND SERVING TO BE NUMBER ONLY
-  const handleCaloriesInput = (inputText: string) => {
-    const numericText = inputText.replace(/[^0-9]/g, '');
-    handleInputChange('calories', numericText);
-  };
-
-  const handleServingInput = (inputText: string) => {
-    const numericText = inputText.replace(/[^0-9]/g, '');
-    handleInputChange('serving', numericText);
-  };
+  // const handleCaloriesInput = (inputText: string) => {
+  //   const numericText = inputText.replace(/[^0-9]/g, '');
+  //   handleTextInput('calories', numericText);
+  // };
+  //
+  // const handleServingInput = (inputText: string) => {
+  //   const numericText = inputText.replace(/[^0-9]/g, '');
+  //   handleTextInput('serving', numericText);
+  // };
 
   //HANDLE NEXT BUTTON
   const handleNextScreen = () => {
@@ -201,7 +133,6 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
       setErrors({name: false, calories: false, serving: false, unit: false});
     }
   }, [formData]);
-
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
@@ -211,10 +142,7 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
         </Text>
         <View style={styles.imgCameraWrapper}>
           {selectedImg ? (
-            <Image
-              style={styles.cameraImg}
-              source={{uri: selectedImg || temp_img}}
-            />
+            <Image style={styles.cameraImg} source={{uri: selectedImg}} />
           ) : (
             <Image
               style={styles.cameraImg}
@@ -224,18 +152,21 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
           <View style={styles.cameraBtnWrapper}>
             <ButtonText
               children={'Gallery'}
-              onPress={() => handleImagePicker()}
+              onPress={() => handleImagePicker(setSelectedImg)}
             />
-            <ButtonText children={'Camera'} onPress={() => handleCamera()} />
+            <ButtonText
+              children={'Camera'}
+              onPress={() => handleCamera(setSelectedImg)}
+            />
           </View>
         </View>
         <View>
           <TextInput
             label="Food Name"
-            value={formData.foodName}
+            value={formData.foodName!}
             enterKeyHint={'next'}
             returnKeyType={'done'}
-            onChangeText={val => handleInputChange('foodName', val)}
+            onChangeText={val => handleTextInput('foodName', val)}
             right={
               errors.name ? (
                 <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />
@@ -261,11 +192,11 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
           <TextInput
             ref={caloriesRef}
             label="Food Calories, (Cal)"
-            value={formData.calories}
+            value={formData.calories?.toString()}
             enterKeyHint={Platform.OS === 'ios' ? 'done' : 'next'}
             returnKeyType={'done'}
-            keyboardType={'numeric'}
-            onChangeText={val => handleCaloriesInput(val)}
+            keyboardType={'decimal-pad'}
+            onChangeText={val => handleNumberInput('calories', val)}
             right={
               errors.calories ? (
                 <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />
@@ -290,12 +221,12 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
         <View>
           <TextInput
             ref={servingRef}
-            label="Serving Size, (grams)"
-            value={formData.serving}
-            keyboardType={'numeric'}
+            label="Serving Size, (grams, slice, spoon, etc...)"
+            value={formData.serving?.toString()}
+            keyboardType={'decimal-pad'}
             enterKeyHint={Platform.OS === 'ios' ? 'done' : 'next'}
             returnKeyType={'done'}
-            onChangeText={val => handleServingInput(val)}
+            onChangeText={val => handleNumberInput('serving', val)}
             right={
               errors.serving ? (
                 <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />
@@ -320,9 +251,9 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
           <TextInput
             ref={unitRef}
             label="Serving unit, (grams, slice, spoon, etc...)"
-            value={formData.unit}
+            value={formData.unit!}
             returnKeyType={'done'}
-            onChangeText={val => handleInputChange('unit', val)}
+            onChangeText={val => handleTextInput('unit', val)}
             right={
               errors.unit ? (
                 <TextInput.Icon icon={'alert-circle'} color={Colours.darkRed} />

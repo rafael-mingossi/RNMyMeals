@@ -10,7 +10,7 @@ import {
 import {Colours} from '@constants';
 import {ButtonText, TextInputLabel} from '@components';
 import {AddNutrientsStack} from '@config';
-import {useFoods} from '@api';
+import {useAddFood} from '@api';
 import styles from './addNutrients.styles.ts';
 import {useAuth} from '@providers';
 import {uploadImage} from '@utils';
@@ -23,31 +23,29 @@ type ErrorsType = {
 };
 
 type FormType = {
-  fat: string;
-  carbs: string;
-  protein: string;
-  sodium: string;
-  fibre: string;
+  fat: number | null;
+  carbs: number | null;
+  protein: number | null;
+  sodium: number | null;
+  fibre: number | null;
 };
 
 const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
   const {foodName, calories, serving, unit, img} = route?.params;
-  const {useAddFood} = useFoods();
   const {mutate: addFood} = useAddFood();
   const {session} = useAuth();
   const [formData, setFormData] = useState<FormType>({
-    fat: '',
-    carbs: '',
-    protein: '',
-    sodium: '',
-    fibre: '',
+    fat: null,
+    carbs: null,
+    protein: null,
+    sodium: null,
+    fibre: null,
   });
   const [errors, setErrors] = useState<ErrorsType>({
     fat: false,
     carbs: false,
     protein: false,
   });
-  console.log('=x=>', img);
   const inputRefs = {
     carbs: useRef<TI | null>(null),
     protein: useRef<TI | null>(null),
@@ -59,16 +57,19 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     inputRefs[key]?.current?.focus();
   };
 
+  const handleNumberInput = (name: string, value: string) => {
+    const parsedNumber = parseFloat(value); // Parse the string to a number
+    if (!isNaN(parsedNumber)) {
+      setFormData({...formData, [name]: parsedNumber});
+    }
+  };
+
   const temp_img =
-    'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
+    'https://lzvknmgwnxlojtpfprid.supabase.co/storage/v1/object/public/food-images/camera_placeholder.png';
 
   if (!foodName || !calories || !serving || !unit) {
     navigation.goBack();
   }
-
-  const handleInputChange = (name: string, value: string) => {
-    setFormData({...formData, [name]: value});
-  };
 
   const validateForm = () => {
     setErrors({
@@ -88,8 +89,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
       return;
     }
 
-    const imagePath = await uploadImage(img);
-    console.log('imagePath ==>', imagePath);
+    const imagePath = img && (await uploadImage(img));
     const {data} = supabase.storage
       .from('food-images')
       .getPublicUrl(`${imagePath}`);
@@ -147,43 +147,49 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           autoFocus={true}
           label={'Total Fat'}
           enablesReturnKeyAutomatically={true}
-          value={formData.fat}
-          onChangeText={val => handleInputChange('fat', val)}
-          error={errors.fat && formData.fat === ''}
+          value={formData.fat?.toString()}
+          keyboardType={'decimal-pad'}
+          onChangeText={val => handleNumberInput('fat', val)}
+          error={errors.fat && !formData.fat}
           onSubmitEditing={() => handleNextInput('carbs')}
         />
         <TextInputLabel
           ref={inputRefs.carbs}
           label={'Total Carbs'}
           enablesReturnKeyAutomatically={true}
-          value={formData.carbs}
-          onChangeText={val => handleInputChange('carbs', val)}
-          error={errors.carbs && formData.carbs === ''}
+          value={formData.carbs?.toString()}
+          keyboardType={'decimal-pad'}
+          onChangeText={val => handleNumberInput('carbs', val)}
+          error={errors.carbs && !formData.carbs}
           onSubmitEditing={() => handleNextInput('protein')}
         />
         <TextInputLabel
           ref={inputRefs.protein}
           label={'Protein'}
           enablesReturnKeyAutomatically={true}
-          value={formData.protein}
-          onChangeText={val => handleInputChange('protein', val)}
-          error={errors.protein && formData.protein === ''}
+          keyboardType={'decimal-pad'}
+          value={formData.protein?.toString()}
+          onChangeText={val => handleNumberInput('protein', val)}
+          error={errors.protein && !formData.protein}
           onSubmitEditing={() => handleNextInput('sodium')}
         />
         <TextInputLabel
           ref={inputRefs.sodium}
           label={'Sodium'}
           enablesReturnKeyAutomatically={true}
-          value={formData.sodium}
-          onChangeText={val => handleInputChange('sodium', val)}
+          keyboardType={'decimal-pad'}
+          value={formData.sodium?.toString()}
+          unit={'mg'}
+          onChangeText={val => handleNumberInput('sodium', val)}
           onSubmitEditing={() => handleNextInput('fibre')}
         />
         <TextInputLabel
           ref={inputRefs.fibre}
           enablesReturnKeyAutomatically={true}
+          keyboardType={'decimal-pad'}
           label={'Fibre'}
-          value={formData.fibre}
-          onChangeText={val => handleInputChange('fibre', val)}
+          value={formData.fibre?.toString()}
+          onChangeText={val => handleNumberInput('fibre', val)}
           onSubmitEditing={() => handleSubmitForm()}
         />
       </ScrollView>
