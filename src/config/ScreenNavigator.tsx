@@ -1,14 +1,23 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, RouteProp} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {Login, Register, Initial} from '@screens';
+import {
+  Login,
+  Register,
+  Initial,
+  SingleFoodScreen,
+  SingleFoodEdit,
+} from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth} from '@providers';
 import {ActivityIndicator} from 'react-native';
+import {SingleFoodType} from '@types';
+import {Colours, Fonts} from '@constants';
+import {hS} from '@utils';
 
 export type StackNavigatorParams = {
   Login: undefined;
@@ -16,6 +25,9 @@ export type StackNavigatorParams = {
   Home: undefined;
   Initial: undefined;
   AddFoodRoot: undefined;
+  SingleFood: undefined;
+  SingleFoodScreen: {item: SingleFoodType};
+  SingleFoodEdit: {item: SingleFoodType};
 };
 
 export type InitialStack = NativeStackScreenProps<
@@ -28,10 +40,38 @@ export type RegisterStack = NativeStackScreenProps<
   'Register'
 >;
 
+type SingleFoodRouteProp = RouteProp<StackNavigatorParams, 'SingleFoodScreen'>;
+type SingleFoodNavigationProp = NativeStackNavigationProp<
+  StackNavigatorParams,
+  'SingleFoodScreen'
+>;
+export type SingleFoodPropsNavigation = {
+  navigation: SingleFoodNavigationProp;
+  route: SingleFoodRouteProp;
+};
+
+type SingleFoodEditRouteProp = RouteProp<
+  StackNavigatorParams,
+  'SingleFoodEdit'
+>;
+type SingleFoodEditNavigationProp = NativeStackNavigationProp<
+  StackNavigatorParams,
+  'SingleFoodEdit'
+>;
+export type SingleFoodEditPropsNavigation = {
+  navigation: SingleFoodEditNavigationProp;
+  route: SingleFoodEditRouteProp;
+};
+
 ////NAVIGATION FOR NON-SCREENS
 export type BottomSheetPropsNavigation = NativeStackNavigationProp<
   StackNavigatorParams,
   'AddFoodRoot'
+>;
+
+export type SingleFoodComponentPropsNavigation = NativeStackNavigationProp<
+  StackNavigatorParams,
+  'SingleFood'
 >;
 
 const Stack = createNativeStackNavigator<StackNavigatorParams>();
@@ -51,17 +91,68 @@ const ScreenNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName={'Initial'}
-        screenOptions={{headerShown: false}}>
+        screenOptions={{
+          headerShown: true,
+          // headerTitle: 'My Food',
+          headerBackTitleVisible: false,
+          headerStyle: {
+            backgroundColor: Colours.green,
+          },
+          headerTitleStyle: {
+            fontFamily: Fonts.semiBold,
+            fontSize: hS(18),
+          },
+        }}>
         {session ? (
           <>
-            <Stack.Screen name="Home" component={BottomNavigator} />
-            <Stack.Screen name="AddFoodRoot" component={AddFoodNavigator} />
+            <Stack.Screen
+              name="Home"
+              component={BottomNavigator}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="AddFoodRoot"
+              component={AddFoodNavigator}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="SingleFoodScreen"
+              component={SingleFoodScreen}
+              options={{
+                headerShown: true,
+                headerTitleAlign: 'center',
+                headerTintColor: Colours.white,
+                title: 'View Food',
+              }}
+            />
+            <Stack.Screen
+              name="SingleFoodEdit"
+              component={SingleFoodEdit}
+              options={{
+                headerShown: true,
+                headerTitleAlign: 'center',
+                headerTintColor: Colours.white,
+                title: 'Edit Food',
+              }}
+            />
           </>
         ) : (
           <>
-            <Stack.Screen name="Initial" component={Initial} />
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen
+              name="Initial"
+              component={Initial}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Register"
+              component={Register}
+              options={{headerShown: false}}
+            />
           </>
         )}
       </Stack.Navigator>
