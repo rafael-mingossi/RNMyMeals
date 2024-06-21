@@ -28,6 +28,12 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.semiBold,
     fontSize: hS(15),
   },
+  loadingWrapper: {
+    backgroundColor: Colours.white,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default styles;

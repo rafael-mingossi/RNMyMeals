@@ -1,5 +1,9 @@
 import React from 'react';
-import {NavigationContainer, RouteProp} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  RouteProp,
+  useNavigation,
+} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -11,13 +15,16 @@ import {
   Initial,
   SingleFoodScreen,
   SingleFoodEdit,
+  AddRecipe,
+  Ingredients,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth} from '@providers';
-import {ActivityIndicator} from 'react-native';
+import {ActivityIndicator, TouchableOpacity} from 'react-native';
 import {SingleFoodType} from '@types';
 import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
+import {Icon} from 'react-native-paper';
 
 export type StackNavigatorParams = {
   Login: undefined;
@@ -28,6 +35,8 @@ export type StackNavigatorParams = {
   SingleFood: undefined;
   SingleFoodScreen: {item: SingleFoodType};
   SingleFoodEdit: {item: SingleFoodType};
+  AddRecipe: undefined;
+  Ingredients: undefined;
 };
 
 export type InitialStack = NativeStackScreenProps<
@@ -74,7 +83,21 @@ export type SingleFoodComponentPropsNavigation = NativeStackNavigationProp<
   'SingleFood'
 >;
 
+export type AddRecipeStack = NativeStackScreenProps<
+  StackNavigatorParams,
+  'AddRecipe'
+>;
+
 const Stack = createNativeStackNavigator<StackNavigatorParams>();
+
+function HeaderLeft() {
+  const navigation = useNavigation();
+  return (
+    <TouchableOpacity onPress={() => navigation.goBack()}>
+      <Icon size={hS(22)} source={'keyboard-backspace'} color={Colours.white} />
+    </TouchableOpacity>
+  );
+}
 
 const ScreenNavigator = () => {
   const {session, loading} = useAuth();
@@ -92,12 +115,13 @@ const ScreenNavigator = () => {
       <Stack.Navigator
         initialRouteName={'Initial'}
         screenOptions={{
-          headerShown: true,
-          // headerTitle: 'My Food',
-          headerBackTitleVisible: false,
+          headerTitleAlign: 'center',
+          headerBackVisible: false,
+          headerLeft: () => HeaderLeft(),
           headerStyle: {
             backgroundColor: Colours.green,
           },
+          headerTintColor: Colours.white,
           headerTitleStyle: {
             fontFamily: Fonts.semiBold,
             fontSize: hS(18),
@@ -133,6 +157,26 @@ const ScreenNavigator = () => {
                 headerTitleAlign: 'center',
                 headerTintColor: Colours.white,
                 title: 'Edit Food',
+              }}
+            />
+            <Stack.Screen
+              name="AddRecipe"
+              component={AddRecipe}
+              options={{
+                headerShown: true,
+                headerTitleAlign: 'center',
+                headerTintColor: Colours.white,
+                title: 'Add Recipe',
+              }}
+            />
+            <Stack.Screen
+              name="Ingredients"
+              component={Ingredients}
+              options={{
+                headerShown: true,
+                headerTitleAlign: 'center',
+                headerTintColor: Colours.white,
+                title: 'Ingredients',
               }}
             />
           </>

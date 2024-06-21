@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Text,
   StyleSheet,
@@ -8,10 +8,27 @@ import {
 } from 'react-native';
 import {useAuth} from '@providers';
 import {PieChart} from 'react-native-gifted-charts';
+import {getFoodsById} from '@api';
+import {foodStore} from '@stores';
 
 const Dashboard = () => {
   const data = [{value: 50}, {value: 80}, {value: 90}];
   const {userLogOut} = useAuth();
+  const {data: ingredients, isLoading} = getFoodsById();
+  const {setFoods} = foodStore();
+
+  const getInfo = () => {
+    if (isLoading || !ingredients?.length) {
+      return;
+    }
+    setFoods(ingredients);
+    console.log('ONE MORE CALL TO THE API');
+  };
+
+  useEffect(() => {
+    getInfo();
+  }, [isLoading]);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView>

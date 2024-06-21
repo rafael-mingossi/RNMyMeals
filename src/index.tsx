@@ -6,7 +6,7 @@ import {ScreenNavigator} from '@config';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {configureFonts, MD2LightTheme, PaperProvider} from 'react-native-paper';
-import {AuthProvider, QueryProvider} from '@providers';
+import {AuthProvider, QueryProvider, RecipesProvider} from '@providers';
 import {Colours, Fonts} from '@constants';
 import {PortalProvider} from '@gorhom/portal';
 
@@ -57,17 +57,19 @@ function App(): React.JSX.Element {
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
         <GestureHandlerRootView style={{flex: 1}}>
-          <PortalProvider>
-            <StatusBar
-              barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-              backgroundColor={Colours.green}
-            />
-            <AuthProvider>
-              <QueryProvider>
-                <ScreenNavigator />
-              </QueryProvider>
-            </AuthProvider>
-          </PortalProvider>
+          <RecipesProvider>
+            <PortalProvider>
+              <StatusBar
+                barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+                backgroundColor={Colours.green}
+              />
+              <AuthProvider>
+                <QueryProvider>
+                  <ScreenNavigator />
+                </QueryProvider>
+              </AuthProvider>
+            </PortalProvider>
+          </RecipesProvider>
         </GestureHandlerRootView>
       </PaperProvider>
     </SafeAreaProvider>

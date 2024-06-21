@@ -7,7 +7,7 @@ import {
 import {Icon} from 'react-native-paper';
 
 ////SCREENS
-import {Dashboard, Profile, Goals, Foods} from '@screens';
+import {Dashboard, Profile, Foods, Recipes} from '@screens';
 import {AddBottomSheet} from '../components';
 import {hS, mS, vS} from '@utils';
 import {Colours, Fonts} from '@constants';
@@ -120,7 +120,11 @@ const BottomNavigator = () => {
         component={AddScreenComponent}
         options={bottomTabAddButtonOptions}
       />
-      <Bottom.Screen name="Goals" component={Goals} options={bottomTabGoals} />
+      <Bottom.Screen
+        name="Recipes"
+        component={Recipes}
+        options={bottomTabGoals}
+      />
       <Bottom.Screen
         name="Profile"
         component={Profile}
