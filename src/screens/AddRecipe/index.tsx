@@ -5,6 +5,7 @@ import {Colours} from '@constants';
 import styles from './addRecipe.styles.ts';
 import {ButtonText, TextInputLabel} from '@components';
 import {AddRecipeStack} from '@config';
+import {useRecipes} from '@providers';
 
 type ErrorsType = {
   name: boolean;
@@ -19,6 +20,7 @@ type FormType = {
 };
 
 const AddRecipe = ({navigation}: AddRecipeStack) => {
+  const {items} = useRecipes();
   const servingRef = useRef<TI | null>(null);
   const unitRef = useRef<TI | null>(null);
 
@@ -43,6 +45,38 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
     if (!isNaN(parsedNumber)) {
       setFormData({...formData, [name]: parsedNumber});
     }
+  };
+
+  console.log('ITEMS =>>', items);
+
+  const handleTotals = items?.reduce(
+    (acc, item) => {
+      const {calories, carbs, protein, fat, fibre, sodium} = item.food;
+
+      acc.calories += calories;
+      acc.carbs += carbs;
+      acc.protein += protein;
+      acc.fat += fat;
+      acc.fibre += fibre;
+      acc.sodium += sodium;
+
+      return acc;
+    },
+    {
+      calories: 0,
+      carbs: 0,
+      protein: 0,
+      fat: 0,
+      fibre: 0,
+      sodium: 0,
+    },
+  );
+
+  const formatNumber = (value: number) => {
+    return value.toLocaleString('en-US', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
   };
 
   return (
@@ -110,8 +144,10 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
         </View>
         <View style={styles.line} />
         <View style={styles.blockPadding}>
-          <Text style={styles.label}>0 Ingredients</Text>
-          <Text style={styles.label}>List goes here</Text>
+          <Text style={styles.label}>{items?.length} Ingredients</Text>
+          {items?.map(recipe => (
+            <Text key={recipe?.id}>{recipe?.food.label}</Text>
+          ))}
         </View>
         <View style={styles.line} />
         <View style={styles.blockPadding}>
@@ -120,33 +156,47 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
             <Text style={styles.totalsTxtBold}>
               Total Calories (in calories):
             </Text>
-            <Text style={styles.valsTxt}>0</Text>
+            <Text style={styles.valsTxt}>
+              {formatNumber(handleTotals?.calories)}
+            </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>Total Protein (in grams):</Text>
-            <Text style={styles.valsTxt}>0</Text>
+            <Text style={styles.valsTxt}>
+              {formatNumber(handleTotals?.protein)}
+            </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>Total Carbs (in grams):</Text>
-            <Text style={styles.valsTxt}>0</Text>
+            <Text style={styles.valsTxt}>
+              {formatNumber(handleTotals?.carbs)}
+            </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>Total Fat (in grams):</Text>
-            <Text style={styles.valsTxt}>0</Text>
+            <Text style={styles.valsTxt}>
+              {formatNumber(handleTotals?.fat)}
+            </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>Total Fibre (in grams):</Text>
-            <Text style={styles.valsTxt}>0</Text>
+            <Text style={styles.valsTxt}>
+              {formatNumber(handleTotals?.fibre)}
+            </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>Total Carbs (in grams):</Text>
-            <Text style={styles.valsTxt}>0</Text>
+            <Text style={styles.valsTxt}>
+              {formatNumber(handleTotals?.carbs)}
+            </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>
               Total Sodium (in milligrams):
             </Text>
-            <Text style={styles.valsTxt}>0</Text>
+            <Text style={styles.valsTxt}>
+              {formatNumber(handleTotals?.sodium)}
+            </Text>
           </View>
         </View>
       </ScrollView>

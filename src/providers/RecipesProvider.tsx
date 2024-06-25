@@ -1,10 +1,11 @@
-import React, {PropsWithChildren, useContext} from 'react';
+import React, {PropsWithChildren, useContext, useState} from 'react';
 import {createContext} from 'react';
-import {Food, Recipes} from '@types';
+import {Recipes, SingleFoodType} from '@types';
+import {v4 as uuidv4} from 'uuid';
 
 type RecipesType = {
   items: Recipes[];
-  addItem: (item: Food) => void;
+  addItem: (item: SingleFoodType, quantity: number) => void;
 };
 
 const RecipesContext = createContext<RecipesType>({
@@ -13,13 +14,24 @@ const RecipesContext = createContext<RecipesType>({
 });
 
 const RecipesProvider = ({children}: PropsWithChildren) => {
+  const [items, setItems] = useState<Recipes[]>([]);
+
+  const addItem = (food: SingleFoodType, quantity: number) => {
+    const newItem: Recipes = {
+      id: uuidv4(),
+      food,
+      food_id: food.id,
+      quantity,
+    };
+    console.log('NEW ITEM =>>', newItem);
+    setItems([newItem, ...items]);
+  };
+
   return (
     <RecipesContext.Provider
       value={{
-        items: [],
-        addItem: (food: Food) => {
-          console.log('CART =>>', food);
-        },
+        items,
+        addItem,
       }}>
       {children}
     </RecipesContext.Provider>

@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import styles from './ingredients.styles.ts';
 import {FoodsType} from '@types';
 import {foodStore} from '@stores';
-import {Ingredient, SingleFood} from '@components';
-import {hS, vS} from '@utils';
+import {Ingredient} from '@components';
+import {vS} from '@utils';
+import {Searchbar} from 'react-native-paper';
+import {IngredientsStack} from '@config';
 
-const Ingredients = () => {
+const Ingredients = ({navigation}: IngredientsStack) => {
   const {foods} = foodStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredFoods, setFilteredFoods] = useState<FoodsType[] | undefined>(
@@ -25,12 +27,28 @@ const Ingredients = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.searchWrapper}>
+        <Searchbar
+          placeholder="Ingredient name"
+          onChangeText={setSearchQuery}
+          value={searchQuery}
+          style={styles.search}
+        />
+      </View>
       <FlatList
-        data={foods}
+        data={filteredFoods}
+        keyExtractor={item => item.id.toString()}
         contentContainerStyle={{
           rowGap: vS(10),
         }}
-        renderItem={({item}) => <Ingredient item={item} />}
+        renderItem={({item}) => (
+          <Ingredient
+            item={item}
+            onPress={() => {
+              navigation.navigate('IngredientView', {item: item});
+            }}
+          />
+        )}
         ListEmptyComponent={
           <View style={styles.noResults}>
             <Text style={styles.noResultsTxt}>No results found...</Text>

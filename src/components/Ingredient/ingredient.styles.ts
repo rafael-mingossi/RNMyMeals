@@ -1,9 +1,14 @@
 import {StyleSheet} from 'react-native';
 import {hS, mS, vS} from '@utils';
-import {Fonts} from '@constants';
+import {Colours, Fonts} from '@constants';
 
 const styles = StyleSheet.create({
   wrapper: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  left: {
     flexDirection: 'row',
     columnGap: hS(10),
     alignItems: 'center',
@@ -15,7 +20,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: Fonts.bold,
-    fontSize: mS(18),
+    fontSize: mS(19),
+    color: Colours.darkGray,
   },
   label: {
     fontFamily: Fonts.semiBold,

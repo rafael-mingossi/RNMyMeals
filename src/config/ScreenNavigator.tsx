@@ -17,6 +17,7 @@ import {
   SingleFoodEdit,
   AddRecipe,
   Ingredients,
+  IngredientView,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth} from '@providers';
@@ -37,6 +38,7 @@ export type StackNavigatorParams = {
   SingleFoodEdit: {item: SingleFoodType};
   AddRecipe: undefined;
   Ingredients: undefined;
+  IngredientView: {item: SingleFoodType};
 };
 
 export type InitialStack = NativeStackScreenProps<
@@ -48,6 +50,24 @@ export type RegisterStack = NativeStackScreenProps<
   StackNavigatorParams,
   'Register'
 >;
+
+export type IngredientsStack = NativeStackScreenProps<
+  StackNavigatorParams,
+  'Ingredients'
+>;
+
+type IngredientsViewRouteProp = RouteProp<
+  StackNavigatorParams,
+  'IngredientView'
+>;
+type IngredientsViewNavigationProp = NativeStackNavigationProp<
+  StackNavigatorParams,
+  'IngredientView'
+>;
+export type IngredientsViewPropsNavigation = {
+  navigation: IngredientsViewNavigationProp;
+  route: IngredientsViewRouteProp;
+};
 
 type SingleFoodRouteProp = RouteProp<StackNavigatorParams, 'SingleFoodScreen'>;
 type SingleFoodNavigationProp = NativeStackNavigationProp<
@@ -177,6 +197,18 @@ const ScreenNavigator = () => {
                 headerTitleAlign: 'center',
                 headerTintColor: Colours.white,
                 title: 'Ingredients',
+              }}
+            />
+            <Stack.Screen
+              name="IngredientView"
+              component={IngredientView}
+              options={{
+                headerShown: false,
+                headerTitleAlign: 'center',
+                headerTintColor: Colours.white,
+                title: 'Ingredient',
+                headerBackVisible: false,
+                headerTransparent: true,
               }}
             />
           </>
