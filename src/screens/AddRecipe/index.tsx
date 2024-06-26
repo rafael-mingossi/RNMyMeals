@@ -144,9 +144,18 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
         </View>
         <View style={styles.line} />
         <View style={styles.blockPadding}>
-          <Text style={styles.label}>{items?.length} Ingredients</Text>
+          <Text style={[styles.label, styles.extraPadding]}>
+            {items?.length} Ingredients
+          </Text>
           {items?.map(recipe => (
-            <Text key={recipe?.id}>{recipe?.food.label}</Text>
+            <View
+              key={recipe?.id}
+              style={[styles.ingredients, styles.extraPadding]}>
+              <Text style={styles.totalsTxtBold}>{recipe?.food.label} - </Text>
+              <Text style={styles.totalsTxtBold}>
+                {recipe?.food.serv_size} {recipe?.food.serv_unit}
+              </Text>
+            </View>
           ))}
         </View>
         <View style={styles.line} />

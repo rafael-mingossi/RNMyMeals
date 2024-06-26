@@ -7,9 +7,11 @@ import {Ingredient} from '@components';
 import {vS} from '@utils';
 import {Searchbar} from 'react-native-paper';
 import {IngredientsStack} from '@config';
+import {useRecipes} from '@providers';
 
 const Ingredients = ({navigation}: IngredientsStack) => {
   const {foods} = foodStore();
+  const {items, deleteItem} = useRecipes();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredFoods, setFilteredFoods] = useState<FoodsType[] | undefined>(
     [],
@@ -45,7 +47,9 @@ const Ingredients = ({navigation}: IngredientsStack) => {
           <Ingredient
             item={item}
             onPress={() => {
-              navigation.navigate('IngredientView', {item: item});
+              items.some(i => String(i.food.id).includes(String(item.id)))
+                ? deleteItem(String(item.id))
+                : navigation.navigate('IngredientView', {item: item});
             }}
           />
         )}

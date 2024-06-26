@@ -22,8 +22,6 @@ const IngredientView = ({
     {value: prop?.carbs, color: Colours.midGreen},
   ];
 
-  console.log('INGREDIENT =>>', prop);
-
   const handleAddIngredient = () => {
     const shallow = {
       ...prop,

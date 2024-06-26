@@ -14,7 +14,6 @@ type IngredientProp = {
 
 const Ingredient = ({item, onPress}: IngredientProp) => {
   const {items} = useRecipes();
-  console.log('ITEM ID =>>', item.id);
 
   const checkAddedItem = () => {
     return items.some(i => String(i.food.id).includes(String(item.id)));

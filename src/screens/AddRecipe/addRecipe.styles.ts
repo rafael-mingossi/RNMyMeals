@@ -64,6 +64,10 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.regular,
     paddingRight: hS(10),
   },
+  ingredients: {
+    flexDirection: 'row',
+    paddingHorizontal: hS(10),
+  },
 });
 
 export default styles;

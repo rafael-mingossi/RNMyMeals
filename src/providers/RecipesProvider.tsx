@@ -6,11 +6,13 @@ import {v4 as uuidv4} from 'uuid';
 type RecipesType = {
   items: Recipes[];
   addItem: (item: SingleFoodType, quantity: number) => void;
+  deleteItem: (id: string) => void;
 };
 
 const RecipesContext = createContext<RecipesType>({
   items: [],
   addItem: () => {},
+  deleteItem: () => {},
 });
 
 const RecipesProvider = ({children}: PropsWithChildren) => {
@@ -23,8 +25,13 @@ const RecipesProvider = ({children}: PropsWithChildren) => {
       food_id: food.id,
       quantity,
     };
-    console.log('NEW ITEM =>>', newItem);
     setItems([newItem, ...items]);
+  };
+
+  const deleteItem = (id: string) => {
+    const shallow = [...items];
+    const filteredData = shallow.filter(item => String(item.food.id) !== id);
+    setItems(filteredData);
   };
 
   return (
@@ -32,6 +39,7 @@ const RecipesProvider = ({children}: PropsWithChildren) => {
       value={{
         items,
         addItem,
+        deleteItem,
       }}>
       {children}
     </RecipesContext.Provider>
