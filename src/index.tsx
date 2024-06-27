@@ -57,19 +57,19 @@ function App(): React.JSX.Element {
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
         <GestureHandlerRootView style={{flex: 1}}>
-          <RecipesProvider>
-            <PortalProvider>
-              <StatusBar
-                barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-                backgroundColor={Colours.green}
-              />
-              <AuthProvider>
-                <QueryProvider>
+          <AuthProvider>
+            <QueryProvider>
+              <RecipesProvider>
+                <PortalProvider>
+                  <StatusBar
+                    barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+                    backgroundColor={Colours.green}
+                  />
                   <ScreenNavigator />
-                </QueryProvider>
-              </AuthProvider>
-            </PortalProvider>
-          </RecipesProvider>
+                </PortalProvider>
+              </RecipesProvider>
+            </QueryProvider>
+          </AuthProvider>
         </GestureHandlerRootView>
       </PaperProvider>
     </SafeAreaProvider>

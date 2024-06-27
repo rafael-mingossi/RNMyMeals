@@ -20,7 +20,7 @@ type FormType = {
 };
 
 const AddRecipe = ({navigation}: AddRecipeStack) => {
-  const {items} = useRecipes();
+  const {items, addRecipe} = useRecipes();
   const servingRef = useRef<TI | null>(null);
   const unitRef = useRef<TI | null>(null);
 
@@ -57,8 +57,8 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
       acc.carbs += carbs;
       acc.protein += protein;
       acc.fat += fat;
-      acc.fibre += fibre;
-      acc.sodium += sodium;
+      acc.fibre += fibre!;
+      acc.sodium += sodium!;
 
       return acc;
     },
@@ -77,6 +77,10 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
       minimumFractionDigits: 1,
       maximumFractionDigits: 1,
     });
+  };
+
+  const handleCreateRecipe = () => {
+    addRecipe(formData.name!, formData.serving!, formData.unit!);
   };
 
   return (
@@ -129,8 +133,8 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
               label={'Serving Unit'}
               enablesReturnKeyAutomatically={true}
               value={formData.unit!}
+              keyboardType={'default'}
               unit={''}
-              keyboardType={'decimal-pad'}
               onChangeText={val => handleTextInput('unit', val)}
               error={errors.unit && !formData.unit}
               onSubmitEditing={() => {}}
@@ -220,7 +224,7 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
           children={'Ingredients'}
           onPress={() => navigation.navigate('Ingredients')}
         />
-        <ButtonText children={'Save'} onPress={() => {}} />
+        <ButtonText children={'Save'} onPress={handleCreateRecipe} />
       </View>
     </View>
   );

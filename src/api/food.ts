@@ -2,14 +2,16 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {supabase} from '@services';
 import {useAuth} from '@providers';
 
-export const getFoodsById = () => {
+export const useGetFoodsById = () => {
   const {session} = useAuth();
   const id = session?.user.id;
 
   return useQuery({
     queryKey: ['foods', {userId: id}],
     queryFn: async () => {
-      if (!id) return null;
+      if (!id) {
+        return null;
+      }
 
       const {data, error} = await supabase
         .from('foods')
@@ -97,13 +99,13 @@ export const useUpdateFood = () => {
 };
 
 export const useDeleteFood = () => {
+  const {session} = useAuth();
+  const id = session?.user.id;
   const queryClient = useQueryClient();
 
   return useMutation({
-    async mutationFn(id: number) {
-      const {error} = await supabase.from('foods').delete().eq('id', id);
-
-      // deleteFood(id);
+    async mutationFn(foodId: number) {
+      const {error} = await supabase.from('foods').delete().eq('id', foodId);
 
       if (error) {
         throw new Error(error.message);
@@ -112,6 +114,7 @@ export const useDeleteFood = () => {
 
     async onSuccess() {
       await queryClient.invalidateQueries({queryKey: ['foods']});
+      await queryClient.invalidateQueries({queryKey: ['foods', {userId: id}]});
     },
   });
 };

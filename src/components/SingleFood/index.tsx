@@ -65,7 +65,7 @@ const SingleFood: FC<SingleFoodProps> = ({
         />
       ) : null}
 
-      <Image source={{uri: item.food_img}} style={styles.img} />
+      <Image source={{uri: item.food_img!}} style={styles.img} />
       <View style={styles.textWrapper}>
         <Text style={styles.text}>{item.label}</Text>
         <Text style={styles.text}>{item.calories} cals</Text>

@@ -17,9 +17,9 @@ import {SingleFoodType} from './foodTypes.ts';
 //   user_id: string;
 // };
 
-export type Recipes = {
+export type RecipesOLD = {
   id: string;
   food: SingleFoodType;
-  food_id: number;
+  // food_id: number;
   quantity: number;
 };

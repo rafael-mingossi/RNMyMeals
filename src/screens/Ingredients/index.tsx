@@ -1,23 +1,23 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, Text, View} from 'react-native';
 import styles from './ingredients.styles.ts';
-import {FoodsType} from '@types';
 import {foodStore} from '@stores';
 import {Ingredient} from '@components';
 import {vS} from '@utils';
 import {Searchbar} from 'react-native-paper';
 import {IngredientsStack} from '@config';
 import {useRecipes} from '@providers';
+import {Tables} from '@types';
+
+type Food = Tables<'foods'>;
 
 const Ingredients = ({navigation}: IngredientsStack) => {
   const {foods} = foodStore();
   const {items, deleteItem} = useRecipes();
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredFoods, setFilteredFoods] = useState<FoodsType[] | undefined>(
-    [],
-  );
+  const [filteredFoods, setFilteredFoods] = useState<Food[] | undefined>([]);
   const filterFoods = () => {
-    const filtered: FoodsType[] | undefined = foods?.filter(item =>
+    const filtered: Food[] | undefined = foods?.filter(item =>
       item.label.includes(searchQuery),
     );
 

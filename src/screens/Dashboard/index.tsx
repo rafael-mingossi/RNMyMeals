@@ -8,13 +8,13 @@ import {
 } from 'react-native';
 import {useAuth} from '@providers';
 import {PieChart} from 'react-native-gifted-charts';
-import {getFoodsById} from '@api';
+import {useGetFoodsById} from '@api';
 import {foodStore} from '@stores';
 
 const Dashboard = () => {
   const data = [{value: 50}, {value: 80}, {value: 90}];
   const {userLogOut} = useAuth();
-  const {data: ingredients, isLoading} = getFoodsById();
+  const {data: ingredients, isLoading} = useGetFoodsById();
   const {setFoods} = foodStore();
 
   const getInfo = () => {

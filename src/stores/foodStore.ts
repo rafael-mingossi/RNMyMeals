@@ -1,30 +1,17 @@
 import {create, StateCreator, StoreApi} from 'zustand';
+import {Tables} from '@types';
 
 interface FoodState {
-  foods: FoodsType[];
-  setFoods: (newFoods: FoodsType[]) => void;
+  foods: Food[];
+  setFoods: (newFoods: Food[]) => void;
   deleteFood: (itemId: number) => void;
 }
 
-type FoodsType = {
-  calories: number;
-  carbs: number;
-  created_at: string;
-  fat: number;
-  fibre: number;
-  food_img: string;
-  id: number;
-  label: string;
-  protein: number;
-  serv_size: number;
-  serv_unit: string;
-  sodium: number;
-  user_id: string;
-};
+type Food = Tables<'foods'>;
 
 const createFoodStore: StateCreator<FoodState> = (set, get) => ({
   foods: [],
-  setFoods: (newFoods: FoodsType[]) => set(() => ({foods: newFoods})),
+  setFoods: (newFoods: Food[]) => set(() => ({foods: newFoods})),
   deleteFood: itemId =>
     set(state => ({
       foods: state.foods.filter(item => item.id !== itemId),

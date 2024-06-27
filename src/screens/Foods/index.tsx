@@ -1,27 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  SafeAreaView,
-  StatusBar,
-  Text,
-  View,
-} from 'react-native';
+import {FlatList, SafeAreaView, StatusBar, Text, View} from 'react-native';
 import {SingleFood} from '@components';
 import {Searchbar} from 'react-native-paper';
 import styles from './foods.styles.ts';
 import {Colours} from '@constants';
-import {FoodsType} from '@types';
+import {Tables} from '@types';
 import {foodStore} from '@stores';
+
+type Food = Tables<'foods'>;
 
 const Foods = () => {
   const {foods} = foodStore();
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredFoods, setFilteredFoods] = useState<FoodsType[] | undefined>(
-    [],
-  );
+  const [filteredFoods, setFilteredFoods] = useState<Food[] | undefined>([]);
   const filterFoods = () => {
-    const filtered: FoodsType[] | undefined = foods?.filter(item =>
+    const filtered: Food[] | undefined = foods?.filter(item =>
       item.label.includes(searchQuery),
     );
 
