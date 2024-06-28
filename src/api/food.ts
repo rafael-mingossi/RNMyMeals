@@ -1,10 +1,12 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {supabase} from '@services';
 import {useAuth} from '@providers';
+import {foodStore} from '@stores';
 
 export const useGetFoodsById = () => {
   const {session} = useAuth();
   const id = session?.user.id;
+  const {setFoods} = foodStore();
 
   return useQuery({
     queryKey: ['foods', {userId: id}],
@@ -22,7 +24,8 @@ export const useGetFoodsById = () => {
       if (error) {
         throw new Error(error.message);
       }
-      // setFoods(data);
+      console.log('GET FOODS API CALLED');
+      setFoods(data);
       return data;
     },
   });
@@ -30,6 +33,8 @@ export const useGetFoodsById = () => {
 
 export const useAddFood = () => {
   const queryClient = useQueryClient();
+  const {session} = useAuth();
+  const id = session?.user.id;
 
   return useMutation({
     async mutationFn(userInput: any) {
@@ -57,6 +62,7 @@ export const useAddFood = () => {
     },
     async onSuccess() {
       await queryClient.invalidateQueries({queryKey: ['foods']});
+      await queryClient.invalidateQueries({queryKey: ['foods', {userId: id}]});
     },
   });
 };

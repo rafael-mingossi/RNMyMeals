@@ -1,9 +1,18 @@
 import React, {useState} from 'react';
-import {StatusBar, SafeAreaView, View, FlatList, Text} from 'react-native';
+import {
+  StatusBar,
+  SafeAreaView,
+  View,
+  FlatList,
+  Text,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import {Colours} from '@constants';
 import styles from './recipes.styles.ts';
 import {Searchbar} from 'react-native-paper';
 import {useMyRecipesList} from '@api';
+import {Avatar, Card, IconButton} from 'react-native-paper';
 
 const Recipes = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,16 +28,41 @@ const Recipes = () => {
           value={searchQuery}
           style={styles.search}
         />
-        <FlatList
-          data={data}
-          renderItem={({item}) => (
-            <View>
-              <Text>{item.name}</Text>
-              <Text>{item.tCalories}</Text>
-            </View>
-          )}
-        />
       </View>
+
+      <FlatList
+        data={data}
+        style={styles.flatList}
+        renderItem={({item}) => (
+          <TouchableOpacity>
+            <Card.Title
+              titleStyle={styles.flatListItem}
+              subtitleStyle={styles.flatListItem}
+              title={item.name}
+              subtitle={`${item.tCalories} cals`}
+              left={() => (
+                <Image
+                  source={require('../../assets/images/default_food.png')}
+                  style={styles.icon}
+                />
+              )}
+              // left={props => <Avatar.Icon {...props} icon="check" />}
+              // right={props => (
+              //   <IconButton
+              //     {...props}
+              //     icon="dots-vertical"
+              //     onPress={() => {}}
+              //   />
+              // )}
+            />
+          </TouchableOpacity>
+        )}
+        ListEmptyComponent={
+          <View style={styles.noResults}>
+            <Text style={styles.noResultsTxt}>No results found...</Text>
+          </View>
+        }
+      />
     </SafeAreaView>
   );
 };

@@ -20,7 +20,7 @@ const SingleFoodScreen: FC<SingleFoodPropsNavigation> = ({
   const {mutate: deleteFood} = useDeleteFood();
   let val = route.params.item;
   const handleDelete = async () => {
-    const filename = val.food_img.split('/').pop();
+    const filename = val?.food_img?.split('/').pop();
 
     if (filename) {
       const {error} = await supabase.storage
@@ -59,7 +59,7 @@ const SingleFoodScreen: FC<SingleFoodPropsNavigation> = ({
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={Colours.green} barStyle={'light-content'} />
       <View style={styles.innerWrapper}>
-        {val?.food_img.includes('supabase.co') ? (
+        {val?.food_img?.includes('supabase.co') ? (
           <Animated.Image
             entering={FadeIn.duration(400).delay(200)}
             source={{uri: val?.food_img}}

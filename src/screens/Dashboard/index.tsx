@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {
   Text,
   StyleSheet,
@@ -9,25 +9,24 @@ import {
 import {useAuth} from '@providers';
 import {PieChart} from 'react-native-gifted-charts';
 import {useGetFoodsById} from '@api';
-import {foodStore} from '@stores';
 
 const Dashboard = () => {
   const data = [{value: 50}, {value: 80}, {value: 90}];
   const {userLogOut} = useAuth();
-  const {data: ingredients, isLoading} = useGetFoodsById();
-  const {setFoods} = foodStore();
+  const {data: ingredients} = useGetFoodsById();
+  // const {setFoods} = foodStore();
 
-  const getInfo = () => {
-    if (isLoading || !ingredients?.length) {
-      return;
-    }
-    setFoods(ingredients);
-    console.log('ONE MORE CALL TO THE API');
-  };
-
-  useEffect(() => {
-    getInfo();
-  }, [isLoading]);
+  // const getInfo = () => {
+  //   if (isLoading || !ingredients?.length) {
+  //     return;
+  //   }
+  //   setFoods(ingredients);
+  //   console.log('ONE MORE CALL TO THE API');
+  // };
+  //
+  // useEffect(() => {
+  //   getInfo();
+  // }, [isLoading]);
 
   return (
     <SafeAreaView style={{flex: 1}}>

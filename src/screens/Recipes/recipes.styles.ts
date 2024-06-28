@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import {hS} from '@utils';
-import {Colours} from '@constants';
+import {hS, vS} from '@utils';
+import {Colours, Fonts} from '@constants';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,6 +14,23 @@ const styles = StyleSheet.create({
   },
   searchWrapper: {
     backgroundColor: Colours.green,
+  },
+  icon: {width: hS(35), height: vS(35), aspectRatio: 1},
+  flatList: {
+    backgroundColor: Colours.white,
+  },
+  noResults: {
+    backgroundColor: Colours.white,
+    flex: 1,
+    paddingHorizontal: hS(20),
+    paddingVertical: hS(15),
+  },
+  noResultsTxt: {
+    fontFamily: Fonts.semiBold,
+    fontSize: hS(15),
+  },
+  flatListItem: {
+    fontFamily: Fonts.semiBold,
   },
 });
 
