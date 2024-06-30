@@ -6,7 +6,7 @@ import {TextInput} from 'react-native-paper';
 import {Colours} from '@constants';
 import {PieChart} from 'react-native-gifted-charts';
 import {hS} from '@utils';
-import {ButtonText} from '@components';
+import {ButtonText, MacrosChart} from '@components';
 import {useRecipes} from '@providers';
 
 const IngredientView = ({
@@ -28,9 +28,9 @@ const IngredientView = ({
       calories: (Number(quantity) * prop?.calories) / prop?.serv_size,
       carbs: (Number(quantity) * prop?.carbs) / prop?.serv_size,
       fat: (Number(quantity) * prop?.fat) / prop?.serv_size,
-      fibre: (Number(quantity) * prop?.fibre) / prop?.serv_size,
+      fibre: (Number(quantity) * prop?.fibre!) / prop?.serv_size,
       protein: (Number(quantity) * prop?.protein) / prop?.serv_size,
-      sodium: (Number(quantity) * prop?.sodium) / prop?.serv_size,
+      sodium: (Number(quantity) * prop?.sodium!) / prop?.serv_size,
     };
 
     addItem(
@@ -49,7 +49,7 @@ const IngredientView = ({
           translucent={true}
         />
         <View>
-          <Image source={{uri: prop.food_img}} style={styles.img} />
+          <Image source={{uri: prop.food_img!}} style={styles.img} />
           <Text style={styles.foodName}>{prop?.label}</Text>
         </View>
 
@@ -80,28 +80,13 @@ const IngredientView = ({
           Food Serving: {prop?.serv_size} {prop?.serv_unit}
         </Text>
         <View style={styles.line} />
-        <View style={styles.foodMacroWrapper}>
-          <View>
-            <Text style={styles.macroTitle}>Food Macros</Text>
-            <PieChart
-              data={data}
-              radius={hS(65)}
-              strokeWidth={3}
-              strokeColor="#fff"
-            />
-          </View>
-          <View style={styles.macrosRight}>
-            <Text style={[styles.macrosTxt, {color: Colours.darkYellow}]}>
-              Protein: {prop?.protein}g
-            </Text>
-            <Text style={[styles.macrosTxt, {color: Colours.midGreen}]}>
-              Carbs: {prop?.carbs}g
-            </Text>
-            <Text style={[styles.macrosTxt, {color: Colours.midOrange}]}>
-              Fat: {prop?.fat}g
-            </Text>
-          </View>
-        </View>
+        <MacrosChart
+          hasTitle
+          data={data}
+          protein={prop?.protein}
+          carbs={prop?.carbs}
+          fat={prop?.fat}
+        />
       </ScrollView>
       <View style={styles.buttonsWrapper}>
         <ButtonText children={'Return'} onPress={() => navigation.goBack()} />

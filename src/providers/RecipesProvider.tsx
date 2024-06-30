@@ -92,18 +92,19 @@ const RecipesProvider = ({children}: PropsWithChildren) => {
   };
 
   const saveRecipeItems = (recipe: Tables<'recipes'>) => {
-    console.log('RECIPE ITEMS SAVE =>>', recipe);
+    console.log('RECIPE TO MAP =>>', recipe);
     const recipeItems = items.map(ri => ({
       food_id: ri.food_id,
       quantity: ri.quantity,
       recipe_id: recipe.id,
     }));
 
+    console.log('recipeItems MAPPED=>>', recipeItems);
+
     addRecipeItems(recipeItems, {
       onSuccess: () => console.log('DONE ADDING'),
       onError: e => console.log('ERROR INSERT RECIPE ITEM=>>', e),
     });
-    console.log('RECIPE =>>', recipe);
   };
 
   return (

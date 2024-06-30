@@ -64,26 +64,6 @@ const styles = StyleSheet.create({
     borderColor: Colours.gray,
     paddingVertical: vS(5),
   },
-  foodMacroWrapper: {
-    marginTop: vS(20),
-    paddingHorizontal: hS(25),
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  macroTitle: {
-    fontFamily: Fonts.bold,
-    fontSize: mS(20),
-    marginBottom: vS(15),
-  },
-  macrosRight: {
-    paddingRight: hS(10),
-    rowGap: vS(5),
-  },
-  macrosTxt: {
-    fontFamily: Fonts.bold,
-    fontSize: mS(18),
-  },
   buttonsWrapper: {
     borderTopWidth: 1,
     borderColor: Colours.gray,

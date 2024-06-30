@@ -57,7 +57,7 @@ export const useRecipeDetails = (id: number) => {
     queryFn: async () => {
       const {data, error} = await supabase
         .from('recipes')
-        .select('*, order_items(*, products(*))')
+        .select('*, recipe_items(*, foods(*))')
         .eq('id', id)
         .single();
 

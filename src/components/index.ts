@@ -7,6 +7,7 @@ export {default as TextInputIcon} from './TextInputIcon';
 export {default as TextInputLabel} from './TextInputLabel';
 export {default as SingleFood} from './SingleFood';
 export {default as Ingredient} from './Ingredient';
+export {default as MacrosChart} from './MacrosChart';
 
 //BUTTONS
 export {default as ButtonRound} from './ButtonRound';

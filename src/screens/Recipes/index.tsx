@@ -13,8 +13,9 @@ import styles from './recipes.styles.ts';
 import {Searchbar} from 'react-native-paper';
 import {useMyRecipesList} from '@api';
 import {Avatar, Card, IconButton} from 'react-native-paper';
+import {RecipesStack} from '@config';
 
-const Recipes = () => {
+const Recipes = ({navigation}: RecipesStack) => {
   const [searchQuery, setSearchQuery] = useState('');
   const {data} = useMyRecipesList();
   return (
@@ -34,7 +35,10 @@ const Recipes = () => {
         data={data}
         style={styles.flatList}
         renderItem={({item}) => (
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('RecipeDetails', {recipeId: item.id})
+            }>
             <Card.Title
               titleStyle={styles.flatListItem}
               subtitleStyle={styles.flatListItem}

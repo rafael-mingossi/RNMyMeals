@@ -18,10 +18,11 @@ import {
   AddRecipe,
   Ingredients,
   IngredientView,
+  RecipeDetails,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth} from '@providers';
-import {ActivityIndicator, TouchableOpacity} from 'react-native';
+import {ActivityIndicator, StyleSheet, TouchableOpacity} from 'react-native';
 import {SingleFoodType} from '@types';
 import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
@@ -39,6 +40,8 @@ export type StackNavigatorParams = {
   AddRecipe: undefined;
   Ingredients: undefined;
   IngredientView: {item: SingleFoodType};
+  Recipes: undefined;
+  RecipeDetails: {recipeId: number};
 };
 
 export type InitialStack = NativeStackScreenProps<
@@ -51,10 +54,25 @@ export type RegisterStack = NativeStackScreenProps<
   'Register'
 >;
 
+export type RecipesStack = NativeStackScreenProps<
+  StackNavigatorParams,
+  'Recipes'
+>;
+
 export type IngredientsStack = NativeStackScreenProps<
   StackNavigatorParams,
   'Ingredients'
 >;
+
+type RecipesDetailsRouteProp = RouteProp<StackNavigatorParams, 'RecipeDetails'>;
+type RecipesDetailsNavigationProp = NativeStackNavigationProp<
+  StackNavigatorParams,
+  'RecipeDetails'
+>;
+export type RecipeDetailsPropsNavigation = {
+  navigation: RecipesDetailsNavigationProp;
+  route: RecipesDetailsRouteProp;
+};
 
 type IngredientsViewRouteProp = RouteProp<
   StackNavigatorParams,
@@ -115,6 +133,17 @@ function HeaderLeft() {
   return (
     <TouchableOpacity onPress={() => navigation.goBack()}>
       <Icon size={hS(22)} source={'keyboard-backspace'} color={Colours.white} />
+    </TouchableOpacity>
+  );
+}
+
+function HeaderLeftRounded() {
+  const navigation = useNavigation();
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.goBack()}
+      style={styles.leftRounded}>
+      <Icon size={hS(22)} source={'keyboard-backspace'} color={Colours.green} />
     </TouchableOpacity>
   );
 }
@@ -211,6 +240,22 @@ const ScreenNavigator = () => {
                 headerTransparent: true,
               }}
             />
+            <Stack.Screen
+              name="RecipeDetails"
+              component={RecipeDetails}
+              options={{
+                headerShown: true,
+                headerLeft: () => HeaderLeftRounded(),
+                headerTitleAlign: 'center',
+                headerTintColor: Colours.white,
+                title: '',
+                headerBackVisible: false,
+                headerTransparent: true,
+                headerStyle: {
+                  backgroundColor: 'transparent',
+                },
+              }}
+            />
           </>
         ) : (
           <>
@@ -235,5 +280,13 @@ const ScreenNavigator = () => {
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  leftRounded: {
+    backgroundColor: Colours.white,
+    borderRadius: 300,
+    padding: 5,
+  },
+});
 
 export default ScreenNavigator;
