@@ -1,8 +1,32 @@
+// import React from 'react';
+// import {SafeAreaView, StatusBar, useColorScheme} from 'react-native';
+// import {Colors} from 'react-native/Libraries/NewAppScreen';
+// import {VerticalList} from '../../components/Scroll/VerticalList.tsx';
+//
+// const RecipeDetails = () => {
+//   const isDarkMode = useColorScheme() === 'dark';
+//
+//   const backgroundStyle = {
+//     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+//   };
+//
+//   return (
+//     <SafeAreaView style={[backgroundStyle, {flex: 1}]}>
+//       <StatusBar
+//         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+//         backgroundColor={backgroundStyle.backgroundColor}
+//       />
+//       <VerticalList />
+//     </SafeAreaView>
+//   );
+// };
+//
+// export default RecipeDetails;
+
 import React from 'react';
 import {
   ActivityIndicator,
   Image,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -13,6 +37,16 @@ import styles from './recipeDetails.styles.ts';
 import {Card} from 'react-native-paper';
 import {Colours} from '@constants';
 import {MacrosChart} from '@components';
+import Animated, {
+  interpolate,
+  useAnimatedRef,
+  useAnimatedStyle,
+  useScrollViewOffset,
+} from 'react-native-reanimated';
+
+const IMG_START_HEIGHT = 600;
+const IMG_END_HEIGHT = 180;
+const SCROLL_THRESHOLD = 150;
 
 const RecipeDetails = ({navigation, route}: RecipeDetailsPropsNavigation) => {
   const {
@@ -20,6 +54,25 @@ const RecipeDetails = ({navigation, route}: RecipeDetailsPropsNavigation) => {
     isLoading,
     error,
   } = useRecipeDetails(route?.params?.recipeId);
+  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const scrollOffset = useScrollViewOffset(scrollRef);
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    height: interpolate(
+      scrollOffset.value,
+      [0, SCROLL_THRESHOLD],
+      [IMG_START_HEIGHT, IMG_END_HEIGHT],
+    ),
+    transform: [
+      {
+        scale: interpolate(
+          scrollOffset.value,
+          [-IMG_START_HEIGHT, 0, IMG_START_HEIGHT],
+          [2, 1, 1],
+        ),
+      },
+    ],
+  }));
 
   const data = [
     {value: foods?.tFat!, color: Colours.midOrange},
@@ -40,13 +93,14 @@ const RecipeDetails = ({navigation, route}: RecipeDetailsPropsNavigation) => {
   }
 
   return (
-    <ScrollView
+    <Animated.ScrollView
+      ref={scrollRef}
       scrollEventThrottle={16}
       contentContainerStyle={styles.container}>
       <View>
-        <Image
+        <Animated.Image
           source={require('../../assets/images/recipe.png')}
-          style={styles.banner}
+          style={[styles.banner, animatedStyles]}
         />
         <Text style={styles.foodName}>{foods?.name}</Text>
       </View>
@@ -56,6 +110,7 @@ const RecipeDetails = ({navigation, route}: RecipeDetailsPropsNavigation) => {
             {foods?.serving} {foods?.serv_unit}
           </Text>
           <Text style={styles.bottomText}>total</Text>
+          <Text style={styles.bottomText}>serving</Text>
         </View>
         <View style={styles.singleInfo}>
           <Text style={styles.calories}>{foods?.tCalories}</Text>
@@ -66,7 +121,7 @@ const RecipeDetails = ({navigation, route}: RecipeDetailsPropsNavigation) => {
       <View style={styles.line} />
       <View style={styles.ingredients}>
         <Text style={styles.header}>
-          {foods?.recipe_items.length} Ingredients
+          {foods?.recipe_items.length} Ingredient(s)
         </Text>
         {foods?.recipe_items.map(food => (
           <TouchableOpacity key={food.food_id}>
@@ -87,7 +142,7 @@ const RecipeDetails = ({navigation, route}: RecipeDetailsPropsNavigation) => {
       </View>
       <View style={styles.line} />
       <View style={styles.ingredients}>
-        <Text style={styles.header}>Recipe Macro Nutrients</Text>
+        <Text style={styles.header}> Macro Nutrients</Text>
         {data && foods ? (
           <MacrosChart
             data={data}
@@ -97,7 +152,7 @@ const RecipeDetails = ({navigation, route}: RecipeDetailsPropsNavigation) => {
           />
         ) : null}
       </View>
-    </ScrollView>
+    </Animated.ScrollView>
   );
 };
 

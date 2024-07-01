@@ -11,13 +11,13 @@ import {
 import {Colours} from '@constants';
 import styles from './recipes.styles.ts';
 import {Searchbar} from 'react-native-paper';
-import {useMyRecipesList} from '@api';
 import {Avatar, Card, IconButton} from 'react-native-paper';
 import {RecipesStack} from '@config';
+import {recipeStore} from '@stores';
 
 const Recipes = ({navigation}: RecipesStack) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const {data} = useMyRecipesList();
+  const {recipes} = recipeStore();
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
@@ -32,7 +32,7 @@ const Recipes = ({navigation}: RecipesStack) => {
       </View>
 
       <FlatList
-        data={data}
+        data={recipes}
         style={styles.flatList}
         renderItem={({item}) => (
           <TouchableOpacity

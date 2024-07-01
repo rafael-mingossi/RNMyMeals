@@ -232,12 +232,16 @@ const ScreenNavigator = () => {
               name="IngredientView"
               component={IngredientView}
               options={{
-                headerShown: false,
+                headerLeft: () => HeaderLeftRounded(),
+                headerShown: true,
                 headerTitleAlign: 'center',
                 headerTintColor: Colours.white,
                 title: 'Ingredient',
                 headerBackVisible: false,
                 headerTransparent: true,
+                headerStyle: {
+                  backgroundColor: 'transparent',
+                },
               }}
             />
             <Stack.Screen

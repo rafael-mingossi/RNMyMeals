@@ -2,6 +2,7 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {supabase} from '@services';
 import {useAuth} from '@providers';
 import {InsertTables} from '@types';
+import {recipeStore} from '@stores';
 // import {InsertTables, UpdateTables} from '@types';
 
 // export const useAdminOrdersList = ({ archived = false }) => {
@@ -28,6 +29,7 @@ import {InsertTables} from '@types';
 export const useMyRecipesList = () => {
   const {session} = useAuth();
   const id = session?.user.id;
+  const {setRecipes} = recipeStore();
 
   return useQuery({
     queryKey: ['recipes', {userId: id}],
@@ -46,6 +48,8 @@ export const useMyRecipesList = () => {
         throw new Error(error.message);
       }
 
+      console.log('GET RECIPES API CALLED');
+      setRecipes(data);
       return data;
     },
   });

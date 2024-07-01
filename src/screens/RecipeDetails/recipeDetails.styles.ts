@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
   container: {backgroundColor: Colours.white, flexGrow: 1},
   banner: {
     width: '100%',
-    // height: 300,
+    // height: 400,
   },
   foodName: {
     position: 'absolute',
