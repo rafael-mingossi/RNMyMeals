@@ -9,6 +9,7 @@ import {
 import {Icon} from 'react-native-paper';
 import {Portal} from 'react-native-paper';
 import styles from './addBottomSheet.styles.ts';
+
 import {BottomSheetPropsNavigation} from '@config';
 import {useNavigation} from '@react-navigation/native';
 import BottomSheet, {BottomSheetMethods} from '@devvie/bottom-sheet';
@@ -60,7 +61,7 @@ const AddBottomSheet = () => {
                   style={styles.icon}
                 />
               </View>
-              <Text style={styles.bottomSheetTitle}>Breakfast</Text>
+              <Text style={styles.bottomSheetTitle}>Breakie</Text>
             </TouchableOpacity>
             <TouchableOpacity>
               <View style={styles.iconWrapper}>
@@ -101,7 +102,20 @@ const AddBottomSheet = () => {
                     style={styles.icon}
                   />
                 </View>
-                <Text style={styles.bottomSheetTitle}>Add Food</Text>
+                <Text style={styles.bottomSheetTitle}>+ Food</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  onModalClose();
+                  navigation.navigate('AddRecipe');
+                }}>
+                <View style={styles.iconWrapper}>
+                  <Image
+                    source={require('../../assets/images/img_recipe.png')}
+                    style={styles.icon}
+                  />
+                </View>
+                <Text style={styles.bottomSheetTitle}>+ Recipe</Text>
               </TouchableOpacity>
             </View>
           </View>

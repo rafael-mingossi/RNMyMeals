@@ -8,10 +8,26 @@ import {
 } from 'react-native';
 import {useAuth} from '@providers';
 import {PieChart} from 'react-native-gifted-charts';
+import {useGetFoodsById, useMyRecipesList} from '@api';
 
 const Dashboard = () => {
   const data = [{value: 50}, {value: 80}, {value: 90}];
   const {userLogOut} = useAuth();
+  const {data: ingredients} = useGetFoodsById();
+  const {data: recipes} = useMyRecipesList();
+
+  // const getInfo = () => {
+  //   if (isLoading || !ingredients?.length) {
+  //     return;
+  //   }
+  //   setFoods(ingredients);
+  //   console.log('ONE MORE CALL TO THE API');
+  // };
+  //
+  // useEffect(() => {
+  //   getInfo();
+  // }, [isLoading]);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView>

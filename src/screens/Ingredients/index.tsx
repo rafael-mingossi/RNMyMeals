@@ -1,16 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, SafeAreaView, StatusBar, Text, View} from 'react-native';
-import {SingleFood} from '@components';
-import {Searchbar} from 'react-native-paper';
-import styles from './foods.styles.ts';
-import {Colours} from '@constants';
-import {Tables} from '@types';
+import {FlatList, Text, View} from 'react-native';
+import styles from './ingredients.styles.ts';
 import {foodStore} from '@stores';
+import {Ingredient} from '@components';
+import {vS} from '@utils';
+import {Searchbar} from 'react-native-paper';
+import {IngredientsStack} from '@config';
+import {useRecipes} from '@providers';
+import {Tables} from '@types';
 
 type Food = Tables<'foods'>;
 
-const Foods = () => {
+const Ingredients = ({navigation}: IngredientsStack) => {
   const {foods} = foodStore();
+  const {items, deleteItem} = useRecipes();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredFoods, setFilteredFoods] = useState<Food[] | undefined>([]);
   const filterFoods = () => {
@@ -20,43 +23,44 @@ const Foods = () => {
 
     setFilteredFoods(filtered);
   };
-
   useEffect(() => {
     filterFoods();
   }, [searchQuery, foods]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor={Colours.green} />
-
+    <View style={styles.container}>
       <View style={styles.searchWrapper}>
         <Searchbar
-          placeholder="Search a food name"
+          placeholder="Ingredient name"
           onChangeText={setSearchQuery}
           value={searchQuery}
           style={styles.search}
         />
       </View>
       <FlatList
-        keyboardDismissMode="on-drag"
         data={filteredFoods}
         keyExtractor={item => item.id.toString()}
-        // contentContainerStyle={{marginBottom: 50}}
-        style={styles.wrapper}
-        // contentInset={{bottom: 90}}
-        renderItem={({item, index}) => (
-          <SingleFood item={item} index={index} foods={filteredFoods} />
+        contentContainerStyle={{
+          rowGap: vS(10),
+        }}
+        renderItem={({item}) => (
+          <Ingredient
+            item={item}
+            onPress={() => {
+              items.some(i => String(i.food.id).includes(String(item.id)))
+                ? deleteItem(String(item.id))
+                : navigation.navigate('IngredientView', {item: item});
+            }}
+          />
         )}
         ListEmptyComponent={
           <View style={styles.noResults}>
             <Text style={styles.noResultsTxt}>No results found...</Text>
           </View>
         }
-        ListFooterComponent={<View />}
-        ListFooterComponentStyle={{height: 90}}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
-export default Foods;
+export default Ingredients;

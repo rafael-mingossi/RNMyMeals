@@ -10,3 +10,7 @@ export {default as AddFood} from './AddFood/index.tsx';
 export {default as AddNutrients} from './AddNutrients/index.tsx';
 export {default as SingleFoodScreen} from './SingleFoodScreen/index.tsx';
 export {default as SingleFoodEdit} from './SingleFoodEdit/index.tsx';
+export {default as AddRecipe} from './AddRecipe/index.tsx';
+export {default as Ingredients} from './Ingredients/index.tsx';
+export {default as IngredientView} from './IngredientView/index.tsx';
+export {default as RecipeDetails} from './RecipeDetails/index.tsx';

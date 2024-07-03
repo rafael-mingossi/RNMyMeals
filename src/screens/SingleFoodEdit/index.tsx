@@ -1,5 +1,5 @@
 import React, {FC, useRef, useState} from 'react';
-import {Text, View, TextInput as TI, ScrollView, Image} from 'react-native';
+import {View, TextInput as TI, ScrollView, Image} from 'react-native';
 import {SingleFoodEditPropsNavigation} from '@config';
 import styles from './singleFoodEdit.styles.ts';
 import {ButtonText, TextInputLabel} from '@components';
@@ -45,8 +45,8 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
     fat: val.fat,
     carbs: val.carbs,
     protein: val.protein,
-    sodium: val.sodium,
-    fibre: val.fibre,
+    sodium: val.sodium!,
+    fibre: val.fibre!,
   });
   const [errors, setErrors] = useState<ErrorsType>({
     foodName: false,
@@ -100,7 +100,7 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
       return;
     }
 
-    const imagePath = await uploadImage(selectedImg || val.food_img);
+    const imagePath = await uploadImage(selectedImg! || val.food_img!);
     const {data} = supabase.storage
       .from('food-images')
       .getPublicUrl(`${imagePath}`);
@@ -150,7 +150,7 @@ const SingleFoodEdit: FC<SingleFoodEditPropsNavigation> = ({
           {selectedImg ? (
             <Image style={styles.cameraImg} source={{uri: selectedImg}} />
           ) : (
-            <Image style={styles.cameraImg} source={{uri: val.food_img}} />
+            <Image style={styles.cameraImg} source={{uri: val.food_img!}} />
           )}
           <View style={styles.cameraBtnWrapper}>
             <ButtonText

@@ -1,22 +1,21 @@
 import {StyleSheet} from 'react-native';
-import {hS, mS, vS} from '@utils';
+import {hS} from '@utils';
 import {Colours, Fonts} from '@constants';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colours.green,
     flex: 1,
+    padding: 20,
+    rowGap: 10,
+    backgroundColor: Colours.white,
   },
   search: {
-    marginHorizontal: hS(20),
-    marginVertical: hS(15),
+    marginHorizontal: hS(5),
+    marginBottom: hS(15),
     borderRadius: 50,
   },
   searchWrapper: {
-    backgroundColor: Colours.green,
-  },
-  wrapper: {
-    backgroundColor: 'white',
+    backgroundColor: Colours.white,
   },
   noResults: {
     backgroundColor: Colours.white,
@@ -27,12 +26,6 @@ const styles = StyleSheet.create({
   noResultsTxt: {
     fontFamily: Fonts.semiBold,
     fontSize: hS(15),
-  },
-  loadingWrapper: {
-    backgroundColor: Colours.white,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

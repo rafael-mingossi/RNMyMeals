@@ -57,7 +57,7 @@ function HeaderLeft() {
 const AddFoodNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName={'AddFood'}
+      // initialRouteName={'AddFood'}
       screenOptions={{
         headerTitleAlign: 'center',
         headerBackVisible: false,
