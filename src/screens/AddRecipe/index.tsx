@@ -6,6 +6,7 @@ import styles from './addRecipe.styles.ts';
 import {ButtonText, TextInputLabel} from '@components';
 import {AddRecipeStack} from '@config';
 import {useRecipes} from '@providers';
+import {handleTotals} from '@utils';
 
 type ErrorsType = {
   name: boolean;
@@ -48,29 +49,6 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
   };
 
   console.log('ITEMS =>>', items);
-
-  const handleTotals = items?.reduce(
-    (acc, item) => {
-      const {calories, carbs, protein, fat, fibre, sodium} = item.food;
-
-      acc.calories += calories;
-      acc.carbs += carbs;
-      acc.protein += protein;
-      acc.fat += fat;
-      acc.fibre += fibre!;
-      acc.sodium += sodium!;
-
-      return acc;
-    },
-    {
-      calories: 0,
-      carbs: 0,
-      protein: 0,
-      fat: 0,
-      fibre: 0,
-      sodium: 0,
-    },
-  );
 
   const formatNumber = (value: number) => {
     return value.toLocaleString('en-US', {
@@ -170,37 +148,37 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
               Total Calories (in calories):
             </Text>
             <Text style={styles.valsTxt}>
-              {formatNumber(handleTotals?.calories)}
+              {formatNumber(handleTotals(items)?.calories)}
             </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>Total Protein (in grams):</Text>
             <Text style={styles.valsTxt}>
-              {formatNumber(handleTotals?.protein)}
+              {formatNumber(handleTotals(items)?.protein)}
             </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>Total Carbs (in grams):</Text>
             <Text style={styles.valsTxt}>
-              {formatNumber(handleTotals?.carbs)}
+              {formatNumber(handleTotals(items)?.carbs)}
             </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>Total Fat (in grams):</Text>
             <Text style={styles.valsTxt}>
-              {formatNumber(handleTotals?.fat)}
+              {formatNumber(handleTotals(items)?.fat)}
             </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>Total Fibre (in grams):</Text>
             <Text style={styles.valsTxt}>
-              {formatNumber(handleTotals?.fibre)}
+              {formatNumber(handleTotals(items)?.fibre)}
             </Text>
           </View>
           <View style={styles.singleTotal}>
             <Text style={styles.totalsTxtBold}>Total Carbs (in grams):</Text>
             <Text style={styles.valsTxt}>
-              {formatNumber(handleTotals?.carbs)}
+              {formatNumber(handleTotals(items)?.carbs)}
             </Text>
           </View>
           <View style={styles.singleTotal}>
@@ -208,7 +186,7 @@ const AddRecipe = ({navigation}: AddRecipeStack) => {
               Total Sodium (in milligrams):
             </Text>
             <Text style={styles.valsTxt}>
-              {formatNumber(handleTotals?.sodium)}
+              {formatNumber(handleTotals(items)?.sodium)}
             </Text>
           </View>
         </View>

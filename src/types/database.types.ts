@@ -65,6 +65,105 @@ export type Database = {
           },
         ];
       };
+      lunch_items: {
+        Row: {
+          created_at: string;
+          food_id: number | null;
+          foodQuantity: number | null;
+          id: number;
+          lunch_id: number | null;
+          recipe_id: number | null;
+          recipeQuantity: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          food_id?: number | null;
+          foodQuantity?: number | null;
+          id?: number;
+          lunch_id?: number | null;
+          recipe_id?: number | null;
+          recipeQuantity?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          food_id?: number | null;
+          foodQuantity?: number | null;
+          id?: number;
+          lunch_id?: number | null;
+          recipe_id?: number | null;
+          recipeQuantity?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'lunch_items_food_id_fkey';
+            columns: ['food_id'];
+            isOneToOne: false;
+            referencedRelation: 'foods';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'lunch_items_lunch_id_fkey';
+            columns: ['lunch_id'];
+            isOneToOne: false;
+            referencedRelation: 'lunchs';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'lunch_items_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipes';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      lunchs: {
+        Row: {
+          created_at: string;
+          dateAdded: string | null;
+          id: number;
+          tCalories: number | null;
+          tCarbs: number | null;
+          tFat: number | null;
+          tFibre: number | null;
+          tProtein: number | null;
+          tSodium: number | null;
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          dateAdded?: string | null;
+          id?: number;
+          tCalories?: number | null;
+          tCarbs?: number | null;
+          tFat?: number | null;
+          tFibre?: number | null;
+          tProtein?: number | null;
+          tSodium?: number | null;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          dateAdded?: string | null;
+          id?: number;
+          tCalories?: number | null;
+          tCarbs?: number | null;
+          tFat?: number | null;
+          tFibre?: number | null;
+          tProtein?: number | null;
+          tSodium?: number | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'lunchs_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profiles: {
         Row: {
           avatar_url: string | null;
