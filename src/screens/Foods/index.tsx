@@ -6,10 +6,11 @@ import styles from './foods.styles.ts';
 import {Colours} from '@constants';
 import {Tables} from '@types';
 import {foodStore} from '@stores';
+import {ScreenStack} from '@config';
 
 type Food = Tables<'foods'>;
 
-const Foods = () => {
+const Foods = ({navigation}: ScreenStack) => {
   const {foods} = foodStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredFoods, setFilteredFoods] = useState<Food[] | undefined>([]);
@@ -20,7 +21,6 @@ const Foods = () => {
 
     setFilteredFoods(filtered);
   };
-
   useEffect(() => {
     filterFoods();
   }, [searchQuery, foods]);
@@ -45,7 +45,12 @@ const Foods = () => {
         style={styles.wrapper}
         // contentInset={{bottom: 90}}
         renderItem={({item, index}) => (
-          <SingleFood item={item} index={index} foods={filteredFoods} />
+          <SingleFood
+            item={item}
+            index={index}
+            foods={filteredFoods}
+            onPress={() => navigation?.navigate('SingleFoodScreen', {item})}
+          />
         )}
         ListEmptyComponent={
           <View style={styles.noResults}>

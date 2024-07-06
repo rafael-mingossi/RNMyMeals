@@ -4,7 +4,7 @@ import {TextInput} from 'react-native-paper';
 import {Colours} from '@constants';
 import styles from './addRecipe.styles.ts';
 import {ButtonText, TextInputLabel} from '@components';
-import {AddRecipeStack} from '@config';
+import {ScreenStack} from '@config';
 import {useRecipes} from '@providers';
 import {handleTotals} from '@utils';
 
@@ -20,7 +20,7 @@ type FormType = {
   unit: string | null;
 };
 
-const AddRecipe = ({navigation}: AddRecipeStack) => {
+const AddRecipe = ({navigation}: ScreenStack) => {
   const {items, addRecipe} = useRecipes();
   const servingRef = useRef<TI | null>(null);
   const unitRef = useRef<TI | null>(null);

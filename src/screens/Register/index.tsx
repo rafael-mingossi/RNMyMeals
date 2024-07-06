@@ -8,19 +8,20 @@ import {
   Image,
 } from 'react-native';
 import {TextInput} from 'react-native-paper';
-import {RegisterStack} from '@config';
+import {ScreenStack} from '@config';
 import {supabase} from '@services';
 import styles from './register.styles.ts';
 import {ButtonRound, ScreenTitle, TextInputIcon} from '@components';
 import {Colours} from '@constants';
 
-const Register: FC<RegisterStack> = ({navigation}) => {
+const Register: FC<ScreenStack> = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [revealPass, setRevealPass] = useState(true);
 
   const passwordRef = useRef<TI | null>(null);
+
   async function signUpWithEmail() {
     setLoading(true);
     const {error, data} = await supabase.auth.signUp({email, password});

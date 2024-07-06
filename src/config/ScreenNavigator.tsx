@@ -19,6 +19,7 @@ import {
   Ingredients,
   IngredientView,
   RecipeDetails,
+  AddListItems,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth} from '@providers';
@@ -42,35 +43,30 @@ export type StackNavigatorParams = {
   IngredientView: {item: SingleFoodType};
   Recipes: undefined;
   RecipeDetails: {recipeId: number};
+  AddListItems: {listItem: 'breakie' | 'snack' | 'lunch' | 'dinner'};
 };
 
-export type InitialStack = NativeStackScreenProps<
+//Navigation to screens only, using Navigation prop
+export type ScreenStack = NativeStackScreenProps<
   StackNavigatorParams,
-  'Initial'
->;
-export type LoginStack = NativeStackScreenProps<StackNavigatorParams, 'Login'>;
-export type RegisterStack = NativeStackScreenProps<
-  StackNavigatorParams,
-  'Register'
+  keyof StackNavigatorParams
 >;
 
-export type RecipesStack = NativeStackScreenProps<
+//Navigation to screens and non-screens, using Navigation prop with goBack()
+export type NavigationScreenProp = NativeStackNavigationProp<
   StackNavigatorParams,
-  'Recipes'
+  keyof StackNavigatorParams
 >;
 
-export type IngredientsStack = NativeStackScreenProps<
-  StackNavigatorParams,
-  'Ingredients'
->;
+type ListItemsRouteProp = RouteProp<StackNavigatorParams, 'AddListItems'>;
+export type ListItemsPropsNavigation = {
+  navigation: NavigationScreenProp;
+  route: ListItemsRouteProp;
+};
 
 type RecipesDetailsRouteProp = RouteProp<StackNavigatorParams, 'RecipeDetails'>;
-type RecipesDetailsNavigationProp = NativeStackNavigationProp<
-  StackNavigatorParams,
-  'RecipeDetails'
->;
 export type RecipeDetailsPropsNavigation = {
-  navigation: RecipesDetailsNavigationProp;
+  navigation: NavigationScreenProp;
   route: RecipesDetailsRouteProp;
 };
 
@@ -78,22 +74,14 @@ type IngredientsViewRouteProp = RouteProp<
   StackNavigatorParams,
   'IngredientView'
 >;
-type IngredientsViewNavigationProp = NativeStackNavigationProp<
-  StackNavigatorParams,
-  'IngredientView'
->;
 export type IngredientsViewPropsNavigation = {
-  navigation: IngredientsViewNavigationProp;
+  navigation: NavigationScreenProp;
   route: IngredientsViewRouteProp;
 };
 
 type SingleFoodRouteProp = RouteProp<StackNavigatorParams, 'SingleFoodScreen'>;
-type SingleFoodNavigationProp = NativeStackNavigationProp<
-  StackNavigatorParams,
-  'SingleFoodScreen'
->;
 export type SingleFoodPropsNavigation = {
-  navigation: SingleFoodNavigationProp;
+  navigation: NavigationScreenProp;
   route: SingleFoodRouteProp;
 };
 
@@ -101,30 +89,10 @@ type SingleFoodEditRouteProp = RouteProp<
   StackNavigatorParams,
   'SingleFoodEdit'
 >;
-type SingleFoodEditNavigationProp = NativeStackNavigationProp<
-  StackNavigatorParams,
-  'SingleFoodEdit'
->;
 export type SingleFoodEditPropsNavigation = {
-  navigation: SingleFoodEditNavigationProp;
+  navigation: NavigationScreenProp;
   route: SingleFoodEditRouteProp;
 };
-
-////NAVIGATION FOR NON-SCREENS
-export type BottomSheetPropsNavigation = NativeStackNavigationProp<
-  StackNavigatorParams,
-  'AddFoodRoot'
->;
-
-export type SingleFoodComponentPropsNavigation = NativeStackNavigationProp<
-  StackNavigatorParams,
-  'SingleFood'
->;
-
-export type AddRecipeStack = NativeStackScreenProps<
-  StackNavigatorParams,
-  'AddRecipe'
->;
 
 const Stack = createNativeStackNavigator<StackNavigatorParams>();
 
@@ -236,7 +204,7 @@ const ScreenNavigator = () => {
                 headerShown: true,
                 headerTitleAlign: 'center',
                 headerTintColor: Colours.white,
-                title: 'Ingredient',
+                title: '',
                 headerBackVisible: false,
                 headerTransparent: true,
                 headerStyle: {
@@ -258,6 +226,13 @@ const ScreenNavigator = () => {
                 headerStyle: {
                   backgroundColor: 'transparent',
                 },
+              }}
+            />
+            <Stack.Screen
+              name="AddListItems"
+              component={AddListItems}
+              options={{
+                headerShown: false,
               }}
             />
           </>

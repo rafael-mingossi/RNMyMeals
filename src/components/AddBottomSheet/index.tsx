@@ -10,7 +10,7 @@ import {Icon} from 'react-native-paper';
 import {Portal} from 'react-native-paper';
 import styles from './addBottomSheet.styles.ts';
 
-import {BottomSheetPropsNavigation} from '@config';
+import {NavigationScreenProp} from '@config';
 import {useNavigation} from '@react-navigation/native';
 import BottomSheet, {BottomSheetMethods} from '@devvie/bottom-sheet';
 import {hS} from '@utils';
@@ -18,7 +18,7 @@ import {Colours} from '@constants';
 
 const AddBottomSheet = () => {
   const sheetRef = useRef<BottomSheetMethods>(null);
-  const navigation: BottomSheetPropsNavigation = useNavigation();
+  const navigation: NavigationScreenProp = useNavigation();
 
   const layoutRef = useRef<View>(null);
   const [childHeight, setChildHeight] = useState(0);
@@ -63,7 +63,11 @@ const AddBottomSheet = () => {
               </View>
               <Text style={styles.bottomSheetTitle}>Breakie</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                onModalClose();
+                navigation.navigate('AddListItems', {listItem: 'lunch'});
+              }}>
               <View style={styles.iconWrapper}>
                 <Image
                   source={require('../../assets/images/img_lunch.png')}

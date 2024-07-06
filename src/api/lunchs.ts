@@ -46,3 +46,30 @@ export const useLunchDetails = (id: number) => {
     },
   });
 };
+
+export const useMyLunchsList = () => {
+  const {session} = useAuth();
+  const id = session?.user.id;
+
+  return useQuery({
+    queryKey: ['lunchs', {userId: id}],
+    queryFn: async () => {
+      if (!id) {
+        return null;
+      }
+
+      const {data, error} = await supabase
+        .from('lunchs')
+        .select('*')
+        .eq('user_id', id)
+        .order('created_at', {ascending: false});
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      console.log('GET LUNCHS API CALLED');
+      return data;
+    },
+  });
+};

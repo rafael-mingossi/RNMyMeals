@@ -5,13 +5,13 @@ import {foodStore} from '@stores';
 import {Ingredient} from '@components';
 import {vS} from '@utils';
 import {Searchbar} from 'react-native-paper';
-import {IngredientsStack} from '@config';
+import {ScreenStack} from '@config';
 import {useRecipes} from '@providers';
 import {Tables} from '@types';
 
 type Food = Tables<'foods'>;
 
-const Ingredients = ({navigation}: IngredientsStack) => {
+const Ingredients = ({navigation}: ScreenStack) => {
   const {foods} = foodStore();
   const {items, deleteItem} = useRecipes();
   const [searchQuery, setSearchQuery] = useState('');

@@ -14,3 +14,4 @@ export {default as AddRecipe} from './AddRecipe/index.tsx';
 export {default as Ingredients} from './Ingredients/index.tsx';
 export {default as IngredientView} from './IngredientView/index.tsx';
 export {default as RecipeDetails} from './RecipeDetails/index.tsx';
+export {default as AddListItems} from './AddListItems/index.tsx';

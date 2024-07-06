@@ -10,6 +10,7 @@ import {useAuth} from '@providers';
 import {PieChart} from 'react-native-gifted-charts';
 import {useGetFoodsById, useLunchDetails, useMyRecipesList} from '@api';
 import {useLists} from '../../providers/ListsProvider.tsx';
+import {Calendar} from '@components';
 
 const Dashboard = () => {
   const data = [{value: 50}, {value: 80}, {value: 90}];
@@ -87,6 +88,7 @@ const Dashboard = () => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <Calendar />
       <ScrollView>
         <Pressable
           onPress={async () => {
@@ -100,8 +102,6 @@ const Dashboard = () => {
         <Pressable onPress={handleAddL}>
           <Text>ADD TO DB</Text>
         </Pressable>
-
-        {/*<Calendar />*/}
 
         <PieChart data={data} donut />
       </ScrollView>
