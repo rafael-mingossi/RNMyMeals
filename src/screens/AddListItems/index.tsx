@@ -1,31 +1,69 @@
-import React, {useEffect, useState} from 'react';
-import {Text, View, ScrollView, StatusBar, FlatList} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, StatusBar} from 'react-native';
 import styles from './addListItems.styles.ts';
-import {ButtonText, SingleFood} from '@components';
-import {ListItemsPropsNavigation} from '@config';
+import {ButtonText} from '@components';
+import {ListItemsPropsNavigation, TopTabsNavigator} from '@config';
 import {Searchbar} from 'react-native-paper';
 import {Colours} from '@constants';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {foodStore} from '@stores';
+import {foodStore, recipeStore} from '@stores';
 import {Tables} from '@types';
+import {useFiltered} from '@providers';
+import Recipes from '../Recipes';
 
 type Food = Tables<'foods'>;
 
 const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
   const insets = useSafeAreaInsets();
   const {foods} = foodStore();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredFoods, setFilteredFoods] = useState<Food[] | undefined>([]);
+  const {recipes} = recipeStore();
+  const {
+    handleFilterFoodsContext,
+    searchQuery,
+    setSearchQuery,
+    handleFilterRecipesContext,
+  } = useFiltered();
+
   const filterFoods = () => {
     const filtered: Food[] | undefined = foods?.filter(item =>
       item.label.includes(searchQuery),
     );
 
-    setFilteredFoods(filtered);
+    handleFilterFoodsContext(filtered);
   };
+
+  const filterRecipes = () => {
+    const filtered: Recipes[] | undefined = recipes?.filter(item =>
+      item?.name?.includes(searchQuery),
+    );
+
+    const newFilteredArray = filtered?.map(item => ({
+      calories: item.tCalories,
+      carbs: item.tCarbs,
+      created_at: item.created_at,
+      fat: item.tFat,
+      fibre: item.tFibre,
+      food_img:
+        'https://lzvknmgwnxlojtpfprid.supabase.co/storage/v1/object/public/food-images/default_food.png',
+      id: item.id,
+      label: item.name!,
+      protein: item.tProtein,
+      serv_size: item.serving!,
+      serv_unit: item.serv_unit!,
+      sodium: item.tSodium,
+      user_id: item.user_id!,
+    }));
+
+    handleFilterRecipesContext(newFilteredArray);
+  };
+
   useEffect(() => {
     filterFoods();
   }, [searchQuery, foods]);
+
+  useEffect(() => {
+    filterRecipes();
+  }, [searchQuery, recipes]);
 
   const handleLog = () => {
     if (route?.params.listItem === 'lunch') {
@@ -52,32 +90,7 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
           style={styles.search}
         />
       </View>
-      {/*<ScrollView contentContainerStyle={styles.scrollView} bounces={false}>*/}
-      <FlatList
-        keyboardDismissMode="on-drag"
-        data={filteredFoods}
-        keyExtractor={item => item.id.toString()}
-        // contentContainerStyle={{marginBottom: 50}}
-        style={styles.wrapper}
-        // contentInset={{bottom: 90}}
-        renderItem={({item, index}) => (
-          <SingleFood
-            hasCheckBox
-            item={item}
-            index={index}
-            foods={filteredFoods}
-            onPress={() => navigation.navigate('IngredientView', {item: item})}
-          />
-        )}
-        // ListEmptyComponent={
-        //   <View style={styles.noResults}>
-        //     <Text style={styles.noResultsTxt}>No results found...</Text>
-        //   </View>
-        // }
-        ListFooterComponent={<View />}
-        ListFooterComponentStyle={{height: 90}}
-      />
-      {/*</ScrollView>*/}
+      <TopTabsNavigator />
 
       <View style={styles.buttonsWrapper}>
         <ButtonText children={'Return'} onPress={() => navigation.goBack()} />
@@ -87,5 +100,4 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
     </View>
   );
 };
-
 export default AddListItems;

@@ -5,6 +5,8 @@ interface FoodState {
   foods: Food[];
   setFoods: (newFoods: Food[]) => void;
   deleteFood: (itemId: number) => void;
+  filteredFoods: Food[] | Partial<Food[]>;
+  setFilteredFoods: (newFoods: Food[]) => void;
 }
 
 type Food = Tables<'foods'>;
@@ -16,6 +18,18 @@ const createFoodStore: StateCreator<FoodState> = (set, get) => ({
     set(state => ({
       foods: state.foods.filter(item => item.id !== itemId),
     })),
+  filteredFoods: [],
+  setFilteredFoods: () => {
+    const shallowCopy = [...get().foods];
+    if (shallowCopy.length > 0) {
+      const filtered: Partial<Food[]> = shallowCopy?.filter(item =>
+        item.label.includes('x'),
+      );
+      set(() => ({
+        filteredFoods: filtered,
+      }));
+    }
+  },
 });
 
 const foodStoreRootSlice = (

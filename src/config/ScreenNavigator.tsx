@@ -22,7 +22,7 @@ import {
   AddListItems,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
-import {useAuth} from '@providers';
+import {useAuth, FilteredItemsProvider} from '@providers';
 import {ActivityIndicator, StyleSheet, TouchableOpacity} from 'react-native';
 import {SingleFoodType} from '@types';
 import {Colours, Fonts} from '@constants';
@@ -128,135 +128,137 @@ const ScreenNavigator = () => {
   // }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName={'Initial'}
-        screenOptions={{
-          headerTitleAlign: 'center',
-          headerBackVisible: false,
-          headerLeft: () => HeaderLeft(),
-          headerStyle: {
-            backgroundColor: Colours.green,
-          },
-          headerTintColor: Colours.white,
-          headerTitleStyle: {
-            fontFamily: Fonts.semiBold,
-            fontSize: hS(18),
-          },
-        }}>
-        {session ? (
-          <>
-            <Stack.Screen
-              name="Home"
-              component={BottomNavigator}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="AddFoodRoot"
-              component={AddFoodNavigator}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="SingleFoodScreen"
-              component={SingleFoodScreen}
-              options={{
-                headerShown: true,
-                headerTitleAlign: 'center',
-                headerTintColor: Colours.white,
-                title: 'View Food',
-              }}
-            />
-            <Stack.Screen
-              name="SingleFoodEdit"
-              component={SingleFoodEdit}
-              options={{
-                headerShown: true,
-                headerTitleAlign: 'center',
-                headerTintColor: Colours.white,
-                title: 'Edit Food',
-              }}
-            />
-            <Stack.Screen
-              name="AddRecipe"
-              component={AddRecipe}
-              options={{
-                headerShown: true,
-                headerTitleAlign: 'center',
-                headerTintColor: Colours.white,
-                title: 'Add Recipe',
-              }}
-            />
-            <Stack.Screen
-              name="Ingredients"
-              component={Ingredients}
-              options={{
-                headerShown: true,
-                headerTitleAlign: 'center',
-                headerTintColor: Colours.white,
-                title: 'Ingredients',
-              }}
-            />
-            <Stack.Screen
-              name="IngredientView"
-              component={IngredientView}
-              options={{
-                headerLeft: () => HeaderLeftRounded(),
-                headerShown: true,
-                headerTitleAlign: 'center',
-                headerTintColor: Colours.white,
-                title: '',
-                headerBackVisible: false,
-                headerTransparent: true,
-                headerStyle: {
-                  backgroundColor: 'transparent',
-                },
-              }}
-            />
-            <Stack.Screen
-              name="RecipeDetails"
-              component={RecipeDetails}
-              options={{
-                headerShown: true,
-                headerLeft: () => HeaderLeftRounded(),
-                headerTitleAlign: 'center',
-                headerTintColor: Colours.white,
-                title: '',
-                headerBackVisible: false,
-                headerTransparent: true,
-                headerStyle: {
-                  backgroundColor: 'transparent',
-                },
-              }}
-            />
-            <Stack.Screen
-              name="AddListItems"
-              component={AddListItems}
-              options={{
-                headerShown: false,
-              }}
-            />
-          </>
-        ) : (
-          <>
-            <Stack.Screen
-              name="Initial"
-              component={Initial}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="Login"
-              component={Login}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="Register"
-              component={Register}
-              options={{headerShown: false}}
-            />
-          </>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <FilteredItemsProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName={'Initial'}
+          screenOptions={{
+            headerTitleAlign: 'center',
+            headerBackVisible: false,
+            headerLeft: () => HeaderLeft(),
+            headerStyle: {
+              backgroundColor: Colours.green,
+            },
+            headerTintColor: Colours.white,
+            headerTitleStyle: {
+              fontFamily: Fonts.semiBold,
+              fontSize: hS(18),
+            },
+          }}>
+          {session ? (
+            <>
+              <Stack.Screen
+                name="Home"
+                component={BottomNavigator}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="AddFoodRoot"
+                component={AddFoodNavigator}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="SingleFoodScreen"
+                component={SingleFoodScreen}
+                options={{
+                  headerShown: true,
+                  headerTitleAlign: 'center',
+                  headerTintColor: Colours.white,
+                  title: 'View Food',
+                }}
+              />
+              <Stack.Screen
+                name="SingleFoodEdit"
+                component={SingleFoodEdit}
+                options={{
+                  headerShown: true,
+                  headerTitleAlign: 'center',
+                  headerTintColor: Colours.white,
+                  title: 'Edit Food',
+                }}
+              />
+              <Stack.Screen
+                name="AddRecipe"
+                component={AddRecipe}
+                options={{
+                  headerShown: true,
+                  headerTitleAlign: 'center',
+                  headerTintColor: Colours.white,
+                  title: 'Add Recipe',
+                }}
+              />
+              <Stack.Screen
+                name="Ingredients"
+                component={Ingredients}
+                options={{
+                  headerShown: true,
+                  headerTitleAlign: 'center',
+                  headerTintColor: Colours.white,
+                  title: 'Ingredients',
+                }}
+              />
+              <Stack.Screen
+                name="IngredientView"
+                component={IngredientView}
+                options={{
+                  headerLeft: () => HeaderLeftRounded(),
+                  headerShown: true,
+                  headerTitleAlign: 'center',
+                  headerTintColor: Colours.white,
+                  title: '',
+                  headerBackVisible: false,
+                  headerTransparent: true,
+                  headerStyle: {
+                    backgroundColor: 'transparent',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="RecipeDetails"
+                component={RecipeDetails}
+                options={{
+                  headerShown: true,
+                  headerLeft: () => HeaderLeftRounded(),
+                  headerTitleAlign: 'center',
+                  headerTintColor: Colours.white,
+                  title: '',
+                  headerBackVisible: false,
+                  headerTransparent: true,
+                  headerStyle: {
+                    backgroundColor: 'transparent',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="AddListItems"
+                component={AddListItems}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                name="Initial"
+                component={Initial}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="Register"
+                component={Register}
+                options={{headerShown: false}}
+              />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </FilteredItemsProvider>
   );
 };
 
