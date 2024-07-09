@@ -3,7 +3,7 @@ import {StatusBar, View, Text, Image} from 'react-native';
 import Video, {VideoRef} from 'react-native-video';
 import {ButtonRound} from '@components';
 import styles from './initial.styles.ts';
-import {InitialStack} from '@config';
+import {ScreenStack} from '@config';
 
 const VideoPlaceholder = () => {
   return (
@@ -48,7 +48,7 @@ const VideoPlayer = () => {
   );
 };
 
-const Initial: FC<InitialStack> = ({navigation}) => {
+const Initial: FC<ScreenStack> = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar

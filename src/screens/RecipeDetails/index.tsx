@@ -56,7 +56,6 @@ const RecipeDetails = ({navigation, route}: RecipeDetailsPropsNavigation) => {
   } = useRecipeDetails(route?.params?.recipeId);
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
-
   const animatedStyles = useAnimatedStyle(() => ({
     height: interpolate(
       scrollOffset.value,
@@ -74,15 +73,16 @@ const RecipeDetails = ({navigation, route}: RecipeDetailsPropsNavigation) => {
     ],
   }));
 
-  const data = [
-    {value: foods?.tFat!, color: Colours.midOrange},
-    {value: foods?.tProtein!, color: Colours.darkYellow},
-    {value: foods?.tCarbs!, color: Colours.midGreen},
+  const data = foods && [
+    {value: foods?.tFat, color: Colours.midOrange},
+    {value: foods?.tProtein, color: Colours.darkYellow},
+    {value: foods?.tCarbs, color: Colours.midGreen},
   ];
 
   if (isLoading) {
     return (
-      <View style={styles.loadingView}>
+      // PUTTING REF HERE WILL FIX THE Error: Exception in HostFunction: Value is null, expected a number
+      <View ref={scrollRef as any} style={styles.loadingView}>
         <ActivityIndicator />
       </View>
     );
@@ -143,7 +143,7 @@ const RecipeDetails = ({navigation, route}: RecipeDetailsPropsNavigation) => {
       <View style={styles.line} />
       <View style={styles.ingredients}>
         <Text style={styles.header}> Macro Nutrients</Text>
-        {data && foods ? (
+        {data && foods && !isLoading ? (
           <MacrosChart
             data={data}
             protein={foods.tProtein}

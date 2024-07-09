@@ -4,39 +4,63 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import styles from './singleFood.styles.ts';
 import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
-import {Icon} from 'react-native-paper';
-import {SingleFoodComponentPropsNavigation} from '@config';
+import {NavigationScreenProp} from '@config';
 import {useNavigation} from '@react-navigation/native';
-import {SingleFoodType} from '@types';
+import {SingleFoodType, SingleRecipeType, Tables} from '@types';
+import {useLists} from '../../providers/ListsProvider.tsx';
+import {useFiltered} from '@providers';
+
+type Food = Tables<'foods'>;
 
 type SingleFoodProps = {
   index: number;
   item: SingleFoodType;
-  foods: SingleFoodType[] | undefined;
   hasCheckBox?: boolean;
+  onPress?: () => void;
 };
 
 const SingleFood: FC<SingleFoodProps> = ({
   item,
   index,
-  foods,
   hasCheckBox = false,
+  onPress,
 }) => {
-  const navigation: SingleFoodComponentPropsNavigation = useNavigation();
-  const [selected, setSelected] = useState<SingleFoodType[]>();
-  const [items, setItems] = useState<SingleFoodType[]>(foods!);
-
+  const {filteredFoodsContext} = useFiltered();
+  const navigation: NavigationScreenProp = useNavigation();
+  const [items, setItems] = useState<SingleFoodType[]>(filteredFoodsContext);
+  const {addLunchItem, lunchItems, removeLunchItem} = useLists();
+  const handleRemoveLunchItem = () => {
+    // Find the added item's ID using Food ID and returning it
+    return lunchItems.find(addedItem => addedItem.food?.food_id === item.id)
+      ?.id;
+  };
   useEffect(() => {
-    const selectedItems = items?.filter(res => res.checked);
-    // console.log('selectedItems =>>', selectedItems);
-    setSelected(selectedItems);
-  }, [items]);
+    handleRemoveLunchItem();
+  }, [item, items, index]);
 
+  const handlePickedItem = () => {
+    const picked = items[index]?.checked;
+
+    //Get the current clicked item and update it directly
+    if (item.id === items[index]?.id) {
+      item.checked = !picked;
+
+      const objWithoutChecked = Object.assign({}, item, {
+        checked: undefined,
+      });
+
+      addLunchItem(objWithoutChecked, null, objWithoutChecked.serv_size, null);
+
+      if (handleRemoveLunchItem() && picked) {
+        removeLunchItem(String(handleRemoveLunchItem()));
+      }
+    }
+  };
   return (
-    <TouchableOpacity style={styles.container}>
+    <View style={[styles.container, hasCheckBox && styles.padding]}>
       {hasCheckBox ? (
         <BouncyCheckbox
-          isChecked={items!![index]?.checked}
+          isChecked={items[index]?.checked}
           style={styles.checkBox}
           fillColor={Colours.green}
           iconStyle={{
@@ -48,52 +72,25 @@ const SingleFood: FC<SingleFoodProps> = ({
           unFillColor="#FFFFFF"
           text=""
           textStyle={{fontFamily: Fonts.regular}}
-          onPress={() => {
-            const picked = items[index]?.checked;
-
-            const updatedItems = items?.map(newItem => {
-              if (item.id === items[index]?.id) {
-                item.checked = !picked;
-              }
-
-              return newItem;
-            });
-
-            setItems(updatedItems);
-          }}
+          onPress={handlePickedItem}
           innerIconStyle={{borderColor: Colours.green, borderRadius: 4}}
         />
       ) : null}
 
-      <Image source={{uri: item.food_img!}} style={styles.img} />
-      <View style={styles.textWrapper}>
-        <Text style={styles.text}>{item.label}</Text>
-        <Text style={styles.text}>{item.calories} cals</Text>
-      </View>
-      <View style={styles.icons}>
-        {hasCheckBox ? (
-          <TouchableOpacity
-            onPress={() => navigation?.navigate('SingleFoodScreen', {item})}>
-            <Icon
-              size={hS(27)}
-              source={'chartIngredient-box-plus-outline'}
-              color={Colours.gray}
-            />
-          </TouchableOpacity>
-        ) : (
-          <>
-            <TouchableOpacity
-              onPress={() => navigation?.navigate('SingleFoodScreen', {item})}>
-              <Icon size={hS(27)} source={'eye'} color={Colours.gray} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation?.navigate('SingleFoodEdit', {item})}>
-              <Icon size={hS(25)} source={'pencil'} color={Colours.gray} />
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
-    </TouchableOpacity>
+      <TouchableOpacity style={styles.imgTxtWrapper} onPress={onPress}>
+        <Image source={{uri: item.food_img!}} style={styles.img} />
+        <View style={styles.textWrapper}>
+          <Text style={styles.textLabel}>{item.label}</Text>
+          <Text style={styles.text}>
+            {item.calories} cals
+            <Text style={{color: Colours.black}}>
+              {' '}
+              / Serv. ({item.serv_size} {item.serv_unit})
+            </Text>
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 };
 

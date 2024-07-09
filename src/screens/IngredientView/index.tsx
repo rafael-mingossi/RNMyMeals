@@ -4,8 +4,6 @@ import {IngredientsViewPropsNavigation} from '@config';
 import styles from './ingredientView.styles.ts';
 import {TextInput} from 'react-native-paper';
 import {Colours} from '@constants';
-import {PieChart} from 'react-native-gifted-charts';
-import {hS} from '@utils';
 import {ButtonText, MacrosChart} from '@components';
 import {useRecipes} from '@providers';
 
@@ -21,7 +19,6 @@ const IngredientView = ({
     {value: prop?.protein, color: Colours.darkYellow},
     {value: prop?.carbs, color: Colours.midGreen},
   ];
-
   const handleAddIngredient = () => {
     const shallow = {
       ...prop,

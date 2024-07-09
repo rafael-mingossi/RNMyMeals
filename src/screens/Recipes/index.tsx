@@ -1,30 +1,25 @@
-import React, {useState} from 'react';
-import {
-  StatusBar,
-  SafeAreaView,
-  View,
-  FlatList,
-  Text,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import React from 'react';
+import {StatusBar, SafeAreaView, View, FlatList, Text} from 'react-native';
 import {Colours} from '@constants';
 import styles from './recipes.styles.ts';
 import {Searchbar} from 'react-native-paper';
-import {Avatar, Card, IconButton} from 'react-native-paper';
-import {RecipesStack} from '@config';
-import {recipeStore} from '@stores';
+import {ScreenStack} from '@config';
+import {Tables} from '@types';
+import {SingleFood} from '@components';
+import {useFiltered} from '@providers';
 
-const Recipes = ({navigation}: RecipesStack) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const {recipes} = recipeStore();
+type Recipes = Tables<'recipes'>;
+
+const Recipes = ({navigation}: ScreenStack) => {
+  const {searchQuery, setSearchQuery, filteredRecipesContext} = useFiltered();
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
 
       <View style={styles.searchWrapper}>
         <Searchbar
-          placeholder="Search a food name"
+          placeholder="Search a recipe name"
           onChangeText={setSearchQuery}
           value={searchQuery}
           style={styles.search}
@@ -32,34 +27,17 @@ const Recipes = ({navigation}: RecipesStack) => {
       </View>
 
       <FlatList
-        data={recipes}
+        data={filteredRecipesContext}
         style={styles.flatList}
-        renderItem={({item}) => (
-          <TouchableOpacity
+        renderItem={({item, index}) => (
+          <SingleFood
+            item={item}
+            index={index}
+            foods={filteredRecipesContext}
             onPress={() =>
               navigation.navigate('RecipeDetails', {recipeId: item.id})
-            }>
-            <Card.Title
-              titleStyle={styles.flatListItem}
-              subtitleStyle={styles.flatListItem}
-              title={item.name}
-              subtitle={`${item.tCalories} cals`}
-              left={() => (
-                <Image
-                  source={require('../../assets/images/default_food.png')}
-                  style={styles.icon}
-                />
-              )}
-              // left={props => <Avatar.Icon {...props} icon="check" />}
-              // right={props => (
-              //   <IconButton
-              //     {...props}
-              //     icon="dots-vertical"
-              //     onPress={() => {}}
-              //   />
-              // )}
-            />
-          </TouchableOpacity>
+            }
+          />
         )}
         ListEmptyComponent={
           <View style={styles.noResults}>

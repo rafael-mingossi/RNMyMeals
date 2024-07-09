@@ -6,7 +6,7 @@ import {
   View,
   TextInput as TI,
 } from 'react-native';
-import {LoginStack} from '@config';
+import {ScreenStack} from '@config';
 import {supabase} from '@services';
 import {ButtonRound, ScreenTitle, TextInputIcon} from '@components';
 import styles from './login.styles.ts';
@@ -14,7 +14,7 @@ import {TextInput} from 'react-native-paper';
 import {Colours} from '@constants';
 import {useAuth} from '@providers';
 
-const Login: FC<LoginStack> = ({navigation}) => {
+const Login: FC<ScreenStack> = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

@@ -12,26 +12,28 @@ export type UpdateTables<T extends keyof Database['public']['Tables']> =
 // export type Enums<T extends keyof Database['public']['Enums']> =
 //   Database['public']['Enums'][T];
 
+export type FoodAddedItem = {
+  food_id: number | null;
+  itemFood: TablesType<'foods'> | null;
+  foodQuantity: number | null;
+};
+
+export type RecipeAddedItem = {
+  recipe_id: number | null;
+  itemRecipe: TablesType<'recipes'> | null;
+  recipeQuantity: number | null;
+};
+
+export type AddedLunch = {
+  id: number;
+  food: FoodAddedItem | null;
+  recipe: RecipeAddedItem | null;
+};
+
 export type AddedItem = {
   id: number;
   food: TablesType<'foods'>;
   food_id: number;
-  quantity: number;
-};
-
-export type Recipe = {
-  id: number;
-  created_at: string;
-  total: number;
-  user_id: string;
-  recipe_items?: OrderItem[];
-};
-
-export type OrderItem = {
-  id: number;
-  product_id: number;
-  food: TablesType<'foods'>;
-  order_id: number;
   quantity: number;
 };
 
