@@ -1,31 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {FlatList, Text, View} from 'react-native';
 import styles from './ingredients.styles.ts';
-import {foodStore} from '@stores';
 import {Ingredient} from '@components';
 import {vS} from '@utils';
 import {Searchbar} from 'react-native-paper';
 import {ScreenStack} from '@config';
-import {useRecipes} from '@providers';
-import {Tables} from '@types';
-
-type Food = Tables<'foods'>;
+import {useFiltered, useRecipes} from '@providers';
 
 const Ingredients = ({navigation}: ScreenStack) => {
-  const {foods} = foodStore();
+  const {searchQuery, setSearchQuery, filteredFoodsContext} = useFiltered();
   const {items, deleteItem} = useRecipes();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredFoods, setFilteredFoods] = useState<Food[] | undefined>([]);
-  const filterFoods = () => {
-    const filtered: Food[] | undefined = foods?.filter(item =>
-      item.label.includes(searchQuery),
-    );
-
-    setFilteredFoods(filtered);
-  };
-  useEffect(() => {
-    filterFoods();
-  }, [searchQuery, foods]);
 
   return (
     <View style={styles.container}>
@@ -38,7 +22,7 @@ const Ingredients = ({navigation}: ScreenStack) => {
         />
       </View>
       <FlatList
-        data={filteredFoods}
+        data={filteredFoodsContext}
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={{
           rowGap: vS(10),

@@ -1,16 +1,26 @@
 import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {AddRecipeToLists, AddFoodToLists} from '@screens';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import {Colours, Fonts} from '@constants';
 import {mS} from '@utils';
+import {SingleFoodType} from '@types';
 
 export type StackTopNavigatorParams = {
   AddFoodToLists: undefined;
   AddRecipeToLists: undefined;
+  IngredientView: {item: SingleFoodType};
 };
 
 export type ScreenTopStack = NativeStackScreenProps<
+  StackTopNavigatorParams,
+  keyof StackTopNavigatorParams
+>;
+
+export type NavigationScreenTopProp = NativeStackNavigationProp<
   StackTopNavigatorParams,
   keyof StackTopNavigatorParams
 >;

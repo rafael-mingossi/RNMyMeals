@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList, Text, View} from 'react-native';
+import {FlatList, View} from 'react-native';
 import {SingleFood} from '@components';
 import styles from './addFoodToLists.styles.ts';
 import {ScreenTopStack} from '@config';
@@ -21,8 +21,7 @@ const AddFoodToLists = ({navigation}: ScreenTopStack) => {
           hasCheckBox
           item={item}
           index={index}
-          foods={filteredFoodsContext}
-          // onPress={() => navigation.navigate('IngredientView', {item: item})}
+          onPress={() => navigation.navigate('IngredientView', {item: item})}
         />
       )}
       // ListEmptyComponent={

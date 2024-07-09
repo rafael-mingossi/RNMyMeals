@@ -1,29 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {FlatList, SafeAreaView, StatusBar, Text, View} from 'react-native';
 import {SingleFood} from '@components';
 import {Searchbar} from 'react-native-paper';
 import styles from './foods.styles.ts';
 import {Colours} from '@constants';
-import {Tables} from '@types';
-import {foodStore} from '@stores';
 import {ScreenStack} from '@config';
-
-type Food = Tables<'foods'>;
+import {useFiltered} from '@providers';
 
 const Foods = ({navigation}: ScreenStack) => {
-  const {foods} = foodStore();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredFoods, setFilteredFoods] = useState<Food[] | undefined>([]);
-  const filterFoods = () => {
-    const filtered: Food[] | undefined = foods?.filter(item =>
-      item.label.includes(searchQuery),
-    );
-
-    setFilteredFoods(filtered);
-  };
-  useEffect(() => {
-    filterFoods();
-  }, [searchQuery, foods]);
+  const {searchQuery, setSearchQuery, filteredFoodsContext} = useFiltered();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -39,7 +24,7 @@ const Foods = ({navigation}: ScreenStack) => {
       </View>
       <FlatList
         keyboardDismissMode="on-drag"
-        data={filteredFoods}
+        data={filteredFoodsContext}
         keyExtractor={item => item.id.toString()}
         // contentContainerStyle={{marginBottom: 50}}
         style={styles.wrapper}
@@ -48,7 +33,7 @@ const Foods = ({navigation}: ScreenStack) => {
           <SingleFood
             item={item}
             index={index}
-            foods={filteredFoods}
+            foods={filteredFoodsContext}
             onPress={() => navigation?.navigate('SingleFoodScreen', {item})}
           />
         )}

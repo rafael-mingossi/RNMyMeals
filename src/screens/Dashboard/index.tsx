@@ -17,7 +17,7 @@ const Dashboard = () => {
   const {userLogOut} = useAuth();
   const {data: ingredients} = useGetFoodsById();
   const {data: recipes} = useMyRecipesList();
-  const {addLunchItem, lunchItems, addLunch} = useLists();
+  const {addLunchItem, lunchItems, addLunch, removeLunchItem} = useLists();
   // const {data: details} = useLunchDetails(3);
   // console.log('LUNCH', lunchItems);
   // console.log('LUNCH LENGTH =>>', lunchItems?.length);
@@ -79,7 +79,11 @@ const Dashboard = () => {
   };
 
   const handleAdd = () => {
-    addLunchItem(null, rec, null, 2);
+    addLunchItem(foo, null, foo.serv_size, null);
+  };
+
+  const remove = () => {
+    removeLunchItem(String(662));
   };
 
   const handleAddL = () => {
@@ -101,6 +105,9 @@ const Dashboard = () => {
         </Pressable>
         <Pressable onPress={handleAddL}>
           <Text>ADD TO DB</Text>
+        </Pressable>
+        <Pressable onPress={remove}>
+          <Text>REMOVE FROM LIST</Text>
         </Pressable>
 
         <PieChart data={data} donut />

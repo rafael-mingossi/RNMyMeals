@@ -2,6 +2,9 @@ import React, {PropsWithChildren, useContext, useState} from 'react';
 import {createContext} from 'react';
 import {AddedLunch, FoodAddedItem, RecipeAddedItem, Tables} from '@types';
 import {useInsertLunch, useInsertLunchItems} from '@api';
+import {handleTotalLists} from '@utils';
+import {useNavigation} from '@react-navigation/native';
+import {NavigationScreenTopProp} from '@config';
 
 type Food = Tables<'foods'>;
 type Recipe = Tables<'recipes'>;
@@ -14,13 +17,15 @@ type ListsType = {
     foodQuantity: number | null,
     recipeQuantity: number | null,
   ) => void;
-  addLunch: () => void;
+  removeLunchItem: (id: string) => void;
+  addLunch: (onSuccess: () => void) => void;
 };
 
 const ListsContext = createContext<ListsType>({
   lunchItems: [],
   addLunchItem: () => {},
   addLunch: () => {},
+  removeLunchItem: () => {},
 });
 
 const ListsProvider = ({children}: PropsWithChildren) => {
@@ -32,7 +37,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
   function generateRandomId() {
     const randomDecimal = Math.random();
 
-    const maxIdValue = 1000; // Example: Maximum ID value of 1000
+    const maxIdValue = 999999; // Example: Maximum ID value of 1000
     return Math.floor(randomDecimal * maxIdValue);
   }
 
@@ -63,25 +68,31 @@ const ListsProvider = ({children}: PropsWithChildren) => {
     setLunchItems([newItem, ...lunchItems]);
   };
 
-  const addLunch = () => {
+  const addLunch = (onSuccess: () => void) => {
     addLunchToDb(
       {
-        dateAdded: '10/01/1900',
-        tCalories: 1,
-        tCarbs: 2,
-        tProtein: 3,
-        tSodium: 4,
-        tFat: 5,
-        tFibre: 6,
+        dateAdded: '05/20/2024',
+        tCalories: handleTotalLists(lunchItems).calories,
+        tCarbs: handleTotalLists(lunchItems)?.carbs,
+        tProtein: handleTotalLists(lunchItems)?.protein,
+        tSodium: handleTotalLists(lunchItems)?.sodium,
+        tFat: handleTotalLists(lunchItems)?.fat,
+        tFibre: handleTotalLists(lunchItems)?.fibre,
       },
       {
-        onSuccess: saveLunchItems,
+        onSuccess: data => saveLunchItems(data, onSuccess),
         onError: er => console.log('ERROR LUNCH =>', er),
       },
     );
   };
 
-  const saveLunchItems = (lunch: Tables<'lunchs'>) => {
+  const removeLunchItem = (id: string) => {
+    const shallow = [...lunchItems];
+    const filteredData = shallow.filter(item => String(item.id) !== id);
+    setLunchItems(filteredData);
+  };
+
+  const saveLunchItems = (lunch: Tables<'lunchs'>, onSuccess: () => void) => {
     const luItems = lunchItems.map(lu => ({
       lunch_id: lunch.id,
       food_id: lu?.food?.food_id,
@@ -91,13 +102,17 @@ const ListsProvider = ({children}: PropsWithChildren) => {
     }));
 
     addLunchItems(luItems, {
-      onSuccess: () => console.log('DONE ADDING LUNCH ITEMS'),
+      onSuccess: () => {
+        onSuccess();
+        setLunchItems([]);
+      },
       onError: e => console.log('ERROR INSERT LUNCH ITEM=>>', e),
     });
   };
 
   return (
-    <ListsContext.Provider value={{lunchItems, addLunchItem, addLunch}}>
+    <ListsContext.Provider
+      value={{lunchItems, addLunchItem, addLunch, removeLunchItem}}>
       {children}
     </ListsContext.Provider>
   );

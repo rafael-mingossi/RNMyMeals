@@ -128,8 +128,8 @@ const ScreenNavigator = () => {
   // }
 
   return (
-    <FilteredItemsProvider>
-      <NavigationContainer>
+    <NavigationContainer>
+      <FilteredItemsProvider>
         <Stack.Navigator
           initialRouteName={'Initial'}
           screenOptions={{
@@ -257,8 +257,8 @@ const ScreenNavigator = () => {
             </>
           )}
         </Stack.Navigator>
-      </NavigationContainer>
-    </FilteredItemsProvider>
+      </FilteredItemsProvider>
+    </NavigationContainer>
   );
 };
 

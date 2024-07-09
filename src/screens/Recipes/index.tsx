@@ -1,50 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {StatusBar, SafeAreaView, View, FlatList, Text} from 'react-native';
 import {Colours} from '@constants';
 import styles from './recipes.styles.ts';
 import {Searchbar} from 'react-native-paper';
 import {ScreenStack} from '@config';
-import {recipeStore} from '@stores';
 import {Tables} from '@types';
 import {SingleFood} from '@components';
+import {useFiltered} from '@providers';
 
 type Recipes = Tables<'recipes'>;
-type Food = Tables<'foods'>;
 
 const Recipes = ({navigation}: ScreenStack) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const {recipes} = recipeStore();
-  const [filteredRecipes, setFilteredRecipes] = useState<Food[] | undefined>(
-    [],
-  );
-
-  const filterRecipes = () => {
-    const filtered: Recipes[] | undefined = recipes?.filter(item =>
-      item?.name?.includes(searchQuery),
-    );
-
-    const newFilteredArray = filtered?.map(item => ({
-      calories: item.tCalories,
-      carbs: item.tCarbs,
-      created_at: item.created_at,
-      fat: item.tFat,
-      fibre: item.tFibre,
-      food_img:
-        'https://lzvknmgwnxlojtpfprid.supabase.co/storage/v1/object/public/food-images/default_food.png',
-      id: item.id,
-      label: item.name!,
-      protein: item.tProtein,
-      serv_size: item.serving!,
-      serv_unit: item.serv_unit!,
-      sodium: item.tSodium,
-      user_id: item.user_id!,
-    }));
-
-    setFilteredRecipes(newFilteredArray);
-  };
-  useEffect(() => {
-    filterRecipes();
-  }, [searchQuery, recipes]);
+  const {searchQuery, setSearchQuery, filteredRecipesContext} = useFiltered();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,13 +27,13 @@ const Recipes = ({navigation}: ScreenStack) => {
       </View>
 
       <FlatList
-        data={filteredRecipes}
+        data={filteredRecipesContext}
         style={styles.flatList}
         renderItem={({item, index}) => (
           <SingleFood
             item={item}
             index={index}
-            foods={filteredRecipes}
+            foods={filteredRecipesContext}
             onPress={() =>
               navigation.navigate('RecipeDetails', {recipeId: item.id})
             }
