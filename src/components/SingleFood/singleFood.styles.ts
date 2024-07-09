@@ -8,27 +8,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+  },
+  padding: {
+    paddingLeft: hS(20),
+  },
+  imgTxtWrapper: {
+    flexDirection: 'row',
     paddingHorizontal: hS(20),
     paddingVertical: vS(10),
-    gap: mS(10),
+    columnGap: hS(10),
   },
   img: {
-    width: hS(55),
-    height: vS(50),
+    width: hS(40),
+    height: vS(35),
     borderRadius: 5,
   },
   textWrapper: {flexDirection: 'column'},
   checkBox: {
-    width: hS(35),
+    width: hS(15),
+  },
+  textLabel: {
+    fontFamily: Fonts.semiBold,
+    fontSize: hS(16),
   },
   text: {
     fontFamily: Fonts.regular,
     fontSize: hS(14),
-  },
-  icons: {
-    marginLeft: 'auto',
-    flexDirection: 'row',
-    columnGap: hS(8),
+    color: Colours.green,
   },
 });
 

@@ -1,37 +1,19 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {supabase} from '@services';
 import {useAuth} from '@providers';
-// import {foodStore} from '../stores/foodStore.ts';
-//
-// export function useFoods() {
-//   const {foods, setFoods, deleteFood} = foodStore();
+import {foodStore} from '@stores';
 
-type FoodsType = [
-  {
-    calories: number;
-    carbs: number;
-    created_at: string;
-    fat: number;
-    fibre: number;
-    food_img: string;
-    id: number;
-    label: string;
-    protein: number;
-    serv_size: number;
-    serv_unit: string;
-    sodium: number;
-    user_id: string;
-  },
-];
-
-export const getFoodsById = () => {
+export const useGetFoodsById = () => {
   const {session} = useAuth();
   const id = session?.user.id;
+  const {setFoods} = foodStore();
 
   return useQuery({
     queryKey: ['foods', {userId: id}],
     queryFn: async () => {
-      if (!id) return null;
+      if (!id) {
+        return null;
+      }
 
       const {data, error} = await supabase
         .from('foods')
@@ -42,7 +24,8 @@ export const getFoodsById = () => {
       if (error) {
         throw new Error(error.message);
       }
-      // setFoods(data);
+      console.log('GET FOODS API CALLED');
+      setFoods(data);
       return data;
     },
   });
@@ -50,6 +33,8 @@ export const getFoodsById = () => {
 
 export const useAddFood = () => {
   const queryClient = useQueryClient();
+  const {session} = useAuth();
+  const id = session?.user.id;
 
   return useMutation({
     async mutationFn(userInput: any) {
@@ -77,6 +62,7 @@ export const useAddFood = () => {
     },
     async onSuccess() {
       await queryClient.invalidateQueries({queryKey: ['foods']});
+      await queryClient.invalidateQueries({queryKey: ['foods', {userId: id}]});
     },
   });
 };
@@ -119,13 +105,13 @@ export const useUpdateFood = () => {
 };
 
 export const useDeleteFood = () => {
+  const {session} = useAuth();
+  const id = session?.user.id;
   const queryClient = useQueryClient();
 
   return useMutation({
-    async mutationFn(id: number) {
-      const {error} = await supabase.from('foods').delete().eq('id', id);
-
-      // deleteFood(id);
+    async mutationFn(foodId: number) {
+      const {error} = await supabase.from('foods').delete().eq('id', foodId);
 
       if (error) {
         throw new Error(error.message);
@@ -134,9 +120,7 @@ export const useDeleteFood = () => {
 
     async onSuccess() {
       await queryClient.invalidateQueries({queryKey: ['foods']});
+      await queryClient.invalidateQueries({queryKey: ['foods', {userId: id}]});
     },
   });
 };
-
-//   return {foods, getFoodsById, useAddFood, useUpdateFood, useDeleteFood};
-// }

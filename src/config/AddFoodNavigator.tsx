@@ -14,11 +14,11 @@ import {Icon} from 'react-native-paper';
 export type AddFoodStackNavigatorParams = {
   AddFood: undefined;
   AddNutrients: {
-    foodName: string;
-    calories: string;
-    serving: string;
-    unit: string;
-    img: string;
+    foodName: string | null;
+    calories: number | null;
+    serving: number | null;
+    unit: string | null;
+    img: string | null;
   };
   Foods: undefined;
 };
@@ -57,7 +57,7 @@ function HeaderLeft() {
 const AddFoodNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName={'AddFood'}
+      // initialRouteName={'AddFood'}
       screenOptions={{
         headerTitleAlign: 'center',
         headerBackVisible: false,

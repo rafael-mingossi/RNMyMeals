@@ -16,19 +16,20 @@ const styles = StyleSheet.create({
   right: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    columnGap: hS(6),
     justifyContent: 'flex-end',
   },
   labelG: {
     fontFamily: Fonts.bold,
     fontSize: hS(14),
     color: Colours.black,
+    marginLeft: hS(10),
+    width: hS(28),
   },
   input: {
-    width: '55%',
+    width: '50%',
     backgroundColor: Colours.white,
     paddingHorizontal: 0,
-    height: vS(45),
+    height: vS(43),
     textAlign: 'center',
   },
 });
