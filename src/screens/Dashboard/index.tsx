@@ -5,12 +5,15 @@ import {
   Pressable,
   SafeAreaView,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import {useAuth} from '@providers';
 import {PieChart} from 'react-native-gifted-charts';
-import {useGetFoodsById, useLunchDetails, useMyRecipesList} from '@api';
+import {useGetFoodsById, useMyRecipesList} from '@api';
 import {useLists} from '../../providers/ListsProvider.tsx';
 import {Calendar} from '@components';
+import {Colours} from '@constants';
+import {calendarStore} from '@stores';
 
 const Dashboard = () => {
   const data = [{value: 50}, {value: 80}, {value: 90}];
@@ -18,50 +21,8 @@ const Dashboard = () => {
   const {data: ingredients} = useGetFoodsById();
   const {data: recipes} = useMyRecipesList();
   const {addLunchItem, lunchItems, addLunch, removeLunchItem} = useLists();
-  // const {data: details} = useLunchDetails(3);
-  // console.log('LUNCH', lunchItems);
-  // console.log('LUNCH LENGTH =>>', lunchItems?.length);
-  // console.log(
-  //   'LUNCH REC =>',
-  //   lunchItems.map(item => {
-  //     return item.recipe;
-  //   }),
-  // );
-  // console.log(
-  //   'LUNCH FOOD =>',
-  //   lunchItems.map(item => {
-  //     return item.food;
-  //   }),
-  // );
-  // console.log('LU =>', details?.lunch_items);
-  // const getInfo = () => {
-  //   if (isLoading || !ingredients?.length) {
-  //     return;
-  //   }
-  //   setFoods(ingredients);
-  //   console.log('ONE MORE CALL TO THE API');
-  // };
-  //
-  // useEffect(() => {
-  //   getInfo();
-  // }, [isLoading]);
-  const foo = {
-    calories: 250,
-    carbs: 3,
-    created_at: '2024-06-27T23:21:16.485825+00:00',
-    fat: 2,
-    fibre: 0,
-    food_img:
-      'https://lzvknmgwnxlojtpfprid.supabase.co/storage/v1/object/public/food-images/ef8a9472-c96e-477e-8f75-27636da5d500.png',
-    id: 53,
-    label: 'Xup',
-    protein: 4,
-    serv_size: 20,
-    serv_unit: 'G',
-    sodium: 5,
-    user_id: 'f5072b71-3672-47e0-bd14-a0a0cb4b2a85',
-  };
-
+  const {date, setDate} = calendarStore();
+  console.log('STORE =>', date);
   const rec = {
     created_at: '2024-06-28T21:34:01.763156+00:00',
     id: 7,
@@ -79,19 +40,20 @@ const Dashboard = () => {
   };
 
   const handleAdd = () => {
-    addLunchItem(foo, null, foo.serv_size, null);
+    addLunchItem(null, rec, null, rec.serving);
   };
 
   const remove = () => {
     removeLunchItem(String(662));
   };
 
-  const handleAddL = () => {
-    addLunch();
+  const dates = () => {
+    setDate(date.subtract(1, 'day'));
   };
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <StatusBar backgroundColor={Colours.green} />
       <Calendar />
       <ScrollView>
         <Pressable
@@ -103,11 +65,13 @@ const Dashboard = () => {
         <Pressable onPress={handleAdd}>
           <Text>ADD</Text>
         </Pressable>
-        <Pressable onPress={handleAddL}>
-          <Text>ADD TO DB</Text>
-        </Pressable>
+
         <Pressable onPress={remove}>
           <Text>REMOVE FROM LIST</Text>
+        </Pressable>
+
+        <Pressable onPress={dates}>
+          <Text>DATE</Text>
         </Pressable>
 
         <PieChart data={data} donut />

@@ -3,8 +3,6 @@ import {createContext} from 'react';
 import {AddedLunch, FoodAddedItem, RecipeAddedItem, Tables} from '@types';
 import {useInsertLunch, useInsertLunchItems} from '@api';
 import {handleTotalLists} from '@utils';
-import {useNavigation} from '@react-navigation/native';
-import {NavigationScreenTopProp} from '@config';
 
 type Food = Tables<'foods'>;
 type Recipe = Tables<'recipes'>;
