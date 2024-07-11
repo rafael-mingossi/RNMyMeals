@@ -3,6 +3,7 @@ import {createContext} from 'react';
 import {AddedLunch, FoodAddedItem, RecipeAddedItem, Tables} from '@types';
 import {useInsertLunch, useInsertLunchItems} from '@api';
 import {handleTotalLists} from '@utils';
+import {calendarStore} from '@stores';
 
 type Food = Tables<'foods'>;
 type Recipe = Tables<'recipes'>;
@@ -17,6 +18,7 @@ type ListsType = {
   ) => void;
   removeLunchItem: (id: string) => void;
   addLunch: (onSuccess: () => void) => void;
+  unselectCheckbox: () => void;
 };
 
 const ListsContext = createContext<ListsType>({
@@ -24,10 +26,12 @@ const ListsContext = createContext<ListsType>({
   addLunchItem: () => {},
   addLunch: () => {},
   removeLunchItem: () => {},
+  unselectCheckbox: () => {},
 });
 
 const ListsProvider = ({children}: PropsWithChildren) => {
   const [lunchItems, setLunchItems] = useState<AddedLunch[]>([]);
+  const {date} = calendarStore();
 
   const {mutate: addLunchToDb} = useInsertLunch();
   const {mutate: addLunchItems} = useInsertLunchItems();
@@ -69,7 +73,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
   const addLunch = (onSuccess: () => void) => {
     addLunchToDb(
       {
-        dateAdded: '05/20/2024',
+        dateAdded: date.format('MM/DD/YYYY'),
         tCalories: handleTotalLists(lunchItems).calories,
         tCarbs: handleTotalLists(lunchItems)?.carbs,
         tProtein: handleTotalLists(lunchItems)?.protein,
@@ -101,16 +105,27 @@ const ListsProvider = ({children}: PropsWithChildren) => {
 
     addLunchItems(luItems, {
       onSuccess: () => {
+        unselectCheckbox();
         onSuccess();
-        setLunchItems([]);
       },
       onError: e => console.log('ERROR INSERT LUNCH ITEM=>>', e),
     });
   };
 
+  const unselectCheckbox = () => {
+    setLunchItems(lunchItems.map(item => ({...item, isChecked: false})));
+    setLunchItems([]);
+  };
+
   return (
     <ListsContext.Provider
-      value={{lunchItems, addLunchItem, addLunch, removeLunchItem}}>
+      value={{
+        lunchItems,
+        addLunchItem,
+        addLunch,
+        removeLunchItem,
+        unselectCheckbox,
+      }}>
       {children}
     </ListsContext.Provider>
   );

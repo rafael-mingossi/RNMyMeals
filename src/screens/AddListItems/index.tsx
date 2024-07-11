@@ -6,8 +6,7 @@ import {ListItemsPropsNavigation, TopTabsNavigator} from '@config';
 import {Searchbar} from 'react-native-paper';
 import {Colours} from '@constants';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useFiltered} from '@providers';
-import {useLists} from '../../providers/ListsProvider.tsx';
+import {useFiltered, useLists} from '@providers';
 
 const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
   const insets = useSafeAreaInsets();

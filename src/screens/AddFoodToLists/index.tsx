@@ -20,8 +20,12 @@ const AddFoodToLists = ({navigation}: ScreenTopStack) => {
         <SingleFood
           hasCheckBox
           item={item}
+          items={filteredFoodsContext}
+          isFood
           index={index}
-          onPress={() => navigation.navigate('IngredientView', {item: item})}
+          onPress={() =>
+            navigation.navigate('IngredientView', {item: item, isFood: true})
+          }
         />
       )}
       // ListEmptyComponent={

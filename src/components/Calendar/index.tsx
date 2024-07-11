@@ -14,10 +14,10 @@ import timezone from 'dayjs/plugin/timezone';
 import {getDaysInMonth, renderMonthName, renderWeekDay} from '@utils';
 import styles from './calendar.styles.ts';
 
-dayjs.extend(localeData);
 dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.tz.guess();
+dayjs.extend(localeData);
+// dayjs.extend(timezone);
+// dayjs.tz.guess();
 
 //// ICONS
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -71,7 +71,10 @@ const Calendar = () => {
           setLIndex(index);
           setDate(dayShort);
         }}>
-        <Text style={styles.dayText}>{dayShort?.date()}</Text>
+        <Text
+          style={[styles.dayText, lIndex === index && styles.selectedDayTxt]}>
+          {dayShort?.date()}
+        </Text>
       </TouchableOpacity>
     );
   };

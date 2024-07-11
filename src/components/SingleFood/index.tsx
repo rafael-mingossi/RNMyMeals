@@ -6,52 +6,87 @@ import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
 import {NavigationScreenProp} from '@config';
 import {useNavigation} from '@react-navigation/native';
-import {SingleFoodType, SingleRecipeType, Tables} from '@types';
-import {useLists} from '../../providers/ListsProvider.tsx';
-import {useFiltered} from '@providers';
-
-type Food = Tables<'foods'>;
+import {SingleFoodType} from '@types';
+import {useLists} from '@providers';
 
 type SingleFoodProps = {
   index: number;
   item: SingleFoodType;
+  items: SingleFoodType[];
   hasCheckBox?: boolean;
   onPress?: () => void;
+  isFood: boolean;
 };
 
 const SingleFood: FC<SingleFoodProps> = ({
   item,
   index,
   hasCheckBox = false,
+  items,
   onPress,
+  isFood,
 }) => {
-  const {filteredFoodsContext} = useFiltered();
   const navigation: NavigationScreenProp = useNavigation();
-  const [items, setItems] = useState<SingleFoodType[]>(filteredFoodsContext);
-  const {addLunchItem, lunchItems, removeLunchItem} = useLists();
+  const [isChecked, setIsChecked] = useState(false);
+  const {addLunchItem, lunchItems, removeLunchItem, unselectCheckbox} =
+    useLists();
   const handleRemoveLunchItem = () => {
     // Find the added item's ID using Food ID and returning it
-    return lunchItems.find(addedItem => addedItem.food?.food_id === item.id)
-      ?.id;
+    if (isFood) {
+      return lunchItems.find(addedItem => addedItem.food?.food_id === item.id)
+        ?.id;
+    } else {
+      return lunchItems.find(
+        addedItem => addedItem.recipe?.recipe_id === item.id,
+      )?.id;
+    }
   };
   useEffect(() => {
     handleRemoveLunchItem();
   }, [item, items, index]);
 
   const handlePickedItem = () => {
-    const picked = items[index]?.checked;
+    setIsChecked(!isChecked);
 
     //Get the current clicked item and update it directly
     if (item.id === items[index]?.id) {
-      item.checked = !picked;
+      item.checked = !isChecked;
+      if (isFood) {
+        const objWithoutChecked = Object.assign({}, item, {
+          checked: undefined,
+        });
 
-      const objWithoutChecked = Object.assign({}, item, {
-        checked: undefined,
-      });
+        addLunchItem(
+          objWithoutChecked,
+          null,
+          objWithoutChecked.serv_size,
+          null,
+        );
+      } else {
+        const objWithoutChecked = Object.assign({}, item, {
+          checked: undefined,
+        });
 
-      addLunchItem(objWithoutChecked, null, objWithoutChecked.serv_size, null);
+        const backToRecipe = {
+          created_at: objWithoutChecked.created_at,
+          id: objWithoutChecked.id,
+          img: objWithoutChecked.food_img,
+          name: objWithoutChecked.label,
+          serv_unit: objWithoutChecked.serv_unit,
+          serving: objWithoutChecked.serv_size,
+          tCalories: objWithoutChecked.calories,
+          tCarbs: objWithoutChecked.carbs,
+          tFat: objWithoutChecked.fat,
+          tFibre: objWithoutChecked.fibre || 0,
+          tProtein: objWithoutChecked.protein,
+          tSodium: objWithoutChecked.sodium || 0,
+          user_id: objWithoutChecked.user_id,
+        };
 
-      if (handleRemoveLunchItem() && picked) {
+        addLunchItem(null, backToRecipe, null, backToRecipe.serving);
+      }
+
+      if (handleRemoveLunchItem() && isChecked) {
         removeLunchItem(String(handleRemoveLunchItem()));
       }
     }
@@ -60,7 +95,7 @@ const SingleFood: FC<SingleFoodProps> = ({
     <View style={[styles.container, hasCheckBox && styles.padding]}>
       {hasCheckBox ? (
         <BouncyCheckbox
-          isChecked={items[index]?.checked}
+          isChecked={isChecked}
           style={styles.checkBox}
           fillColor={Colours.green}
           iconStyle={{

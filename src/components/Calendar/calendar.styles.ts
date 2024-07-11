@@ -4,7 +4,7 @@ import {hS, mS, vS} from '@utils';
 
 const styles = StyleSheet.create({
   calendarContainer: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: Colours.white,
   },
   selectedDay: {
@@ -15,6 +15,9 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  selectedDayTxt: {
+    color: Colours.white,
   },
   header: {
     flexDirection: 'row',
