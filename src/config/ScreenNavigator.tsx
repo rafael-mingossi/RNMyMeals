@@ -70,14 +70,14 @@ export type RecipeDetailsPropsNavigation = {
   route: RecipesDetailsRouteProp;
 };
 
-type IngredientsViewRouteProp = RouteProp<
-  StackNavigatorParams,
-  'IngredientView'
->;
-export type IngredientsViewPropsNavigation = {
-  navigation: NavigationScreenProp;
-  route: IngredientsViewRouteProp;
-};
+// type IngredientsViewRouteProp = RouteProp<
+//   StackNavigatorParams,
+//   'IngredientView'
+// >;
+// export type IngredientsViewPropsNavigation = {
+//   navigation: NavigationScreenProp;
+//   route: IngredientsViewRouteProp;
+// };
 
 type SingleFoodRouteProp = RouteProp<StackNavigatorParams, 'SingleFoodScreen'>;
 export type SingleFoodPropsNavigation = {

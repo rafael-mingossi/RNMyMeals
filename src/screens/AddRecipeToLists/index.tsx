@@ -19,9 +19,13 @@ const AddRecipeToLists = ({navigation}: ScreenTopStack) => {
       renderItem={({item, index}) => (
         <SingleFood
           hasCheckBox
+          items={filteredRecipesContext}
+          isFood={false}
           item={item}
           index={index}
-          onPress={() => navigation.navigate('IngredientView', {item: item})}
+          onPress={() =>
+            navigation.navigate('IngredientView', {item: item, isFood: false})
+          }
         />
       )}
       // ListEmptyComponent={
