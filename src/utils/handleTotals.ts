@@ -1,4 +1,6 @@
-import {AddedItem, AddedLunch, Tables} from '@types';
+import {AddedItem, AddedLunch, InsertTables} from '@types';
+
+type Lunchs = Partial<InsertTables<'lunchs'>>;
 
 export const handleTotals = (items: AddedItem[]) => {
   return items?.reduce(
@@ -21,6 +23,31 @@ export const handleTotals = (items: AddedItem[]) => {
       fat: 0,
       fibre: 0,
       sodium: 0,
+    },
+  );
+};
+
+export const handleTotalsUpdate = (items: Lunchs[]) => {
+  return items?.reduce(
+    (acc, item) => {
+      const {tCalories, tCarbs, tProtein, tFat, tFibre, tSodium} = item;
+
+      acc.tCalories! += tCalories!;
+      acc.tCarbs! += tCarbs!;
+      acc.tProtein! += tProtein!;
+      acc.tFat! += tFat!;
+      acc.tFibre! += tFibre!;
+      acc.tSodium! += tSodium!;
+
+      return acc;
+    },
+    {
+      tCalories: 0,
+      tCarbs: 0,
+      tProtein: 0,
+      tFat: 0,
+      tFibre: 0,
+      tSodium: 0,
     },
   );
 };

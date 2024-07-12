@@ -1,11 +1,20 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {Pressable, SafeAreaView, Text} from 'react-native';
+import {useAuth} from '@providers';
 
 const Profile = () => {
+  const {userLogOut} = useAuth();
+
   return (
-    <View>
+    <SafeAreaView>
       <Text>PROFILE</Text>
-    </View>
+      <Pressable
+        onPress={async () => {
+          userLogOut();
+        }}>
+        <Text>LOG OUT</Text>
+      </Pressable>
+    </SafeAreaView>
   );
 };
 

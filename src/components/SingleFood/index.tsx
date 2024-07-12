@@ -12,10 +12,10 @@ import {useLists} from '@providers';
 type SingleFoodProps = {
   index: number;
   item: SingleFoodType;
-  items: SingleFoodType[];
+  items?: SingleFoodType[];
   hasCheckBox?: boolean;
   onPress?: () => void;
-  isFood: boolean;
+  isFood?: boolean;
 };
 
 const SingleFood: FC<SingleFoodProps> = ({
@@ -28,8 +28,8 @@ const SingleFood: FC<SingleFoodProps> = ({
 }) => {
   const navigation: NavigationScreenProp = useNavigation();
   const [isChecked, setIsChecked] = useState(false);
-  const {addLunchItem, lunchItems, removeLunchItem, unselectCheckbox} =
-    useLists();
+  const {addLunchItem, lunchItems, removeLunchItem} = useLists();
+  console.log('lunchItems =>', lunchItems);
   const handleRemoveLunchItem = () => {
     // Find the added item's ID using Food ID and returning it
     if (isFood) {
@@ -41,6 +41,7 @@ const SingleFood: FC<SingleFoodProps> = ({
       )?.id;
     }
   };
+
   useEffect(() => {
     handleRemoveLunchItem();
   }, [item, items, index]);
@@ -49,7 +50,7 @@ const SingleFood: FC<SingleFoodProps> = ({
     setIsChecked(!isChecked);
 
     //Get the current clicked item and update it directly
-    if (item.id === items[index]?.id) {
+    if (item.id === items!![index]?.id) {
       item.checked = !isChecked;
       if (isFood) {
         const objWithoutChecked = Object.assign({}, item, {
@@ -91,6 +92,7 @@ const SingleFood: FC<SingleFoodProps> = ({
       }
     }
   };
+
   return (
     <View style={[styles.container, hasCheckBox && styles.padding]}>
       {hasCheckBox ? (

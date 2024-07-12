@@ -1,38 +1,44 @@
 import React from 'react';
 import {
-  Text,
-  StyleSheet,
+  ActivityIndicator,
   Pressable,
   SafeAreaView,
   ScrollView,
   StatusBar,
+  Text,
+  View,
 } from 'react-native';
-import {useAuth} from '@providers';
 import {PieChart} from 'react-native-gifted-charts';
-import {useGetFoodsById, useMyRecipesList} from '@api';
+import {useGetFoodsById, useMyLunchsList, useMyRecipesList} from '@api';
 import {Calendar} from '@components';
 import {Colours} from '@constants';
 import styles from './dashboard.styles.ts';
+import {BottomScreenStack} from '../../config/BottomNavigator.tsx';
 
-const Dashboard = () => {
+const Dashboard = ({navigation}: BottomScreenStack) => {
   const data = [{value: 50}, {value: 80}, {value: 90}];
-  const {userLogOut} = useAuth();
-  const {data: ingredients} = useGetFoodsById();
-  const {data: recipes} = useMyRecipesList();
+
+  const {data: ingredients, isLoading: loadFoods} = useGetFoodsById();
+  const {data: recipes, isLoading: loadRecipes} = useMyRecipesList();
+  const {data: lunchs, isLoading: loadLunchs} = useMyLunchsList();
+
+  if (loadFoods || loadRecipes || loadLunchs) {
+    return (
+      <View style={styles.loadingView}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
       <Calendar />
-      <ScrollView>
-        <Pressable
-          onPress={async () => {
-            userLogOut();
-          }}>
-          <Text>DASH</Text>
-        </Pressable>
-
+      <ScrollView contentContainerStyle={styles.scrollViewWrapper}>
         <PieChart data={data} donut />
+        <Pressable onPress={() => navigation.navigate('AllMeals')}>
+          <Text>ALL MEALS</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );

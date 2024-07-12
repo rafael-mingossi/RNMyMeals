@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   iconWrapper: {
     borderWidth: 1,
-    borderColor: Colours.black,
+    borderColor: Colours.gray,
     backgroundColor: Colours.white,
     height: Dimensions.get('window').width * 0.18,
     width: Dimensions.get('window').width * 0.18,

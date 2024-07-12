@@ -23,34 +23,24 @@ const IngredientView = ({
     {value: prop?.protein, color: Colours.darkYellow},
     {value: prop?.carbs, color: Colours.midGreen},
   ];
+  const shallow = {
+    ...prop,
+    calories: (Number(quantity) * prop?.calories) / prop?.serv_size,
+    carbs: (Number(quantity) * prop?.carbs) / prop?.serv_size,
+    fat: (Number(quantity) * prop?.fat) / prop?.serv_size,
+    fibre: (Number(quantity) * prop?.fibre!) / prop?.serv_size,
+    protein: (Number(quantity) * prop?.protein) / prop?.serv_size,
+    sodium: (Number(quantity) * prop?.sodium!) / prop?.serv_size,
+  };
+
   const handleAddIngredient = () => {
     if (isFoodProp === undefined) {
-      const shallow = {
-        ...prop,
-        calories: (Number(quantity) * prop?.calories) / prop?.serv_size,
-        carbs: (Number(quantity) * prop?.carbs) / prop?.serv_size,
-        fat: (Number(quantity) * prop?.fat) / prop?.serv_size,
-        fibre: (Number(quantity) * prop?.fibre!) / prop?.serv_size,
-        protein: (Number(quantity) * prop?.protein) / prop?.serv_size,
-        sodium: (Number(quantity) * prop?.sodium!) / prop?.serv_size,
-      };
-
       addItem(
         quantity ? shallow : prop,
         quantity ? Number(quantity) : prop?.serv_size,
       );
       navigation.goBack();
     } else if (isFoodProp) {
-      const shallow = {
-        ...prop,
-        calories: (Number(quantity) * prop?.calories) / prop?.serv_size,
-        carbs: (Number(quantity) * prop?.carbs) / prop?.serv_size,
-        fat: (Number(quantity) * prop?.fat) / prop?.serv_size,
-        fibre: (Number(quantity) * prop?.fibre!) / prop?.serv_size,
-        protein: (Number(quantity) * prop?.protein) / prop?.serv_size,
-        sodium: (Number(quantity) * prop?.sodium!) / prop?.serv_size,
-      };
-
       addLunchItem(
         quantity ? shallow : prop,
         null,

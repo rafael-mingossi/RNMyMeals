@@ -20,6 +20,7 @@ import {
   IngredientView,
   RecipeDetails,
   AddListItems,
+  AllMeals,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth, FilteredItemsProvider} from '@providers';
@@ -44,6 +45,7 @@ export type StackNavigatorParams = {
   Recipes: undefined;
   RecipeDetails: {recipeId: number};
   AddListItems: {listItem: 'breakie' | 'snack' | 'lunch' | 'dinner'};
+  AllMeals: undefined;
 };
 
 //Navigation to screens only, using Navigation prop
@@ -234,6 +236,14 @@ const ScreenNavigator = () => {
                 component={AddListItems}
                 options={{
                   headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="AllMeals"
+                component={AllMeals}
+                options={{
+                  headerShown: true,
+                  title: 'All Meals',
                 }}
               />
             </>

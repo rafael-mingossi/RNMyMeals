@@ -4,10 +4,10 @@ import {SingleFood} from '@components';
 import {Searchbar} from 'react-native-paper';
 import styles from './foods.styles.ts';
 import {Colours} from '@constants';
-import {ScreenStack} from '@config';
 import {useFiltered} from '@providers';
+import {BottomScreenStack} from '../../config/BottomNavigator.tsx';
 
-const Foods = ({navigation}: ScreenStack) => {
+const Foods = ({navigation}: BottomScreenStack) => {
   const {searchQuery, setSearchQuery, filteredFoodsContext} = useFiltered();
 
   return (
@@ -33,7 +33,7 @@ const Foods = ({navigation}: ScreenStack) => {
           <SingleFood
             item={item}
             index={index}
-            foods={filteredFoodsContext}
+            items={filteredFoodsContext}
             onPress={() => navigation?.navigate('SingleFoodScreen', {item})}
           />
         )}

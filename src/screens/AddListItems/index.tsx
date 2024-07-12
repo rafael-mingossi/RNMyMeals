@@ -7,15 +7,29 @@ import {Searchbar} from 'react-native-paper';
 import {Colours} from '@constants';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useFiltered, useLists} from '@providers';
+import {calendarStore, listsStore} from '@stores';
 
 const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
   const insets = useSafeAreaInsets();
   const {searchQuery, setSearchQuery} = useFiltered();
-  const {addLunch} = useLists();
+  const {lunchs} = listsStore();
+  const {date} = calendarStore();
+  const {addLunch, lunchItems, updateLunch} = useLists();
+
+  const getIdToUpdateLunch = () => {
+    return lunchs.find(item => item.dateAdded === date.format('YYYY-MM-DD'))
+      ?.id;
+  };
 
   const handleLog = () => {
+    const lunchFiltered = lunchs?.filter(
+      item => item.dateAdded === date.format('YYYY-MM-DD'),
+    );
+
     if (route?.params.listItem === 'lunch') {
-      addLunch(() => navigation.goBack());
+      lunchFiltered.length
+        ? updateLunch(getIdToUpdateLunch()!, () => navigation.goBack())
+        : addLunch(() => navigation.goBack());
     }
   };
 
@@ -43,7 +57,11 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
       <View style={styles.buttonsWrapper}>
         <ButtonText children={'Return'} onPress={() => navigation.goBack()} />
 
-        <ButtonText children={'Log'} onPress={handleLog} />
+        <ButtonText
+          children={'Log'}
+          onPress={handleLog}
+          disabled={!lunchItems.length}
+        />
       </View>
     </View>
   );

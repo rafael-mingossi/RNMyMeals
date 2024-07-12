@@ -1,12 +1,19 @@
 import React, {PropsWithChildren, useContext, useState} from 'react';
 import {createContext} from 'react';
-import {AddedLunch, FoodAddedItem, RecipeAddedItem, Tables} from '@types';
-import {useInsertLunch, useInsertLunchItems} from '@api';
-import {handleTotalLists} from '@utils';
-import {calendarStore} from '@stores';
+import {
+  AddedLunch,
+  FoodAddedItem,
+  InsertTables,
+  RecipeAddedItem,
+  Tables,
+} from '@types';
+import {useInsertLunch, useInsertLunchItems, useUpdateLunch} from '@api';
+import {handleTotalLists, handleTotalsUpdate} from '@utils';
+import {calendarStore, listsStore} from '@stores';
 
 type Food = Tables<'foods'>;
 type Recipe = Tables<'recipes'>;
+type Lunchs = Partial<InsertTables<'lunchs'>>;
 
 type ListsType = {
   lunchItems: AddedLunch[];
@@ -18,6 +25,7 @@ type ListsType = {
   ) => void;
   removeLunchItem: (id: string) => void;
   addLunch: (onSuccess: () => void) => void;
+  updateLunch: (id: number, onSuccess: () => void) => void;
   unselectCheckbox: () => void;
 };
 
@@ -25,6 +33,7 @@ const ListsContext = createContext<ListsType>({
   lunchItems: [],
   addLunchItem: () => {},
   addLunch: () => {},
+  updateLunch: () => {},
   removeLunchItem: () => {},
   unselectCheckbox: () => {},
 });
@@ -32,9 +41,11 @@ const ListsContext = createContext<ListsType>({
 const ListsProvider = ({children}: PropsWithChildren) => {
   const [lunchItems, setLunchItems] = useState<AddedLunch[]>([]);
   const {date} = calendarStore();
+  const {lunchs} = listsStore();
 
   const {mutate: addLunchToDb} = useInsertLunch();
   const {mutate: addLunchItems} = useInsertLunchItems();
+  const {mutate: updateLunchs} = useUpdateLunch();
 
   function generateRandomId() {
     const randomDecimal = Math.random();
@@ -68,6 +79,39 @@ const ListsProvider = ({children}: PropsWithChildren) => {
     };
 
     setLunchItems([newItem, ...lunchItems]);
+  };
+
+  const updateLunch = (id: number, onSuccess: () => void) => {
+    const previousLunchByDate = lunchs?.filter(
+      item => item.dateAdded === date.format('YYYY-MM-DD'),
+    );
+
+    const combinedInputs = {
+      dateAdded: date.format('MM/DD/YYYY'),
+      tCalories:
+        handleTotalsUpdate(previousLunchByDate).tCalories! +
+        handleTotalLists(lunchItems).calories,
+      tCarbs:
+        handleTotalsUpdate(previousLunchByDate)?.tCarbs! +
+        handleTotalLists(lunchItems)?.carbs,
+      tProtein:
+        handleTotalsUpdate(previousLunchByDate)?.tProtein! +
+        handleTotalLists(lunchItems)?.protein,
+      tSodium:
+        handleTotalsUpdate(previousLunchByDate)?.tSodium! +
+        handleTotalLists(lunchItems)?.sodium,
+      tFat:
+        handleTotalsUpdate(previousLunchByDate)?.tFat! +
+        handleTotalLists(lunchItems)?.fat,
+      tFibre:
+        handleTotalsUpdate(previousLunchByDate)?.tFibre! +
+        handleTotalLists(lunchItems)?.fibre,
+    };
+
+    updateLunchs(
+      {id, userInput: combinedInputs},
+      {onSuccess: data => saveLunchItems(data, onSuccess)},
+    );
   };
 
   const addLunch = (onSuccess: () => void) => {
@@ -125,6 +169,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
         addLunch,
         removeLunchItem,
         unselectCheckbox,
+        updateLunch,
       }}>
       {children}
     </ListsContext.Provider>
