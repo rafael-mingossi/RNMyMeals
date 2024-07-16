@@ -10,18 +10,16 @@ import {
 import dayjs from 'dayjs';
 import localeData from 'dayjs/plugin/localeData';
 import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import {getDaysInMonth, renderMonthName, renderWeekDay} from '@utils';
+// import timezone from 'dayjs/plugin/timezone';
+import {getDaysInMonth, hS, renderMonthName, renderWeekDay} from '@utils';
 import styles from './calendar.styles.ts';
+import {Icon} from 'react-native-paper';
 
 dayjs.extend(utc);
 dayjs.extend(localeData);
 // dayjs.extend(timezone);
 // dayjs.tz.guess();
 
-//// ICONS
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faChevronLeft, faChevronRight} from '@fortawesome/free-solid-svg-icons';
 import {calendarStore} from '@stores';
 
 type SingleDayList = {
@@ -31,12 +29,19 @@ type SingleDayList = {
 
 const Calendar = () => {
   const {date, setDate} = calendarStore();
-  const [lIndex, setLIndex] = useState(dayjs().date() - 1);
+  const daysInMonth = getDaysInMonth(date);
+
+  const [lIndex, setLIndex] = useState(() =>
+    daysInMonth.findIndex(day => {
+      return day.date.date() === date.date();
+    }),
+  );
   const [showMonthModal, setShowMonthModal] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(dayjs().month());
   const [selectedMonthModal, setSelectedMonthModal] = useState(dayjs().month());
 
   const ref = useRef<FlatList>(null);
+
   const handlePrevDay = () => {
     setDate(date.subtract(1, 'day'));
     if (lIndex === 0) {
@@ -58,8 +63,6 @@ const Calendar = () => {
     setDate(newDate);
   };
 
-  const daysInMonth = getDaysInMonth(date);
-
   const renderDaysList = ({item, index}: SingleDayList) => {
     const dayShort = item.date;
     // const isSelected = dayShort?.isSame(date, 'day');
@@ -78,15 +81,17 @@ const Calendar = () => {
       </TouchableOpacity>
     );
   };
-
   useEffect(() => {
-    ref?.current?.scrollToIndex({
-      index: lIndex,
-      animated: true,
-      viewOffset: 10,
-      viewPosition: 0.5,
-    });
-  }, [lIndex]);
+    // daysInMonth.filter(day => console.log(day.date.date() === date.date()));
+    setTimeout(() => {
+      ref?.current?.scrollToIndex({
+        index: lIndex,
+        animated: true,
+        viewOffset: 10, //this is in pixels, 10px from the edges works like a margin
+        viewPosition: 0.4, //0.5 middle of screen
+      });
+    }, 800);
+  }, [lIndex, daysInMonth]);
 
   const handleOnCloseModal = () => {
     setShowMonthModal(false);
@@ -101,6 +106,19 @@ const Calendar = () => {
     handleSetMonth(selectedMonthModal);
     handleOnCloseModal();
   };
+
+  // const handleScrollToIndexFailed = (error: {
+  //   averageItemLength: number;
+  //   index: number;
+  // }) => {
+  //   const centeredOffset =
+  //     error.index * error.averageItemLength -
+  //     ((daysInMonth.length - 1) * hS(50)) / 2;
+  //   ref.current?.scrollToOffset({
+  //     offset: centeredOffset,
+  //     animated: true,
+  //   });
+  // };
 
   return (
     <View style={styles.calendarContainer}>
@@ -151,7 +169,7 @@ const Calendar = () => {
       </Modal>
       <View style={styles.header}>
         <TouchableOpacity onPress={handlePrevDay}>
-          <FontAwesomeIcon icon={faChevronLeft} />
+          <Icon size={hS(22)} source={'chevron-left'} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setShowMonthModal(!showMonthModal)}>
           <Text style={styles.headerText}>
@@ -161,18 +179,22 @@ const Calendar = () => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleNextDay}>
-          <FontAwesomeIcon icon={faChevronRight} />
+          <Icon size={hS(22)} source={'chevron-right'} />
         </TouchableOpacity>
       </View>
+
       <FlatList
         ref={ref}
         horizontal
+        bounces={false}
         showsHorizontalScrollIndicator={false}
+        // initialScrollIndex={lIndex}
         getItemLayout={_ => ({
           length: daysInMonth.length,
           offset: daysInMonth.length * lIndex,
           index: lIndex,
         })}
+        // onScrollToIndexFailed={handleScrollToIndexFailed}
         style={{flexGrow: 0}}
         keyExtractor={(_, index) => index.toString()}
         contentContainerStyle={styles.flatListStyles}

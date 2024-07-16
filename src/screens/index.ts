@@ -18,3 +18,4 @@ export {default as AddListItems} from './AddListItems/index.tsx';
 export {default as AddFoodToLists} from './AddFoodToLists/index.tsx';
 export {default as AddRecipeToLists} from './AddRecipeToLists/index.tsx';
 export {default as AllMeals} from './AllMeals/index.tsx';
+export {default as SingleMealLunch} from './SingleMealLunch/index.tsx';

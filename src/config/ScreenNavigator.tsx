@@ -21,6 +21,7 @@ import {
   RecipeDetails,
   AddListItems,
   AllMeals,
+  SingleMealLunch,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth, FilteredItemsProvider} from '@providers';
@@ -46,6 +47,7 @@ export type StackNavigatorParams = {
   RecipeDetails: {recipeId: number};
   AddListItems: {listItem: 'breakie' | 'snack' | 'lunch' | 'dinner'};
   AllMeals: undefined;
+  SingleMealLunch: undefined;
 };
 
 //Navigation to screens only, using Navigation prop
@@ -99,7 +101,7 @@ export type SingleFoodEditPropsNavigation = {
 const Stack = createNativeStackNavigator<StackNavigatorParams>();
 
 function HeaderLeft() {
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp = useNavigation();
   return (
     <TouchableOpacity onPress={() => navigation.goBack()}>
       <Icon size={hS(22)} source={'keyboard-backspace'} color={Colours.white} />
@@ -244,6 +246,14 @@ const ScreenNavigator = () => {
                 options={{
                   headerShown: true,
                   title: 'All Meals',
+                }}
+              />
+              <Stack.Screen
+                name="SingleMealLunch"
+                component={SingleMealLunch}
+                options={{
+                  headerShown: true,
+                  title: 'Lunch',
                 }}
               />
             </>

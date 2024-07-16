@@ -5,19 +5,19 @@ import {hS, mS, vS} from '@utils';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: Colours.white,
+    backgroundColor: Colours.white,
   },
   scrollView: {
     paddingHorizontal: hS(10),
     paddingVertical: vS(10),
-    rowGap: vS(10),
+    rowGap: vS(15),
   },
   surface: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
-    padding: mS(15),
+    padding: mS(17),
     rowGap: vS(8),
   },
   rowItem: {
@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
   calValTxt: {
     fontFamily: Fonts.semiBold,
     fontSize: mS(24),
-    marginRight: hS(20),
     color: Colours.green,
   },
   calsTxt: {color: Colours.green, fontFamily: Fonts.semiBold, fontSize: mS(16)},

@@ -55,15 +55,27 @@ export const handleTotalsUpdate = (items: Lunchs[]) => {
 export const handleTotalLists = (items: AddedLunch[]) => {
   return items?.reduce(
     (acc, item) => {
-      const {calories, carbs, protein, fat, fibre, sodium} =
-        item?.food?.itemFood!;
+      if (item?.food?.itemFood) {
+        const {calories, carbs, protein, fat, fibre, sodium} =
+          item?.food?.itemFood;
 
-      acc.calories += calories;
-      acc.carbs += carbs;
-      acc.protein += protein;
-      acc.fat += fat;
-      acc.fibre += fibre!;
-      acc.sodium += sodium!;
+        acc.calories += calories;
+        acc.carbs += carbs;
+        acc.protein += protein;
+        acc.fat += fat;
+        acc.fibre += fibre!;
+        acc.sodium += sodium!;
+      } else if (item?.recipe?.itemRecipe) {
+        const {tCalories, tCarbs, tProtein, tFat, tFibre, tSodium} =
+          item?.recipe?.itemRecipe;
+
+        acc.calories += tCalories;
+        acc.carbs += tCarbs;
+        acc.protein += tProtein;
+        acc.fat += tFat;
+        acc.fibre += tFibre!;
+        acc.sodium += tSodium!;
+      }
 
       return acc;
     },

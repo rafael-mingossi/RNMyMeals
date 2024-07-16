@@ -1,19 +1,18 @@
-import React, {PropsWithChildren, useContext, useState} from 'react';
+import React, {
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  useContext,
+  useState,
+} from 'react';
 import {createContext} from 'react';
-import {
-  AddedLunch,
-  FoodAddedItem,
-  InsertTables,
-  RecipeAddedItem,
-  Tables,
-} from '@types';
+import {AddedLunch, FoodAddedItem, RecipeAddedItem, Tables} from '@types';
 import {useInsertLunch, useInsertLunchItems, useUpdateLunch} from '@api';
 import {handleTotalLists, handleTotalsUpdate} from '@utils';
 import {calendarStore, listsStore} from '@stores';
 
 type Food = Tables<'foods'>;
 type Recipe = Tables<'recipes'>;
-type Lunchs = Partial<InsertTables<'lunchs'>>;
 
 type ListsType = {
   lunchItems: AddedLunch[];
@@ -27,6 +26,10 @@ type ListsType = {
   addLunch: (onSuccess: () => void) => void;
   updateLunch: (id: number, onSuccess: () => void) => void;
   unselectCheckbox: () => void;
+  handleDisableCheckbox: (singleRecipe: Food) => boolean | undefined;
+  clearCart: () => void;
+  isChecked: {[key: number]: boolean};
+  setIsChecked: Dispatch<SetStateAction<ListsType['isChecked']>>;
 };
 
 const ListsContext = createContext<ListsType>({
@@ -36,13 +39,22 @@ const ListsContext = createContext<ListsType>({
   updateLunch: () => {},
   removeLunchItem: () => {},
   unselectCheckbox: () => {},
+  handleDisableCheckbox: () => true,
+  clearCart: () => [],
+  isChecked: {},
+  setIsChecked: () => {},
 });
 
 const ListsProvider = ({children}: PropsWithChildren) => {
   const [lunchItems, setLunchItems] = useState<AddedLunch[]>([]);
+  const [isChecked, setIsChecked] = useState<ListsType['isChecked']>({});
   const {date} = calendarStore();
   const {lunchs} = listsStore();
-
+  // console.log('lunchItems =>>', lunchItems);
+  //
+  // lunchItems.map(f => console.log('FOODS =>>', f.food?.itemFood));
+  //
+  // lunchItems.map(r => console.log('RECIPES =>>', r.recipe?.itemRecipe));
   const {mutate: addLunchToDb} = useInsertLunch();
   const {mutate: addLunchItems} = useInsertLunchItems();
   const {mutate: updateLunchs} = useUpdateLunch();
@@ -156,9 +168,23 @@ const ListsProvider = ({children}: PropsWithChildren) => {
     });
   };
 
+  const handleDisableCheckbox = (singleRecipe: Food) => {
+    if (lunchItems?.length) {
+      return lunchItems
+        .filter(res => res.recipe?.recipe_id === singleRecipe.id)
+        .some(item => item.recipe?.recipeQuantity === singleRecipe.serv_size);
+    }
+  };
+
   const unselectCheckbox = () => {
     setLunchItems(lunchItems.map(item => ({...item, isChecked: false})));
     setLunchItems([]);
+  };
+
+  const clearCart = () => {
+    setLunchItems(lunchItems.map(item => ({...item, isChecked: false})));
+    setLunchItems([]);
+    setIsChecked({});
   };
 
   return (
@@ -170,6 +196,10 @@ const ListsProvider = ({children}: PropsWithChildren) => {
         removeLunchItem,
         unselectCheckbox,
         updateLunch,
+        handleDisableCheckbox,
+        clearCart,
+        setIsChecked,
+        isChecked,
       }}>
       {children}
     </ListsContext.Provider>

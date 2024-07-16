@@ -1,11 +1,21 @@
-import React, {useEffect} from 'react';
-import {ActivityIndicator, Image, ScrollView, Text, View} from 'react-native';
+import React from 'react';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import styles from './allMeals.styles.ts';
 import {Surface} from 'react-native-paper';
 import {Calendar} from '@components';
 import {calendarStore, listsStore} from '@stores';
+import {Colours} from '@constants';
+import {ScreenStack} from '@config';
 
-const AllMeals = () => {
+const AllMeals = ({navigation}: ScreenStack) => {
   const {lunchs} = listsStore();
   const {date} = calendarStore();
 
@@ -15,6 +25,7 @@ const AllMeals = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar backgroundColor={Colours.green} />
       <Calendar />
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Surface style={styles.surface} elevation={3}>
@@ -32,7 +43,9 @@ const AllMeals = () => {
               500 <Text style={styles.calsTxt}>cals</Text>
             </Text>
           </View>
-          <View style={styles.rowItem}>
+          <TouchableOpacity
+            style={styles.rowItem}
+            onPress={() => navigation.navigate('SingleMealLunch')}>
             <View style={styles.iconAndText}>
               <View style={styles.iconWrapper}>
                 <Image
@@ -46,7 +59,7 @@ const AllMeals = () => {
               {lunchFiltered?.length ? lunchFiltered[0]?.tCalories : 0}{' '}
               <Text style={styles.calsTxt}>cals</Text>
             </Text>
-          </View>
+          </TouchableOpacity>
           <View style={styles.rowItem}>
             <View style={styles.iconAndText}>
               <View style={styles.iconWrapper}>

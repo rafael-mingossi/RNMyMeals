@@ -17,8 +17,8 @@ type AuthData = {
 };
 
 export type Profile = {
-  id: string;
-  group: string;
+  id?: string;
+  group?: string;
 };
 
 const AuthContext = createContext<AuthData>({
