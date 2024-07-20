@@ -37,6 +37,18 @@ export type AddedItem = {
   quantity: number;
 };
 
+export type LunchDetails = {
+  created_at: string;
+  foodQuantity: number | null;
+  food_id: number | null;
+  foods: TablesType<'foods'> | null;
+  id: number;
+  lunch_id: number | null;
+  recipeQuantity: number | null;
+  recipe_id: number | null;
+  recipes: TablesType<'recipes'> | null;
+};
+
 export type Profile = {
   id: string;
   group: string;

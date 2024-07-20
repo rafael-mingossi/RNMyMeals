@@ -6,9 +6,24 @@ import React, {
   useState,
 } from 'react';
 import {createContext} from 'react';
-import {AddedLunch, FoodAddedItem, RecipeAddedItem, Tables} from '@types';
-import {useInsertLunch, useInsertLunchItems, useUpdateLunch} from '@api';
-import {handleTotalLists, handleTotalsUpdate} from '@utils';
+import {
+  AddedLunch,
+  FoodAddedItem,
+  LunchDetails,
+  RecipeAddedItem,
+  Tables,
+} from '@types';
+import {
+  useInsertLunch,
+  useInsertLunchItems,
+  useUpdateLunch,
+  useDeleteLunchItems,
+} from '@api';
+import {
+  handleTotalLists,
+  handleTotalListsUpdate,
+  handleTotalsUpdate,
+} from '@utils';
 import {calendarStore, listsStore} from '@stores';
 
 type Food = Tables<'foods'>;
@@ -25,7 +40,13 @@ type ListsType = {
   removeLunchItem: (id: string) => void;
   addLunch: (onSuccess: () => void) => void;
   updateLunch: (id: number, onSuccess: () => void) => void;
-  unselectCheckbox: () => void;
+  updateAllLunch: (
+    id: number,
+    onSuccess: () => void,
+    items: LunchDetails[],
+    dateProp: string,
+    Ids: number[],
+  ) => void;
   handleDisableCheckbox: (singleRecipe: Food) => boolean | undefined;
   clearCart: () => void;
   isChecked: {[key: number]: boolean};
@@ -37,8 +58,8 @@ const ListsContext = createContext<ListsType>({
   addLunchItem: () => {},
   addLunch: () => {},
   updateLunch: () => {},
+  updateAllLunch: () => {},
   removeLunchItem: () => {},
-  unselectCheckbox: () => {},
   handleDisableCheckbox: () => true,
   clearCart: () => [],
   isChecked: {},
@@ -58,6 +79,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
   const {mutate: addLunchToDb} = useInsertLunch();
   const {mutate: addLunchItems} = useInsertLunchItems();
   const {mutate: updateLunchs} = useUpdateLunch();
+  const {mutate: deleteLunchItems} = useDeleteLunchItems();
 
   function generateRandomId() {
     const randomDecimal = Math.random();
@@ -122,8 +144,47 @@ const ListsProvider = ({children}: PropsWithChildren) => {
 
     updateLunchs(
       {id, userInput: combinedInputs},
-      {onSuccess: data => saveLunchItems(data, onSuccess)},
+      {
+        onSuccess: data => {
+          saveLunchItems(data, onSuccess);
+        },
+      },
     );
+  };
+
+  const updateAllLunch = (
+    id: number,
+    onSuccess: () => void,
+    items: LunchDetails[],
+    dateProp: string,
+    Ids: number[],
+  ) => {
+    const combinedInputs = {
+      dateAdded: dateProp,
+      tCalories: handleTotalListsUpdate(items!).calories,
+      tCarbs: handleTotalListsUpdate(items!)?.carbs,
+      tProtein: handleTotalListsUpdate(items!)?.protein,
+      tSodium: handleTotalListsUpdate(items!)?.sodium,
+      tFat: handleTotalListsUpdate(items!)?.fat,
+      tFibre: handleTotalListsUpdate(items!)?.fibre,
+    };
+    updateLunchs(
+      {id, userInput: combinedInputs},
+      {
+        onSuccess: () => {
+          handleDeleteLunchItems(onSuccess, Ids);
+        },
+      },
+    );
+  };
+
+  const handleDeleteLunchItems = (onSuccess: () => void, Ids: number[]) => {
+    deleteLunchItems(Ids, {
+      onSuccess: () => {
+        onSuccess();
+      },
+      onError: e => console.log('ERROR DELETING LUNCH ITEMS=>>', e),
+    });
   };
 
   const addLunch = (onSuccess: () => void) => {
@@ -161,7 +222,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
 
     addLunchItems(luItems, {
       onSuccess: () => {
-        unselectCheckbox();
+        clearCart();
         onSuccess();
       },
       onError: e => console.log('ERROR INSERT LUNCH ITEM=>>', e),
@@ -174,11 +235,6 @@ const ListsProvider = ({children}: PropsWithChildren) => {
         .filter(res => res.recipe?.recipe_id === singleRecipe.id)
         .some(item => item.recipe?.recipeQuantity === singleRecipe.serv_size);
     }
-  };
-
-  const unselectCheckbox = () => {
-    setLunchItems(lunchItems.map(item => ({...item, isChecked: false})));
-    setLunchItems([]);
   };
 
   const clearCart = () => {
@@ -194,8 +250,8 @@ const ListsProvider = ({children}: PropsWithChildren) => {
         addLunchItem,
         addLunch,
         removeLunchItem,
-        unselectCheckbox,
         updateLunch,
+        updateAllLunch,
         handleDisableCheckbox,
         clearCart,
         setIsChecked,

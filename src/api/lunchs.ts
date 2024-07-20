@@ -33,6 +33,9 @@ export const useLunchDetails = (id: number) => {
   return useQuery({
     queryKey: ['lunchs', id],
     queryFn: async () => {
+      if (!id) {
+        return null;
+      }
       const {data, error} = await supabase
         .from('lunchs')
         .select('*, lunch_items(*, foods(*), recipes(*))')
@@ -101,9 +104,12 @@ export const useUpdateLunch = () => {
 
       return data;
     },
-    async onSuccess({user_id}) {
+    async onSuccess({user_id, id}) {
       await queryClient.invalidateQueries({
         queryKey: ['lunchs', {userId: user_id}],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['lunchs', id],
       });
     },
   });

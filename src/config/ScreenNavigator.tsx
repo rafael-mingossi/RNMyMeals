@@ -110,7 +110,7 @@ function HeaderLeft() {
 }
 
 function HeaderLeftRounded() {
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp = useNavigation();
   return (
     <TouchableOpacity
       onPress={() => navigation.goBack()}
@@ -137,6 +137,7 @@ const ScreenNavigator = () => {
         <Stack.Navigator
           initialRouteName={'Initial'}
           screenOptions={{
+            headerShown: false,
             headerTitleAlign: 'center',
             headerBackVisible: false,
             headerLeft: () => HeaderLeft(),
@@ -238,6 +239,7 @@ const ScreenNavigator = () => {
                 component={AddListItems}
                 options={{
                   headerShown: false,
+                  gestureEnabled: false,
                 }}
               />
               <Stack.Screen

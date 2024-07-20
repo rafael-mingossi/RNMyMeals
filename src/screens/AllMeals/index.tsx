@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Image,
-  Pressable,
   ScrollView,
   StatusBar,
   Text,
@@ -22,7 +21,6 @@ const AllMeals = ({navigation}: ScreenStack) => {
   const lunchFiltered = lunchs?.filter(
     item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
   );
-
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
@@ -40,7 +38,7 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.iconTxt}>Breakie</Text>
             </View>
             <Text style={styles.calValTxt}>
-              500 <Text style={styles.calsTxt}>cals</Text>
+              0 <Text style={styles.calsTxt}>cals</Text>
             </Text>
           </View>
           <TouchableOpacity
@@ -71,7 +69,7 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.iconTxt}>Snacks</Text>
             </View>
             <Text style={styles.calValTxt}>
-              500 <Text style={styles.calsTxt}>cals</Text>
+              0 <Text style={styles.calsTxt}>cals</Text>
             </Text>
           </View>
           <View style={styles.rowItem}>
@@ -85,7 +83,7 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.iconTxt}>Dinner</Text>
             </View>
             <Text style={styles.calValTxt}>
-              500 <Text style={styles.calsTxt}>cals</Text>
+              0 <Text style={styles.calsTxt}>cals</Text>
             </Text>
           </View>
         </Surface>
@@ -93,7 +91,10 @@ const AllMeals = ({navigation}: ScreenStack) => {
           <Text style={styles.dayTotalsTitle}>Day Totals</Text>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Cals</Text>
-            <Text style={styles.dayTotalsTxt}>500 cals</Text>
+            <Text style={styles.dayTotalsTxt}>
+              {' '}
+              {lunchFiltered?.length ? lunchFiltered[0]?.tCalories : 0} cals
+            </Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Protein</Text>

@@ -19,6 +19,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: mS(17),
     rowGap: vS(8),
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   rowItem: {
     flexDirection: 'row',

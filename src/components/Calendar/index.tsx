@@ -195,7 +195,7 @@ const Calendar = () => {
           index: lIndex,
         })}
         // onScrollToIndexFailed={handleScrollToIndexFailed}
-        style={{flexGrow: 0}}
+        style={styles.flatList}
         keyExtractor={(_, index) => index.toString()}
         contentContainerStyle={styles.flatListStyles}
         data={daysInMonth}

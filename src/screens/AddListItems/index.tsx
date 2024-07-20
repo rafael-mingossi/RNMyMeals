@@ -6,8 +6,7 @@ import {
   LayoutChangeEvent,
   Pressable,
   Image,
-  ScrollView,
-  Dimensions,
+  BackHandler,
 } from 'react-native';
 import styles from './addListItems.styles.ts';
 import {ButtonText} from '@components';
@@ -31,13 +30,32 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
   const {searchQuery, setSearchQuery} = useFiltered();
   const {lunchs} = listsStore();
   const {date} = calendarStore();
-  const {addLunch, lunchItems, updateLunch, removeLunchItem, clearCart} =
-    useLists();
+  const {addLunch, lunchItems, updateLunch, clearCart} = useLists();
   const sheetRef = useRef<BottomSheetMethods>(null);
   const layoutRef = useRef<View>(null);
   const [childHeight, setChildHeight] = useState(0);
 
   // const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+  // Handle Android back button behavior
+  const handleBackPress = () => {
+    if (lunchItems.length) {
+      sheetRef.current?.open(); // Open bottom sheet for confirmation
+      return true; // Prevent default back action
+    } else {
+      navigation.goBack(); // Go back if no items in cart
+    }
+    return false; // Allow default back action if needed
+  };
+
+  useEffect(() => {
+    const backSubscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress,
+    );
+
+    return () => backSubscription.remove();
+  }, [lunchItems.length]);
 
   //Getting the total height of the cart items + bottom buttons
   const handleLayout = (event: LayoutChangeEvent) => {
