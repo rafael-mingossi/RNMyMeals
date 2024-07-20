@@ -1,9 +1,30 @@
-import React, {PropsWithChildren, useContext, useState} from 'react';
+import React, {
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  useContext,
+  useState,
+} from 'react';
 import {createContext} from 'react';
-import {AddedLunch, FoodAddedItem, RecipeAddedItem, Tables} from '@types';
-import {useInsertLunch, useInsertLunchItems} from '@api';
-import {handleTotalLists} from '@utils';
-import {calendarStore} from '@stores';
+import {
+  AddedLunch,
+  FoodAddedItem,
+  LunchDetails,
+  RecipeAddedItem,
+  Tables,
+} from '@types';
+import {
+  useInsertLunch,
+  useInsertLunchItems,
+  useUpdateLunch,
+  useDeleteLunchItems,
+} from '@api';
+import {
+  handleTotalLists,
+  handleTotalListsUpdate,
+  handleTotalsUpdate,
+} from '@utils';
+import {calendarStore, listsStore} from '@stores';
 
 type Food = Tables<'foods'>;
 type Recipe = Tables<'recipes'>;
@@ -18,23 +39,47 @@ type ListsType = {
   ) => void;
   removeLunchItem: (id: string) => void;
   addLunch: (onSuccess: () => void) => void;
-  unselectCheckbox: () => void;
+  updateLunch: (id: number, onSuccess: () => void) => void;
+  updateAllLunch: (
+    id: number,
+    onSuccess: () => void,
+    items: LunchDetails[],
+    dateProp: string,
+    Ids: number[],
+  ) => void;
+  handleDisableCheckbox: (singleRecipe: Food) => boolean | undefined;
+  clearCart: () => void;
+  isChecked: {[key: number]: boolean};
+  setIsChecked: Dispatch<SetStateAction<ListsType['isChecked']>>;
 };
 
 const ListsContext = createContext<ListsType>({
   lunchItems: [],
   addLunchItem: () => {},
   addLunch: () => {},
+  updateLunch: () => {},
+  updateAllLunch: () => {},
   removeLunchItem: () => {},
-  unselectCheckbox: () => {},
+  handleDisableCheckbox: () => true,
+  clearCart: () => [],
+  isChecked: {},
+  setIsChecked: () => {},
 });
 
 const ListsProvider = ({children}: PropsWithChildren) => {
   const [lunchItems, setLunchItems] = useState<AddedLunch[]>([]);
+  const [isChecked, setIsChecked] = useState<ListsType['isChecked']>({});
   const {date} = calendarStore();
-
+  const {lunchs} = listsStore();
+  // console.log('lunchItems =>>', lunchItems);
+  //
+  // lunchItems.map(f => console.log('FOODS =>>', f.food?.itemFood));
+  //
+  // lunchItems.map(r => console.log('RECIPES =>>', r.recipe?.itemRecipe));
   const {mutate: addLunchToDb} = useInsertLunch();
   const {mutate: addLunchItems} = useInsertLunchItems();
+  const {mutate: updateLunchs} = useUpdateLunch();
+  const {mutate: deleteLunchItems} = useDeleteLunchItems();
 
   function generateRandomId() {
     const randomDecimal = Math.random();
@@ -68,6 +113,78 @@ const ListsProvider = ({children}: PropsWithChildren) => {
     };
 
     setLunchItems([newItem, ...lunchItems]);
+  };
+
+  const updateLunch = (id: number, onSuccess: () => void) => {
+    const previousLunchByDate = lunchs?.filter(
+      item => item.dateAdded === date.format('YYYY-MM-DD'),
+    );
+
+    const combinedInputs = {
+      dateAdded: date.format('MM/DD/YYYY'),
+      tCalories:
+        handleTotalsUpdate(previousLunchByDate).tCalories! +
+        handleTotalLists(lunchItems).calories,
+      tCarbs:
+        handleTotalsUpdate(previousLunchByDate)?.tCarbs! +
+        handleTotalLists(lunchItems)?.carbs,
+      tProtein:
+        handleTotalsUpdate(previousLunchByDate)?.tProtein! +
+        handleTotalLists(lunchItems)?.protein,
+      tSodium:
+        handleTotalsUpdate(previousLunchByDate)?.tSodium! +
+        handleTotalLists(lunchItems)?.sodium,
+      tFat:
+        handleTotalsUpdate(previousLunchByDate)?.tFat! +
+        handleTotalLists(lunchItems)?.fat,
+      tFibre:
+        handleTotalsUpdate(previousLunchByDate)?.tFibre! +
+        handleTotalLists(lunchItems)?.fibre,
+    };
+
+    updateLunchs(
+      {id, userInput: combinedInputs},
+      {
+        onSuccess: data => {
+          saveLunchItems(data, onSuccess);
+        },
+      },
+    );
+  };
+
+  const updateAllLunch = (
+    id: number,
+    onSuccess: () => void,
+    items: LunchDetails[],
+    dateProp: string,
+    Ids: number[],
+  ) => {
+    const combinedInputs = {
+      dateAdded: dateProp,
+      tCalories: handleTotalListsUpdate(items!).calories,
+      tCarbs: handleTotalListsUpdate(items!)?.carbs,
+      tProtein: handleTotalListsUpdate(items!)?.protein,
+      tSodium: handleTotalListsUpdate(items!)?.sodium,
+      tFat: handleTotalListsUpdate(items!)?.fat,
+      tFibre: handleTotalListsUpdate(items!)?.fibre,
+    };
+    updateLunchs(
+      {id, userInput: combinedInputs},
+      {
+        onSuccess: () => {
+          handleDeleteLunchItems(onSuccess, Ids);
+        },
+      },
+    );
+  };
+
+  const handleDeleteLunchItems = (onSuccess: () => void, Ids: number[]) => {
+    deleteLunchItems(Ids, {
+      onSuccess: () => {
+        onSuccess();
+      },
+      onError: e => console.log('ERROR DELETING LUNCH ITEMS=>>', e),
+    });
   };
 
   const addLunch = (onSuccess: () => void) => {
@@ -105,16 +222,25 @@ const ListsProvider = ({children}: PropsWithChildren) => {
 
     addLunchItems(luItems, {
       onSuccess: () => {
-        unselectCheckbox();
+        clearCart();
         onSuccess();
       },
       onError: e => console.log('ERROR INSERT LUNCH ITEM=>>', e),
     });
   };
 
-  const unselectCheckbox = () => {
+  const handleDisableCheckbox = (singleRecipe: Food) => {
+    if (lunchItems?.length) {
+      return lunchItems
+        .filter(res => res.recipe?.recipe_id === singleRecipe.id)
+        .some(item => item.recipe?.recipeQuantity === singleRecipe.serv_size);
+    }
+  };
+
+  const clearCart = () => {
     setLunchItems(lunchItems.map(item => ({...item, isChecked: false})));
     setLunchItems([]);
+    setIsChecked({});
   };
 
   return (
@@ -124,7 +250,12 @@ const ListsProvider = ({children}: PropsWithChildren) => {
         addLunchItem,
         addLunch,
         removeLunchItem,
-        unselectCheckbox,
+        updateLunch,
+        updateAllLunch,
+        handleDisableCheckbox,
+        clearCart,
+        setIsChecked,
+        isChecked,
       }}>
       {children}
     </ListsContext.Provider>

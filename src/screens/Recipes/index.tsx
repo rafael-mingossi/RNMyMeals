@@ -3,14 +3,14 @@ import {StatusBar, SafeAreaView, View, FlatList, Text} from 'react-native';
 import {Colours} from '@constants';
 import styles from './recipes.styles.ts';
 import {Searchbar} from 'react-native-paper';
-import {ScreenStack} from '@config';
 import {Tables} from '@types';
 import {SingleFood} from '@components';
 import {useFiltered} from '@providers';
+import {BottomScreenStack} from '../../config/BottomNavigator.tsx';
 
 type Recipes = Tables<'recipes'>;
 
-const Recipes = ({navigation}: ScreenStack) => {
+const Recipes = ({navigation}: BottomScreenStack) => {
   const {searchQuery, setSearchQuery, filteredRecipesContext} = useFiltered();
 
   return (
@@ -33,7 +33,7 @@ const Recipes = ({navigation}: ScreenStack) => {
           <SingleFood
             item={item}
             index={index}
-            foods={filteredRecipesContext}
+            items={filteredRecipesContext}
             onPress={() =>
               navigation.navigate('RecipeDetails', {recipeId: item.id})
             }

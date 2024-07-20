@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import {ScreenTopStack} from '@config';
 import {useFiltered} from '@providers';
 import styles from './addRecipeToLists.styles.ts';
@@ -28,11 +28,11 @@ const AddRecipeToLists = ({navigation}: ScreenTopStack) => {
           }
         />
       )}
-      // ListEmptyComponent={
-      //   <View style={styles.noResults}>
-      //     <Text style={styles.noResultsTxt}>No results found...</Text>
-      //   </View>
-      // }
+      ListEmptyComponent={
+        <View style={styles.noResults}>
+          <Text style={styles.noResultsTxt}>No results found...</Text>
+        </View>
+      }
       ListFooterComponent={<View />}
       ListFooterComponentStyle={{height: 90}}
     />

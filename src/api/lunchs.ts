@@ -2,6 +2,7 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {useAuth} from '@providers';
 import {InsertTables} from '@types';
 import {supabase} from '@services';
+import {listsStore} from '@stores';
 
 export const useInsertLunch = () => {
   const queryClient = useQueryClient();
@@ -32,6 +33,9 @@ export const useLunchDetails = (id: number) => {
   return useQuery({
     queryKey: ['lunchs', id],
     queryFn: async () => {
+      if (!id) {
+        return null;
+      }
       const {data, error} = await supabase
         .from('lunchs')
         .select('*, lunch_items(*, foods(*), recipes(*))')
@@ -49,19 +53,20 @@ export const useLunchDetails = (id: number) => {
 
 export const useMyLunchsList = () => {
   const {session} = useAuth();
-  const id = session?.user.id;
+  const user_id = session?.user.id;
+  const {setLunchs} = listsStore();
 
   return useQuery({
-    queryKey: ['lunchs', {userId: id}],
+    queryKey: ['lunchs', {userId: user_id}],
     queryFn: async () => {
-      if (!id) {
+      if (!user_id) {
         return null;
       }
 
       const {data, error} = await supabase
         .from('lunchs')
         .select('*')
-        .eq('user_id', id)
+        .eq('user_id', user_id)
         .order('created_at', {ascending: false});
 
       if (error) {
@@ -69,7 +74,43 @@ export const useMyLunchsList = () => {
       }
 
       console.log('GET LUNCHS API CALLED');
+      setLunchs(data);
       return data;
+    },
+  });
+};
+
+export const useUpdateLunch = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn({
+      id,
+      userInput,
+    }: {
+      id: number;
+      userInput: InsertTables<'lunchs'>;
+    }) {
+      const {data, error} = await supabase
+        .from('lunchs')
+        .update(userInput)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    async onSuccess({user_id, id}) {
+      await queryClient.invalidateQueries({
+        queryKey: ['lunchs', {userId: user_id}],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['lunchs', id],
+      });
     },
   });
 };

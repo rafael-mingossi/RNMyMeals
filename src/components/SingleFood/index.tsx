@@ -1,6 +1,8 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import BouncyCheckbox, {
+  BouncyCheckboxHandle,
+} from 'react-native-bouncy-checkbox';
 import styles from './singleFood.styles.ts';
 import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
@@ -12,10 +14,10 @@ import {useLists} from '@providers';
 type SingleFoodProps = {
   index: number;
   item: SingleFoodType;
-  items: SingleFoodType[];
+  items?: SingleFoodType[];
   hasCheckBox?: boolean;
   onPress?: () => void;
-  isFood: boolean;
+  isFood?: boolean;
 };
 
 const SingleFood: FC<SingleFoodProps> = ({
@@ -27,9 +29,16 @@ const SingleFood: FC<SingleFoodProps> = ({
   isFood,
 }) => {
   const navigation: NavigationScreenProp = useNavigation();
-  const [isChecked, setIsChecked] = useState(false);
-  const {addLunchItem, lunchItems, removeLunchItem, unselectCheckbox} =
+  // const [isChecked, setIsChecked] = useState(false);
+  const {addLunchItem, lunchItems, removeLunchItem, isChecked, setIsChecked} =
     useLists();
+  const bouncyCheckboxRef = useRef<BouncyCheckboxHandle>(null);
+
+  //Accessing which item was clicked via its index and ticking the checkbox
+  const currentIsChecked = useMemo(
+    () => isChecked?.[index],
+    [isChecked, index],
+  );
   const handleRemoveLunchItem = () => {
     // Find the added item's ID using Food ID and returning it
     if (isFood) {
@@ -41,16 +50,25 @@ const SingleFood: FC<SingleFoodProps> = ({
       )?.id;
     }
   };
+
   useEffect(() => {
     handleRemoveLunchItem();
   }, [item, items, index]);
 
   const handlePickedItem = () => {
-    setIsChecked(!isChecked);
+    setIsChecked(prevChecked => ({
+      ...prevChecked,
+      [index]: !prevChecked?.[index],
+    }));
 
+    if (!items?.length) {
+      console.log('ITEMS WAS NOT PASSED');
+      return;
+    }
     //Get the current clicked item and update it directly
     if (item.id === items[index]?.id) {
       item.checked = !isChecked;
+
       if (isFood) {
         const objWithoutChecked = Object.assign({}, item, {
           checked: undefined,
@@ -91,11 +109,13 @@ const SingleFood: FC<SingleFoodProps> = ({
       }
     }
   };
+
   return (
     <View style={[styles.container, hasCheckBox && styles.padding]}>
       {hasCheckBox ? (
         <BouncyCheckbox
-          isChecked={isChecked}
+          ref={bouncyCheckboxRef}
+          isChecked={currentIsChecked}
           style={styles.checkBox}
           fillColor={Colours.green}
           iconStyle={{
@@ -105,7 +125,8 @@ const SingleFood: FC<SingleFoodProps> = ({
           }}
           size={hS(21)}
           unFillColor="#FFFFFF"
-          text=""
+          disableText
+          // disabled={handleDisableCheckbox(item)}
           textStyle={{fontFamily: Fonts.regular}}
           onPress={handlePickedItem}
           innerIconStyle={{borderColor: Colours.green, borderRadius: 4}}

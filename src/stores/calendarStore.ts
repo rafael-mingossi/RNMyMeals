@@ -1,14 +1,15 @@
 import {create, StateCreator, StoreApi} from 'zustand';
 import dayjs, {Dayjs} from 'dayjs';
 
-import localeData from 'dayjs/plugin/localeData';
+// import localeData from 'dayjs/plugin/localeData';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.guess();
-dayjs.extend(localeData);
+
+// dayjs.extend(localeData);
 
 interface CalendarStore {
   date: Dayjs;
@@ -16,7 +17,8 @@ interface CalendarStore {
 }
 
 const createCalendarStore: StateCreator<CalendarStore> = (set, get) => ({
-  date: dayjs().utc(true).local(), ///FIX DATE AND TIME
+  date: dayjs().local(),
+  // date: dayjs().utc(true).local(), ///FIX DATE AND TIME
   setDate: (value: Dayjs) => set(() => ({date: value})),
 });
 

@@ -4,42 +4,21 @@ import {hS, mS, vS} from '@utils';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colours.green,
-    flex: 1,
-  },
-  wrapper: {
     flex: 1,
     backgroundColor: Colours.white,
   },
-  search: {
-    marginHorizontal: hS(20),
-    marginVertical: hS(15),
-    borderRadius: 50,
+  scrollView: {
+    paddingHorizontal: hS(10),
+    paddingVertical: vS(10),
+    rowGap: vS(15),
   },
-  searchWrapper: {
-    backgroundColor: Colours.green,
-  },
-  buttonsWrapper: {
-    borderTopWidth: 1,
-    borderColor: Colours.gray,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingRight: hS(25),
-    height: vS(70),
-    backgroundColor: Colours.white,
-    // marginBottom: vS(30),
-  },
-  cartBtn: {
-    position: 'absolute',
-    right: hS(10),
-    bottom: vS(80),
-    backgroundColor: Colours.green,
-    padding: mS(3),
-    borderRadius: 10,
+  surface: {
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2,
+    borderRadius: 8,
+    padding: mS(17),
+    rowGap: vS(8),
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -49,29 +28,27 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  carTxt: {
-    position: 'absolute',
-    color: Colours.white,
-    fontFamily: Fonts.semiBold,
-  },
-  wrapperBottomSheet: {backgroundColor: Colours.white},
-
-  contentContainer: {
+  loadingView: {
+    flex: 1,
     backgroundColor: Colours.white,
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   imgTxtWrapper: {
     flexDirection: 'row',
-    paddingHorizontal: hS(20),
-    paddingVertical: vS(10),
-
+    paddingVertical: vS(5),
+    width: '100%',
     justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  deleteSelected: {
+    backgroundColor: Colours.lightRed,
   },
   imgAndText: {
     columnGap: hS(10),
     flexDirection: 'row',
+    alignItems: 'center',
   },
-
   img: {
     width: hS(40),
     height: vS(35),
@@ -91,6 +68,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: hS(5),
+  },
+  buttonsWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingRight: hS(25),
+    height: vS(55),
+    backgroundColor: Colours.lightGray,
+    // marginBottom: vS(30),
   },
 });
 

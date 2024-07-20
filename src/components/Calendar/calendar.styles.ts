@@ -99,6 +99,18 @@ const styles = StyleSheet.create({
     borderBottomColor: Colours.gray,
     borderBottomWidth: 1,
   },
+  flatList: {
+    backgroundColor: Colours.white,
+    flexGrow: 0,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
 });
 
 export default styles;
