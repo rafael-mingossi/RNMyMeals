@@ -108,8 +108,11 @@ const IngredientView = ({
               activeUnderlineColor={Colours.blue}
               style={styles.input}
               value={quantity}
+              enterKeyHint={'next'}
+              returnKeyType={'done'}
               keyboardType={'numeric'}
               onChangeText={setQuantity}
+              onSubmitEditing={handleAddIngredient}
             />
             <Text style={styles.servUnit}>{prop?.serv_unit}</Text>
           </View>

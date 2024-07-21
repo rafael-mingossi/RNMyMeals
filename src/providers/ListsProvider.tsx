@@ -40,14 +40,13 @@ type ListsType = {
   removeLunchItem: (id: string) => void;
   addLunch: (onSuccess: () => void) => void;
   updateLunch: (id: number, onSuccess: () => void) => void;
-  updateAllLunch: (
+  deleteLunchItems: (
     id: number,
     onSuccess: () => void,
     items: LunchDetails[],
     dateProp: string,
     Ids: number[],
   ) => void;
-  handleDisableCheckbox: (singleRecipe: Food) => boolean | undefined;
   clearCart: () => void;
   isChecked: {[key: number]: boolean};
   setIsChecked: Dispatch<SetStateAction<ListsType['isChecked']>>;
@@ -58,9 +57,8 @@ const ListsContext = createContext<ListsType>({
   addLunchItem: () => {},
   addLunch: () => {},
   updateLunch: () => {},
-  updateAllLunch: () => {},
+  deleteLunchItems: () => {},
   removeLunchItem: () => {},
-  handleDisableCheckbox: () => true,
   clearCart: () => [],
   isChecked: {},
   setIsChecked: () => {},
@@ -79,7 +77,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
   const {mutate: addLunchToDb} = useInsertLunch();
   const {mutate: addLunchItems} = useInsertLunchItems();
   const {mutate: updateLunchs} = useUpdateLunch();
-  const {mutate: deleteLunchItems} = useDeleteLunchItems();
+  const {mutate: deleteLunchItemsApi} = useDeleteLunchItems();
 
   function generateRandomId() {
     const randomDecimal = Math.random();
@@ -152,7 +150,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
     );
   };
 
-  const updateAllLunch = (
+  const deleteLunchItems = (
     id: number,
     onSuccess: () => void,
     items: LunchDetails[],
@@ -179,7 +177,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
   };
 
   const handleDeleteLunchItems = (onSuccess: () => void, Ids: number[]) => {
-    deleteLunchItems(Ids, {
+    deleteLunchItemsApi(Ids, {
       onSuccess: () => {
         onSuccess();
       },
@@ -187,6 +185,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
     });
   };
 
+  //PASS A PROP HERE AS STRING TO ADD LUNCH || BREAKIE || ETC..
   const addLunch = (onSuccess: () => void) => {
     addLunchToDb(
       {
@@ -229,14 +228,6 @@ const ListsProvider = ({children}: PropsWithChildren) => {
     });
   };
 
-  const handleDisableCheckbox = (singleRecipe: Food) => {
-    if (lunchItems?.length) {
-      return lunchItems
-        .filter(res => res.recipe?.recipe_id === singleRecipe.id)
-        .some(item => item.recipe?.recipeQuantity === singleRecipe.serv_size);
-    }
-  };
-
   const clearCart = () => {
     setLunchItems(lunchItems.map(item => ({...item, isChecked: false})));
     setLunchItems([]);
@@ -251,8 +242,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
         addLunch,
         removeLunchItem,
         updateLunch,
-        updateAllLunch,
-        handleDisableCheckbox,
+        deleteLunchItems,
         clearCart,
         setIsChecked,
         isChecked,

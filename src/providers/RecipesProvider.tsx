@@ -10,7 +10,12 @@ type RecipesType = {
   items: AddedItem[];
   addItem: (item: Food, quantity: number) => void;
   deleteItem: (id: string) => void;
-  addRecipe: (name: string, serving: number, serv_unit: string) => void;
+  addRecipe: (
+    name: string,
+    serving: number,
+    serv_unit: string,
+    onSuccess: () => void,
+  ) => void;
 };
 
 const RecipesContext = createContext<RecipesType>({
@@ -33,6 +38,10 @@ const RecipesProvider = ({children}: PropsWithChildren) => {
     return Math.floor(randomDecimal * maxIdValue);
   }
 
+  const clearItems = () => {
+    setItems([]);
+  };
+
   const addItem = (food: Food, quantity: number) => {
     const newItem: AddedItem = {
       id: generateRandomId(),
@@ -49,7 +58,12 @@ const RecipesProvider = ({children}: PropsWithChildren) => {
     setItems(filteredData);
   };
 
-  const addRecipe = (name: string, serving: number, serv_unit: string) => {
+  const addRecipe = (
+    name: string,
+    serving: number,
+    serv_unit: string,
+    onSuccess: () => void,
+  ) => {
     addRecipeToDb(
       {
         name,
@@ -63,13 +77,18 @@ const RecipesProvider = ({children}: PropsWithChildren) => {
         tFibre: handleTotals(items)?.fibre,
       },
       {
-        onSuccess: saveRecipeItems,
+        onSuccess: recipe => {
+          saveRecipeItems(recipe, onSuccess);
+        },
         onError: e => console.log('ERROR INSERT RECIPE =>>', e),
       },
     );
   };
 
-  const saveRecipeItems = (recipe: Tables<'recipes'>) => {
+  const saveRecipeItems = (
+    recipe: Tables<'recipes'>,
+    onSuccess: () => void,
+  ) => {
     const recipeItems = items.map(ri => ({
       food_id: ri.food_id,
       quantity: ri.quantity,
@@ -77,7 +96,10 @@ const RecipesProvider = ({children}: PropsWithChildren) => {
     }));
 
     addRecipeItems(recipeItems, {
-      onSuccess: () => console.log('DONE ADDING'),
+      onSuccess: () => {
+        clearItems();
+        onSuccess();
+      },
       onError: e => console.log('ERROR INSERT RECIPE ITEM=>>', e),
     });
   };

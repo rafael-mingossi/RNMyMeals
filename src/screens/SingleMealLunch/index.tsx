@@ -56,7 +56,7 @@ function reducer(state: State, action: Action) {
 const SingleMealLunch = ({navigation}: ScreenStack) => {
   const {lunchs} = listsStore();
   const {date} = calendarStore();
-  const {updateAllLunch} = useLists();
+  const {deleteLunchItems} = useLists();
   const [state, dispatch] = useReducer(reducer, initialState);
   const lunchFiltered = lunchs?.filter(
     item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
@@ -94,7 +94,7 @@ const SingleMealLunch = ({navigation}: ScreenStack) => {
   }, []);
 
   const handleDeleteSelected = useCallback(() => {
-    updateAllLunch(
+    deleteLunchItems(
       data?.id!,
       () => {
         dispatch({type: 'CLEAR_SELECTION'});

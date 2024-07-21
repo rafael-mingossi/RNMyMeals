@@ -54,7 +54,11 @@ const AddBottomSheet = () => {
             style={styles.contentContainer}
             ref={layoutRef}
             onLayout={handleLayout}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                onModalClose();
+                navigation.navigate('AddListItems', {listItem: 'breakie'});
+              }}>
               <View style={styles.iconWrapper}>
                 <Image
                   source={require('../../assets/images/img_breakie.png')}

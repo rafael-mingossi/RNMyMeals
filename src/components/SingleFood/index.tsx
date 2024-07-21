@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
+import React, {FC, useEffect, useMemo, useRef} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import BouncyCheckbox, {
   BouncyCheckboxHandle,
@@ -126,7 +126,6 @@ const SingleFood: FC<SingleFoodProps> = ({
           size={hS(21)}
           unFillColor="#FFFFFF"
           disableText
-          // disabled={handleDisableCheckbox(item)}
           textStyle={{fontFamily: Fonts.regular}}
           onPress={handlePickedItem}
           innerIconStyle={{borderColor: Colours.green, borderRadius: 4}}

@@ -81,7 +81,9 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
       item => item.dateAdded === date.format('YYYY-MM-DD'),
     );
 
-    if (route?.params.listItem === 'lunch') {
+    if (route?.params.listItem === 'breakie') {
+      console.log('BREAKIE');
+    } else if (route?.params.listItem === 'lunch') {
       lunchFiltered.length
         ? updateLunch(getIdToUpdateLunch()!, () => {
             navigation.goBack();
