@@ -15,8 +15,7 @@ const IngredientView = ({
   const isFoodProp = route?.params?.isFood;
 
   const {addItem} = useRecipes();
-  const {addLunchItem, lunchItems} = useLists();
-  console.log('lunchItems =>>', lunchItems);
+  const {addMealItem} = useLists();
   const [quantity, setQuantity] = useState<string>('');
   const data = [
     {value: prop?.fat, color: Colours.midOrange},
@@ -41,7 +40,7 @@ const IngredientView = ({
       );
       navigation.goBack();
     } else if (isFoodProp) {
-      addLunchItem(
+      addMealItem(
         quantity ? shallow : prop,
         null,
         quantity ? Number(quantity) : prop?.serv_size,
@@ -75,7 +74,7 @@ const IngredientView = ({
         tSodium: (Number(quantity) * prop?.sodium!) / prop?.serv_size,
       };
 
-      addLunchItem(
+      addMealItem(
         null,
         quantity ? shallowBackToRecipe : backToRecipe,
         null,
@@ -108,8 +107,11 @@ const IngredientView = ({
               activeUnderlineColor={Colours.blue}
               style={styles.input}
               value={quantity}
+              enterKeyHint={'next'}
+              returnKeyType={'done'}
               keyboardType={'numeric'}
               onChangeText={setQuantity}
+              onSubmitEditing={handleAddIngredient}
             />
             <Text style={styles.servUnit}>{prop?.serv_unit}</Text>
           </View>

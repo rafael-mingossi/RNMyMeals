@@ -21,7 +21,8 @@ import {
   RecipeDetails,
   AddListItems,
   AllMeals,
-  SingleMealLunch,
+  MealLunch,
+  MealBreakie,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth, FilteredItemsProvider} from '@providers';
@@ -45,9 +46,10 @@ export type StackNavigatorParams = {
   IngredientView: {item: SingleFoodType};
   Recipes: undefined;
   RecipeDetails: {recipeId: number};
-  AddListItems: {listItem: 'breakie' | 'snack' | 'lunch' | 'dinner'};
+  AddListItems: {listItem: 'breakfast' | 'snack' | 'lunch' | 'dinner'};
   AllMeals: undefined;
-  SingleMealLunch: undefined;
+  MealLunch: undefined;
+  MealBreakie: undefined;
 };
 
 //Navigation to screens only, using Navigation prop
@@ -74,13 +76,10 @@ export type RecipeDetailsPropsNavigation = {
   route: RecipesDetailsRouteProp;
 };
 
-// type IngredientsViewRouteProp = RouteProp<
-//   StackNavigatorParams,
-//   'IngredientView'
-// >;
-// export type IngredientsViewPropsNavigation = {
+// type SingleMealRouteProp = RouteProp<StackNavigatorParams, 'SingleMealLunch'>;
+// export type SingleMealPropsNavigation = {
 //   navigation: NavigationScreenProp;
-//   route: IngredientsViewRouteProp;
+//   route: SingleMealRouteProp;
 // };
 
 type SingleFoodRouteProp = RouteProp<StackNavigatorParams, 'SingleFoodScreen'>;
@@ -251,11 +250,19 @@ const ScreenNavigator = () => {
                 }}
               />
               <Stack.Screen
-                name="SingleMealLunch"
-                component={SingleMealLunch}
+                name="MealLunch"
+                component={MealLunch}
                 options={{
                   headerShown: true,
                   title: 'Lunch',
+                }}
+              />
+              <Stack.Screen
+                name="MealBreakie"
+                component={MealBreakie}
+                options={{
+                  headerShown: true,
+                  title: 'Breakie',
                 }}
               />
             </>

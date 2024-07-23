@@ -7,17 +7,24 @@ import React, {
 } from 'react';
 import {createContext} from 'react';
 import {
-  AddedLunch,
+  AddedMeal,
+  Food,
   FoodAddedItem,
-  LunchDetails,
+  ItemWithTotals,
+  MealDetails,
+  MealTypes,
+  Recipe,
   RecipeAddedItem,
-  Tables,
 } from '@types';
 import {
   useInsertLunch,
   useInsertLunchItems,
   useUpdateLunch,
   useDeleteLunchItems,
+  useInsertBreakfast,
+  useInsertBreakfastItems,
+  useDeleteBreakfastItems,
+  useUpdateBreakfast,
 } from '@api';
 import {
   handleTotalLists,
@@ -26,60 +33,64 @@ import {
 } from '@utils';
 import {calendarStore, listsStore} from '@stores';
 
-type Food = Tables<'foods'>;
-type Recipe = Tables<'recipes'>;
-
 type ListsType = {
-  lunchItems: AddedLunch[];
-  addLunchItem: (
+  mealsItems: AddedMeal[];
+  addMealItem: (
     itemFood: Food | null,
     itemRecipe: Recipe | null,
     foodQuantity: number | null,
     recipeQuantity: number | null,
   ) => void;
-  removeLunchItem: (id: string) => void;
-  addLunch: (onSuccess: () => void) => void;
-  updateLunch: (id: number, onSuccess: () => void) => void;
-  updateAllLunch: (
+  removeMealItem: (id: string) => void;
+  addMeal: (onSuccess: () => void, meal: MealTypes) => void;
+  updateMeal: (id: number, onSuccess: () => void, meal: MealTypes) => void;
+  deleteMealItems: <T extends MealDetails>(
     id: number,
     onSuccess: () => void,
-    items: LunchDetails[],
+    items: T[],
     dateProp: string,
     Ids: number[],
+    meal: MealTypes,
   ) => void;
-  handleDisableCheckbox: (singleRecipe: Food) => boolean | undefined;
   clearCart: () => void;
   isChecked: {[key: number]: boolean};
   setIsChecked: Dispatch<SetStateAction<ListsType['isChecked']>>;
 };
 
 const ListsContext = createContext<ListsType>({
-  lunchItems: [],
-  addLunchItem: () => {},
-  addLunch: () => {},
-  updateLunch: () => {},
-  updateAllLunch: () => {},
-  removeLunchItem: () => {},
-  handleDisableCheckbox: () => true,
+  mealsItems: [],
+  addMealItem: () => {},
+  addMeal: () => {},
+  updateMeal: () => {},
+  deleteMealItems: () => {},
+  removeMealItem: () => {},
   clearCart: () => [],
   isChecked: {},
   setIsChecked: () => {},
 });
 
 const ListsProvider = ({children}: PropsWithChildren) => {
-  const [lunchItems, setLunchItems] = useState<AddedLunch[]>([]);
+  const [mealsItems, setMealsItems] = useState<AddedMeal[]>([]);
   const [isChecked, setIsChecked] = useState<ListsType['isChecked']>({});
   const {date} = calendarStore();
-  const {lunchs} = listsStore();
-  // console.log('lunchItems =>>', lunchItems);
+  const {lunchs, breakfasts} = listsStore();
+  // console.log('mealsItems =>>', mealsItems);
   //
-  // lunchItems.map(f => console.log('FOODS =>>', f.food?.itemFood));
+  // mealsItems.map(f => console.log('FOODS =>>', f.food?.itemFood));
   //
-  // lunchItems.map(r => console.log('RECIPES =>>', r.recipe?.itemRecipe));
+  // mealsItems.map(r => console.log('RECIPES =>>', r.recipe?.itemRecipe));
+
+  /// LUNCHES
   const {mutate: addLunchToDb} = useInsertLunch();
   const {mutate: addLunchItems} = useInsertLunchItems();
   const {mutate: updateLunchs} = useUpdateLunch();
-  const {mutate: deleteLunchItems} = useDeleteLunchItems();
+  const {mutate: deleteLunchItemsApi} = useDeleteLunchItems();
+
+  /// BREAKFASTS
+  const {mutate: addBreakieToDb} = useInsertBreakfast();
+  const {mutate: addBreakieItems} = useInsertBreakfastItems();
+  const {mutate: updateBreakies} = useUpdateBreakfast();
+  const {mutate: deleteBreakieItemsApi} = useDeleteBreakfastItems();
 
   function generateRandomId() {
     const randomDecimal = Math.random();
@@ -88,7 +99,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
     return Math.floor(randomDecimal * maxIdValue);
   }
 
-  const addLunchItem = (
+  const addMealItem = (
     itemFood: Food | null,
     itemRecipe: Recipe | null,
     foodQuantity: number | null,
@@ -106,58 +117,80 @@ const ListsProvider = ({children}: PropsWithChildren) => {
       recipeQuantity,
     };
 
-    const newItem: AddedLunch = {
+    const newItem: AddedMeal = {
       id: generateRandomId(),
       food: foodI,
       recipe: recipeI,
     };
 
-    setLunchItems([newItem, ...lunchItems]);
+    setMealsItems([newItem, ...mealsItems]);
   };
 
-  const updateLunch = (id: number, onSuccess: () => void) => {
-    const previousLunchByDate = lunchs?.filter(
-      item => item.dateAdded === date.format('YYYY-MM-DD'),
-    );
+  const updateMeal = (id: number, onSuccess: () => void, meal: MealTypes) => {
+    const previousLunchByDate = () => {
+      switch (meal) {
+        case 'lunch':
+          return lunchs?.filter(
+            item => item.dateAdded === date.format('YYYY-MM-DD'),
+          );
+        case 'breakfast':
+          return breakfasts?.filter(
+            item => item.dateAdded === date.format('YYYY-MM-DD'),
+          );
+      }
+    };
 
     const combinedInputs = {
       dateAdded: date.format('MM/DD/YYYY'),
       tCalories:
-        handleTotalsUpdate(previousLunchByDate).tCalories! +
-        handleTotalLists(lunchItems).calories,
+        handleTotalsUpdate(previousLunchByDate()!).tCalories! +
+        handleTotalLists(mealsItems).calories,
       tCarbs:
-        handleTotalsUpdate(previousLunchByDate)?.tCarbs! +
-        handleTotalLists(lunchItems)?.carbs,
+        handleTotalsUpdate(previousLunchByDate()!)?.tCarbs! +
+        handleTotalLists(mealsItems)?.carbs,
       tProtein:
-        handleTotalsUpdate(previousLunchByDate)?.tProtein! +
-        handleTotalLists(lunchItems)?.protein,
+        handleTotalsUpdate(previousLunchByDate()!)?.tProtein! +
+        handleTotalLists(mealsItems)?.protein,
       tSodium:
-        handleTotalsUpdate(previousLunchByDate)?.tSodium! +
-        handleTotalLists(lunchItems)?.sodium,
+        handleTotalsUpdate(previousLunchByDate()!)?.tSodium! +
+        handleTotalLists(mealsItems)?.sodium,
       tFat:
-        handleTotalsUpdate(previousLunchByDate)?.tFat! +
-        handleTotalLists(lunchItems)?.fat,
+        handleTotalsUpdate(previousLunchByDate()!)?.tFat! +
+        handleTotalLists(mealsItems)?.fat,
       tFibre:
-        handleTotalsUpdate(previousLunchByDate)?.tFibre! +
-        handleTotalLists(lunchItems)?.fibre,
+        handleTotalsUpdate(previousLunchByDate()!)?.tFibre! +
+        handleTotalLists(mealsItems)?.fibre,
     };
 
-    updateLunchs(
-      {id, userInput: combinedInputs},
-      {
-        onSuccess: data => {
-          saveLunchItems(data, onSuccess);
-        },
-      },
-    );
+    switch (meal) {
+      case 'lunch':
+        return updateLunchs(
+          {id, userInput: combinedInputs},
+          {
+            onSuccess: data => {
+              saveLunchItems(data, onSuccess, meal);
+            },
+          },
+        );
+      case 'breakfast':
+        return updateBreakies(
+          {id, userInput: combinedInputs},
+          {
+            onSuccess: data => {
+              saveLunchItems(data, onSuccess, meal);
+            },
+          },
+        );
+    }
   };
 
-  const updateAllLunch = (
+  const deleteMealItems = <T extends MealDetails>(
     id: number,
     onSuccess: () => void,
-    items: LunchDetails[],
+    items: T[],
     dateProp: string,
     Ids: number[],
+    meal: MealTypes,
   ) => {
     const combinedInputs = {
       dateAdded: dateProp,
@@ -168,51 +201,99 @@ const ListsProvider = ({children}: PropsWithChildren) => {
       tFat: handleTotalListsUpdate(items!)?.fat,
       tFibre: handleTotalListsUpdate(items!)?.fibre,
     };
-    updateLunchs(
-      {id, userInput: combinedInputs},
-      {
-        onSuccess: () => {
-          handleDeleteLunchItems(onSuccess, Ids);
-        },
-      },
-    );
+
+    switch (meal) {
+      case 'lunch':
+        return updateLunchs(
+          {id, userInput: combinedInputs},
+          {
+            onSuccess: () => {
+              handleDeleteLunchItems(onSuccess, Ids, meal);
+            },
+          },
+        );
+      case 'breakfast':
+        return updateBreakies(
+          {id, userInput: combinedInputs},
+          {
+            onSuccess: () => {
+              handleDeleteLunchItems(onSuccess, Ids, meal);
+            },
+          },
+        );
+    }
   };
 
-  const handleDeleteLunchItems = (onSuccess: () => void, Ids: number[]) => {
-    deleteLunchItems(Ids, {
-      onSuccess: () => {
-        onSuccess();
-      },
-      onError: e => console.log('ERROR DELETING LUNCH ITEMS=>>', e),
-    });
+  const handleDeleteLunchItems = (
+    onSuccess: () => void,
+    Ids: number[],
+    meal: MealTypes,
+  ) => {
+    switch (meal) {
+      case 'lunch':
+        return deleteLunchItemsApi(Ids, {
+          onSuccess: () => {
+            onSuccess();
+          },
+          onError: e => console.log('ERROR DELETING LUNCH ITEMS=>>', e),
+        });
+      case 'breakfast':
+        return deleteBreakieItemsApi(Ids, {
+          onSuccess: () => {
+            onSuccess();
+          },
+          onError: e => console.log('ERROR DELETING BREAKIE ITEMS=>>', e),
+        });
+    }
   };
 
-  const addLunch = (onSuccess: () => void) => {
-    addLunchToDb(
-      {
-        dateAdded: date.format('MM/DD/YYYY'),
-        tCalories: handleTotalLists(lunchItems).calories,
-        tCarbs: handleTotalLists(lunchItems)?.carbs,
-        tProtein: handleTotalLists(lunchItems)?.protein,
-        tSodium: handleTotalLists(lunchItems)?.sodium,
-        tFat: handleTotalLists(lunchItems)?.fat,
-        tFibre: handleTotalLists(lunchItems)?.fibre,
-      },
-      {
-        onSuccess: data => saveLunchItems(data, onSuccess),
-        onError: er => console.log('ERROR LUNCH =>', er),
-      },
-    );
+  const addMeal = (onSuccess: () => void, meal: MealTypes) => {
+    const variables = {
+      dateAdded: date.format('MM/DD/YYYY'),
+      tCalories: handleTotalLists(mealsItems).calories,
+      tCarbs: handleTotalLists(mealsItems)?.carbs,
+      tProtein: handleTotalLists(mealsItems)?.protein,
+      tSodium: handleTotalLists(mealsItems)?.sodium,
+      tFat: handleTotalLists(mealsItems)?.fat,
+      tFibre: handleTotalLists(mealsItems)?.fibre,
+    };
+
+    switch (meal) {
+      case 'lunch':
+        return addLunchToDb(
+          variables,
+
+          {
+            onSuccess: data =>
+              saveLunchItems<ItemWithTotals>(data, onSuccess, meal),
+            onError: er => console.log('ERROR LUNCH =>', er),
+          },
+        );
+      case 'breakfast':
+        return addBreakieToDb(
+          variables,
+
+          {
+            onSuccess: data =>
+              saveLunchItems<ItemWithTotals>(data, onSuccess, meal),
+            onError: er => console.log('ERROR LUNCH =>', er),
+          },
+        );
+    }
   };
 
-  const removeLunchItem = (id: string) => {
-    const shallow = [...lunchItems];
+  const removeMealItem = (id: string) => {
+    const shallow = [...mealsItems];
     const filteredData = shallow.filter(item => String(item.id) !== id);
-    setLunchItems(filteredData);
+    setMealsItems(filteredData);
   };
 
-  const saveLunchItems = (lunch: Tables<'lunchs'>, onSuccess: () => void) => {
-    const luItems = lunchItems.map(lu => ({
+  const saveLunchItems = <T extends ItemWithTotals>(
+    lunch: T,
+    onSuccess: () => void,
+    meal: MealTypes,
+  ) => {
+    const luItems = mealsItems.map(lu => ({
       lunch_id: lunch.id,
       food_id: lu?.food?.food_id,
       foodQuantity: lu?.food?.foodQuantity,
@@ -220,39 +301,49 @@ const ListsProvider = ({children}: PropsWithChildren) => {
       recipeQuantity: lu?.recipe?.recipeQuantity,
     }));
 
-    addLunchItems(luItems, {
-      onSuccess: () => {
-        clearCart();
-        onSuccess();
-      },
-      onError: e => console.log('ERROR INSERT LUNCH ITEM=>>', e),
-    });
-  };
+    const breakieItems = mealsItems.map(lu => ({
+      breakfast_id: lunch?.id,
+      food_id: lu?.food?.food_id,
+      foodQuantity: lu?.food?.foodQuantity,
+      recipe_id: lu?.recipe?.recipe_id,
+      recipeQuantity: lu?.recipe?.recipeQuantity,
+    }));
 
-  const handleDisableCheckbox = (singleRecipe: Food) => {
-    if (lunchItems?.length) {
-      return lunchItems
-        .filter(res => res.recipe?.recipe_id === singleRecipe.id)
-        .some(item => item.recipe?.recipeQuantity === singleRecipe.serv_size);
+    switch (meal) {
+      case 'lunch':
+        return addLunchItems(luItems, {
+          onSuccess: () => {
+            clearCart();
+            onSuccess();
+          },
+          onError: e => console.log('ERROR INSERT LUNCH ITEM=>>', e),
+        });
+      case 'breakfast':
+        return addBreakieItems(breakieItems, {
+          onSuccess: () => {
+            clearCart();
+            onSuccess();
+          },
+          onError: e => console.log('ERROR INSERT LUNCH ITEM=>>', e),
+        });
     }
   };
 
   const clearCart = () => {
-    setLunchItems(lunchItems.map(item => ({...item, isChecked: false})));
-    setLunchItems([]);
+    setMealsItems(mealsItems.map(item => ({...item, isChecked: false})));
+    setMealsItems([]);
     setIsChecked({});
   };
 
   return (
     <ListsContext.Provider
       value={{
-        lunchItems,
-        addLunchItem,
-        addLunch,
-        removeLunchItem,
-        updateLunch,
-        updateAllLunch,
-        handleDisableCheckbox,
+        mealsItems,
+        addMealItem,
+        addMeal,
+        removeMealItem,
+        updateMeal,
+        deleteMealItems,
         clearCart,
         setIsChecked,
         isChecked,

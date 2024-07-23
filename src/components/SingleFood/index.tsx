@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
+import React, {FC, useEffect, useMemo, useRef} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import BouncyCheckbox, {
   BouncyCheckboxHandle,
@@ -30,7 +30,7 @@ const SingleFood: FC<SingleFoodProps> = ({
 }) => {
   const navigation: NavigationScreenProp = useNavigation();
   // const [isChecked, setIsChecked] = useState(false);
-  const {addLunchItem, lunchItems, removeLunchItem, isChecked, setIsChecked} =
+  const {addMealItem, mealsItems, removeMealItem, isChecked, setIsChecked} =
     useLists();
   const bouncyCheckboxRef = useRef<BouncyCheckboxHandle>(null);
 
@@ -42,10 +42,10 @@ const SingleFood: FC<SingleFoodProps> = ({
   const handleRemoveLunchItem = () => {
     // Find the added item's ID using Food ID and returning it
     if (isFood) {
-      return lunchItems.find(addedItem => addedItem.food?.food_id === item.id)
+      return mealsItems.find(addedItem => addedItem.food?.food_id === item.id)
         ?.id;
     } else {
-      return lunchItems.find(
+      return mealsItems.find(
         addedItem => addedItem.recipe?.recipe_id === item.id,
       )?.id;
     }
@@ -74,12 +74,7 @@ const SingleFood: FC<SingleFoodProps> = ({
           checked: undefined,
         });
 
-        addLunchItem(
-          objWithoutChecked,
-          null,
-          objWithoutChecked.serv_size,
-          null,
-        );
+        addMealItem(objWithoutChecked, null, objWithoutChecked.serv_size, null);
       } else {
         const objWithoutChecked = Object.assign({}, item, {
           checked: undefined,
@@ -101,11 +96,11 @@ const SingleFood: FC<SingleFoodProps> = ({
           user_id: objWithoutChecked.user_id,
         };
 
-        addLunchItem(null, backToRecipe, null, backToRecipe.serving);
+        addMealItem(null, backToRecipe, null, backToRecipe.serving);
       }
 
       if (handleRemoveLunchItem() && isChecked) {
-        removeLunchItem(String(handleRemoveLunchItem()));
+        removeMealItem(String(handleRemoveLunchItem()));
       }
     }
   };
@@ -126,7 +121,6 @@ const SingleFood: FC<SingleFoodProps> = ({
           size={hS(21)}
           unFillColor="#FFFFFF"
           disableText
-          // disabled={handleDisableCheckbox(item)}
           textStyle={{fontFamily: Fonts.regular}}
           onPress={handlePickedItem}
           innerIconStyle={{borderColor: Colours.green, borderRadius: 4}}

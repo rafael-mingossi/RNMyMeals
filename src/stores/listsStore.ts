@@ -1,16 +1,26 @@
-import {Tables} from '@types';
+import {Breakies, Dinners, Lunchs, Snacks} from '@types';
 import {create, StateCreator, StoreApi} from 'zustand';
 
 interface ListsStore {
   lunchs: Lunchs[];
   setLunchs: (input: Lunchs[]) => void;
+  breakfasts: Breakies[];
+  setBreakfasts: (input: Breakies[]) => void;
+  snacks: Snacks[];
+  setSnacks: (input: Snacks[]) => void;
+  dinners: Dinners[];
+  setDinners: (input: Dinners[]) => void;
 }
 
-type Lunchs = Tables<'lunchs'>;
-
-const createListsStore: StateCreator<ListsStore> = (set, get) => ({
+const createListsStore: StateCreator<ListsStore> = set => ({
   lunchs: [],
   setLunchs: (input: Lunchs[]) => set(() => ({lunchs: input})),
+  breakfasts: [],
+  setBreakfasts: (input: Breakies[]) => set(() => ({breakfasts: input})),
+  snacks: [],
+  setSnacks: (input: Snacks[]) => set(() => ({snacks: input})),
+  dinners: [],
+  setDinners: (input: Dinners[]) => set(() => ({dinners: input})),
 });
 
 const listsStoreRootSlice = (

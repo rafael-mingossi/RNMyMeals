@@ -58,7 +58,9 @@ const AddRecipe = ({navigation}: ScreenStack) => {
   };
 
   const handleCreateRecipe = () => {
-    addRecipe(formData.name!, formData.serving!, formData.unit!);
+    addRecipe(formData.name!, formData.serving!, formData.unit!, () =>
+      navigation.goBack(),
+    );
   };
 
   return (
@@ -135,7 +137,7 @@ const AddRecipe = ({navigation}: ScreenStack) => {
               style={[styles.ingredients, styles.extraPadding]}>
               <Text style={styles.totalsTxtBold}>{recipe?.food.label} - </Text>
               <Text style={styles.totalsTxtBold}>
-                {recipe?.food.serv_size} {recipe?.food.serv_unit}
+                {recipe?.quantity} {recipe?.food.serv_unit}
               </Text>
             </View>
           ))}
@@ -202,7 +204,16 @@ const AddRecipe = ({navigation}: ScreenStack) => {
           children={'Ingredients'}
           onPress={() => navigation.navigate('Ingredients')}
         />
-        <ButtonText children={'Save'} onPress={handleCreateRecipe} />
+        <ButtonText
+          children={'Save'}
+          onPress={handleCreateRecipe}
+          disabled={
+            !formData.name ||
+            !formData.serving ||
+            !formData.unit ||
+            !items.length
+          }
+        />
       </View>
     </View>
   );
