@@ -31,7 +31,6 @@ function BaseMealComponent<T extends BaseMealItem>({
 }: BaseMealProps<T>) {
   const defaultRecipeImg =
     'https://lzvknmgwnxlojtpfprid.supabase.co/storage/v1/object/public/food-images/default_food.png';
-
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
@@ -45,8 +44,8 @@ function BaseMealComponent<T extends BaseMealItem>({
       ) : null}
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Surface style={styles.surface} elevation={3}>
-          {data.length ? (
-            data.map(item => {
+          {data?.length ? (
+            data?.map(item => {
               const adjustTotals = item?.foodQuantity! / item.foods?.serv_size!;
               return (
                 <View

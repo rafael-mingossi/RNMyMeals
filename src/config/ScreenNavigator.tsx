@@ -46,7 +46,7 @@ export type StackNavigatorParams = {
   IngredientView: {item: SingleFoodType};
   Recipes: undefined;
   RecipeDetails: {recipeId: number};
-  AddListItems: {listItem: 'breakie' | 'snack' | 'lunch' | 'dinner'};
+  AddListItems: {listItem: 'breakfast' | 'snack' | 'lunch' | 'dinner'};
   AllMeals: undefined;
   MealLunch: undefined;
   MealBreakie: undefined;

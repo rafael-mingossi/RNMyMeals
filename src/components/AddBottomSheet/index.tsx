@@ -57,7 +57,7 @@ const AddBottomSheet = () => {
             <TouchableOpacity
               onPress={() => {
                 onModalClose();
-                navigation.navigate('AddListItems', {listItem: 'breakie'});
+                navigation.navigate('AddListItems', {listItem: 'breakfast'});
               }}>
               <View style={styles.iconWrapper}>
                 <Image

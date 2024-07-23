@@ -46,10 +46,10 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
   // Handle Android back button behavior
   const handleBackPress = () => {
     if (mealsItems.length) {
-      sheetRef.current?.open(); // Open bottom sheet for confirmation
+      sheetRef.current?.open();
       return true; // Prevent default back action
     } else {
-      navigation.goBack(); // Go back if no items in cart
+      navigation.goBack();
     }
     return false; // Allow default back action if needed
   };
@@ -82,8 +82,7 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
       case 'lunch':
         return lunchs.find(item => item.dateAdded === date.format('YYYY-MM-DD'))
           ?.id;
-
-      case 'breakie':
+      case 'breakfast':
         return breakfasts.find(
           item => item.dateAdded === date.format('YYYY-MM-DD'),
         )?.id;
@@ -97,7 +96,7 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
           item => item.dateAdded === date.format('YYYY-MM-DD'),
         );
 
-      case 'breakie':
+      case 'breakfast':
         return breakfasts?.filter(
           item => item.dateAdded === date.format('YYYY-MM-DD'),
         );
@@ -125,7 +124,7 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
               navigation.goBack();
               clearCart();
             }, mealName);
-      case 'breakie':
+      case 'breakfast':
         return mealToFilter.length
           ? updateMeal(
               getIdToUpdateMeal()!,

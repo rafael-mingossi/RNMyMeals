@@ -10,11 +10,11 @@ import {
   AddedMeal,
   Food,
   FoodAddedItem,
+  ItemWithTotals,
   MealDetails,
   MealTypes,
   Recipe,
   RecipeAddedItem,
-  Tables,
 } from '@types';
 import {
   useInsertLunch,
@@ -84,13 +84,13 @@ const ListsProvider = ({children}: PropsWithChildren) => {
   const {mutate: addLunchToDb} = useInsertLunch();
   const {mutate: addLunchItems} = useInsertLunchItems();
   const {mutate: updateLunchs} = useUpdateLunch();
-  const {mutate: updateBreakies} = useUpdateBreakfast();
   const {mutate: deleteLunchItemsApi} = useDeleteLunchItems();
-  const {mutate: deleteBreakieItemsApi} = useDeleteBreakfastItems();
 
   /// BREAKFASTS
   const {mutate: addBreakieToDb} = useInsertBreakfast();
   const {mutate: addBreakieItems} = useInsertBreakfastItems();
+  const {mutate: updateBreakies} = useUpdateBreakfast();
+  const {mutate: deleteBreakieItemsApi} = useDeleteBreakfastItems();
 
   function generateRandomId() {
     const randomDecimal = Math.random();
@@ -133,7 +133,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
           return lunchs?.filter(
             item => item.dateAdded === date.format('YYYY-MM-DD'),
           );
-        case 'breakie':
+        case 'breakfast':
           return breakfasts?.filter(
             item => item.dateAdded === date.format('YYYY-MM-DD'),
           );
@@ -172,7 +172,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
             },
           },
         );
-      case 'breakie':
+      case 'breakfast':
         return updateBreakies(
           {id, userInput: combinedInputs},
           {
@@ -212,7 +212,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
             },
           },
         );
-      case 'breakie':
+      case 'breakfast':
         return updateBreakies(
           {id, userInput: combinedInputs},
           {
@@ -237,7 +237,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
           },
           onError: e => console.log('ERROR DELETING LUNCH ITEMS=>>', e),
         });
-      case 'breakie':
+      case 'breakfast':
         return deleteBreakieItemsApi(Ids, {
           onSuccess: () => {
             onSuccess();
@@ -264,16 +264,18 @@ const ListsProvider = ({children}: PropsWithChildren) => {
           variables,
 
           {
-            onSuccess: data => saveLunchItems(data, onSuccess, meal),
+            onSuccess: data =>
+              saveLunchItems<ItemWithTotals>(data, onSuccess, meal),
             onError: er => console.log('ERROR LUNCH =>', er),
           },
         );
-      case 'breakie':
+      case 'breakfast':
         return addBreakieToDb(
           variables,
 
           {
-            onSuccess: data => saveLunchItems(data, onSuccess, meal),
+            onSuccess: data =>
+              saveLunchItems<ItemWithTotals>(data, onSuccess, meal),
             onError: er => console.log('ERROR LUNCH =>', er),
           },
         );
@@ -286,10 +288,10 @@ const ListsProvider = ({children}: PropsWithChildren) => {
     setMealsItems(filteredData);
   };
 
-  const saveLunchItems = (
-    lunch: Tables<'lunchs'>,
+  const saveLunchItems = <T extends ItemWithTotals>(
+    lunch: T,
     onSuccess: () => void,
-    meal: string,
+    meal: MealTypes,
   ) => {
     const luItems = mealsItems.map(lu => ({
       lunch_id: lunch.id,
@@ -316,7 +318,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
           },
           onError: e => console.log('ERROR INSERT LUNCH ITEM=>>', e),
         });
-      case 'breakie':
+      case 'breakfast':
         return addBreakieItems(breakieItems, {
           onSuccess: () => {
             clearCart();

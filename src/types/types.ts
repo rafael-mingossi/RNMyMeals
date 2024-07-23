@@ -45,7 +45,20 @@ export type AddedItem = {
   quantity: number;
 };
 
-export type MealTypes = 'breakie' | 'lunch' | 'snack' | 'dinner';
+export type ItemWithTotals = {
+  created_at: string;
+  dateAdded: string | null;
+  id: number;
+  tCalories: number | null;
+  tCarbs: number | null;
+  tFat: number | null;
+  tFibre: number | null;
+  tProtein: number | null;
+  tSodium: number | null;
+  user_id: string | null;
+};
+
+export type MealTypes = 'breakfast' | 'lunch';
 
 export type LunchDetails = {
   created_at: string;
@@ -71,6 +84,31 @@ export type BreakieDetails = {
   recipes: TablesType<'recipes'> | null;
 };
 
+export type SnackDetails = {
+  created_at: string;
+  foodQuantity: number | null;
+  food_id: number | null;
+  foods: TablesType<'foods'> | null;
+  id: number;
+  snack_id?: number | null;
+  recipeQuantity: number | null;
+  recipe_id: number | null;
+  recipes: TablesType<'recipes'> | null;
+};
+
+export type DinnerDetails = {
+  created_at: string;
+  foodQuantity: number | null;
+  food_id: number | null;
+  foods: TablesType<'foods'> | null;
+  id: number;
+  dinner_id?: number | null;
+  recipeQuantity: number | null;
+  recipe_id: number | null;
+  recipes: TablesType<'recipes'> | null;
+};
+
+// THIS IS BEING USED TO EXTEND GENERICS
 export type MealDetails = {
   created_at: string;
   foodQuantity: number | null;
@@ -90,3 +128,7 @@ export type Profile = {
 
 export type Food = Tables<'foods'>;
 export type Recipe = Tables<'recipes'>;
+export type Lunchs = Tables<'lunchs'>;
+export type Breakies = Tables<'breakfasts'>;
+export type Snacks = Tables<'snacks'>;
+export type Dinners = Tables<'dinners'>;
