@@ -9,7 +9,12 @@ import {
   View,
 } from 'react-native';
 import {PieChart} from 'react-native-gifted-charts';
-import {useGetFoodsById, useMyLunchsList, useMyRecipesList} from '@api';
+import {
+  useGetFoodsById,
+  useMyBreakfastList,
+  useMyLunchsList,
+  useMyRecipesList,
+} from '@api';
 import {Calendar} from '@components';
 import {Colours} from '@constants';
 import styles from './dashboard.styles.ts';
@@ -21,8 +26,9 @@ const Dashboard = ({navigation}: BottomScreenStack) => {
   const {data: ingredients, isLoading: loadFoods} = useGetFoodsById();
   const {data: recipes, isLoading: loadRecipes} = useMyRecipesList();
   const {data: lunchs, isLoading: loadLunchs} = useMyLunchsList();
+  const {data: breakfasts, isLoading: loadBreakies} = useMyBreakfastList();
 
-  if (loadFoods || loadRecipes || loadLunchs) {
+  if (loadFoods || loadRecipes || loadLunchs || loadBreakies) {
     return (
       <View style={styles.loadingView}>
         <ActivityIndicator />

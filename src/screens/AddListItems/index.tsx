@@ -1,4 +1,4 @@
-import React, {RefObject, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   StatusBar,
@@ -28,18 +28,24 @@ import {hS, vS} from '@utils';
 const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
   const insets = useSafeAreaInsets();
   const {searchQuery, setSearchQuery} = useFiltered();
-  const {lunchs} = listsStore();
+  const {lunchs, breakfasts} = listsStore();
   const {date} = calendarStore();
-  const {addLunch, lunchItems, updateLunch, clearCart} = useLists();
+  const {addMeal, mealsItems, updateMeal, clearCart} = useLists();
   const sheetRef = useRef<BottomSheetMethods>(null);
   const layoutRef = useRef<View>(null);
   const [childHeight, setChildHeight] = useState(0);
+
+  const mealName = route?.params.listItem;
+
+  if (!mealName) {
+    navigation.goBack();
+  }
 
   // const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
   // Handle Android back button behavior
   const handleBackPress = () => {
-    if (lunchItems.length) {
+    if (mealsItems.length) {
       sheetRef.current?.open(); // Open bottom sheet for confirmation
       return true; // Prevent default back action
     } else {
@@ -55,7 +61,7 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
     );
 
     return () => backSubscription.remove();
-  }, [lunchItems.length]);
+  }, [mealsItems.length]);
 
   //Getting the total height of the cart items + bottom buttons
   const handleLayout = (event: LayoutChangeEvent) => {
@@ -71,34 +77,70 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
     sheetRef?.current?.close();
   };
 
-  const getIdToUpdateLunch = () => {
-    return lunchs.find(item => item.dateAdded === date.format('YYYY-MM-DD'))
-      ?.id;
-  };
+  const getIdToUpdateMeal = () => {
+    switch (mealName) {
+      case 'lunch':
+        return lunchs.find(item => item.dateAdded === date.format('YYYY-MM-DD'))
+          ?.id;
 
-  const handleLog = () => {
-    const lunchFiltered = lunchs?.filter(
-      item => item.dateAdded === date.format('YYYY-MM-DD'),
-    );
-
-    if (route?.params.listItem === 'breakie') {
-      console.log('BREAKIE');
-    } else if (route?.params.listItem === 'lunch') {
-      lunchFiltered.length
-        ? updateLunch(getIdToUpdateLunch()!, () => {
-            navigation.goBack();
-            clearCart();
-          })
-        : addLunch(() => {
-            navigation.goBack();
-            clearCart();
-          });
+      case 'breakie':
+        return breakfasts.find(
+          item => item.dateAdded === date.format('YYYY-MM-DD'),
+        )?.id;
     }
   };
 
-  // const handleDeleteItem = (id: number) => {
-  //   removeLunchItem(String(id));
-  // };
+  const handleFilteredMeal = () => {
+    switch (mealName) {
+      case 'lunch':
+        return lunchs?.filter(
+          item => item.dateAdded === date.format('YYYY-MM-DD'),
+        );
+
+      case 'breakie':
+        return breakfasts?.filter(
+          item => item.dateAdded === date.format('YYYY-MM-DD'),
+        );
+    }
+  };
+  const handleLog = () => {
+    const mealToFilter = handleFilteredMeal();
+
+    if (!mealToFilter) {
+      return;
+    }
+
+    switch (mealName) {
+      case 'lunch':
+        return mealToFilter.length
+          ? updateMeal(
+              getIdToUpdateMeal()!,
+              () => {
+                navigation.goBack();
+                clearCart();
+              },
+              mealName,
+            )
+          : addMeal(() => {
+              navigation.goBack();
+              clearCart();
+            }, mealName);
+      case 'breakie':
+        return mealToFilter.length
+          ? updateMeal(
+              getIdToUpdateMeal()!,
+              () => {
+                navigation.goBack();
+                clearCart();
+              },
+              mealName,
+            )
+          : addMeal(() => {
+              navigation.goBack();
+              clearCart();
+            }, mealName);
+    }
+  };
 
   return (
     <View
@@ -120,21 +162,21 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
         />
       </View>
       <TopTabsNavigator />
-      {lunchItems.length ? (
+      {mealsItems.length ? (
         <Pressable onPress={onAddButtonPress} style={styles.cartBtn}>
           <Icon size={hS(35)} source={'bucket-outline'} color={Colours.white} />
-          <Text style={styles.carTxt}>{lunchItems.length}</Text>
+          <Text style={styles.carTxt}>{mealsItems.length}</Text>
         </Pressable>
       ) : null}
 
-      {/*{lunchItems.length ? (*/}
+      {/*{mealsItems.length ? (*/}
       {/*  <AnimatedPressable*/}
       {/*    onPress={onAddButtonPress}*/}
       {/*    entering={SlideInRight.duration(200).delay(100)}*/}
       {/*    exiting={SlideOutRight}*/}
       {/*    style={styles.cartBtn}>*/}
       {/*    <Icon size={hS(35)} source={'bucket-outline'} color={Colours.white} />*/}
-      {/*    <Text style={styles.carTxt}>{lunchItems.length}</Text>*/}
+      {/*    <Text style={styles.carTxt}>{mealsItems.length}</Text>*/}
       {/*  </AnimatedPressable>*/}
       {/*) : null}*/}
 
@@ -149,7 +191,7 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
             style={styles.contentContainer}
             ref={layoutRef}
             onLayout={handleLayout}>
-            {lunchItems.map(item => (
+            {mealsItems.map(item => (
               <View style={styles.imgTxtWrapper} key={item.id}>
                 <View style={styles.imgAndText}>
                   <Image
@@ -204,7 +246,7 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
               <ButtonText
                 children={'Log'}
                 onPress={handleLog}
-                disabled={!lunchItems.length}
+                disabled={!mealsItems.length}
               />
             </View>
           </View>
@@ -214,7 +256,7 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
         <ButtonText
           children={'Return'}
           onPress={
-            lunchItems.length
+            mealsItems.length
               ? () => onAddButtonPress()
               : () => navigation.goBack()
           }
@@ -223,7 +265,7 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
         <ButtonText
           children={'Log'}
           onPress={handleLog}
-          disabled={!lunchItems.length}
+          disabled={!mealsItems.length}
         />
       </View>
     </View>

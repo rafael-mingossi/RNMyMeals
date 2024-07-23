@@ -8,6 +8,8 @@ export {default as TextInputLabel} from './TextInputLabel';
 export {default as SingleFood} from './SingleFood';
 export {default as Ingredient} from './Ingredient';
 export {default as MacrosChart} from './MacrosChart';
+export {default as BaseMeal} from './BaseMeal';
+export {default as Loader} from './Loader';
 
 //BUTTONS
 export {default as ButtonRound} from './ButtonRound';

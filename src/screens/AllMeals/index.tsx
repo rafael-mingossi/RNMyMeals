@@ -15,10 +15,14 @@ import {Colours} from '@constants';
 import {ScreenStack} from '@config';
 
 const AllMeals = ({navigation}: ScreenStack) => {
-  const {lunchs} = listsStore();
+  const {lunchs, breakfasts} = listsStore();
   const {date} = calendarStore();
 
   const lunchFiltered = lunchs?.filter(
+    item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
+  );
+
+  const breakiesFiltered = breakfasts?.filter(
     item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
   );
   return (
@@ -27,7 +31,9 @@ const AllMeals = ({navigation}: ScreenStack) => {
       <Calendar />
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Surface style={styles.surface} elevation={3}>
-          <View style={styles.rowItem}>
+          <TouchableOpacity
+            style={styles.rowItem}
+            onPress={() => navigation.navigate('MealBreakie')}>
             <View style={styles.iconAndText}>
               <View style={styles.iconWrapper}>
                 <Image
@@ -38,12 +44,13 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.iconTxt}>Breakie</Text>
             </View>
             <Text style={styles.calValTxt}>
-              0 <Text style={styles.calsTxt}>cals</Text>
+              {breakiesFiltered?.length ? breakiesFiltered[0]?.tCalories : 0}{' '}
+              <Text style={styles.calsTxt}>cals</Text>
             </Text>
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.rowItem}
-            onPress={() => navigation.navigate('SingleMealLunch')}>
+            onPress={() => navigation.navigate('MealLunch')}>
             <View style={styles.iconAndText}>
               <View style={styles.iconWrapper}>
                 <Image
@@ -93,7 +100,10 @@ const AllMeals = ({navigation}: ScreenStack) => {
             <Text style={styles.dayTotalsTxt}>Cals</Text>
             <Text style={styles.dayTotalsTxt}>
               {' '}
-              {lunchFiltered?.length ? lunchFiltered[0]?.tCalories : 0} cals
+              {lunchFiltered?.length && breakiesFiltered?.length
+                ? lunchFiltered[0]?.tCalories! + breakiesFiltered[0]?.tCalories!
+                : 0}{' '}
+              cals
             </Text>
           </View>
           <View style={styles.rowItem}>
