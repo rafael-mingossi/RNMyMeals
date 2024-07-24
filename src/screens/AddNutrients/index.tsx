@@ -152,6 +152,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           onChangeText={val => handleNumberInput('fat', val)}
           error={errors.fat && !formData.fat}
           onSubmitEditing={() => handleNextInput('carbs')}
+          returnKeyType={'next'}
         />
         <TextInputLabel
           ref={inputRefs.carbs}
@@ -162,6 +163,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           onChangeText={val => handleNumberInput('carbs', val)}
           error={errors.carbs && !formData.carbs}
           onSubmitEditing={() => handleNextInput('protein')}
+          returnKeyType={'next'}
         />
         <TextInputLabel
           ref={inputRefs.protein}
@@ -172,6 +174,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           onChangeText={val => handleNumberInput('protein', val)}
           error={errors.protein && !formData.protein}
           onSubmitEditing={() => handleNextInput('sodium')}
+          returnKeyType={'next'}
         />
         <TextInputLabel
           ref={inputRefs.sodium}
@@ -182,6 +185,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           unit={'mg'}
           onChangeText={val => handleNumberInput('sodium', val)}
           onSubmitEditing={() => handleNextInput('fibre')}
+          returnKeyType={'next'}
         />
         <TextInputLabel
           ref={inputRefs.fibre}
@@ -191,6 +195,7 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
           value={formData.fibre?.toString()}
           onChangeText={val => handleNumberInput('fibre', val)}
           onSubmitEditing={() => handleSubmitForm()}
+          returnKeyType={'done'}
         />
       </ScrollView>
       <View style={styles.buttonsWrapper}>

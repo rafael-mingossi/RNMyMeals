@@ -23,6 +23,8 @@ import {
   AllMeals,
   MealLunch,
   MealBreakie,
+  MealDinner,
+  MealSnack,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth, FilteredItemsProvider} from '@providers';
@@ -50,6 +52,8 @@ export type StackNavigatorParams = {
   AllMeals: undefined;
   MealLunch: undefined;
   MealBreakie: undefined;
+  MealDinner: undefined;
+  MealSnack: undefined;
 };
 
 //Navigation to screens only, using Navigation prop
@@ -263,6 +267,22 @@ const ScreenNavigator = () => {
                 options={{
                   headerShown: true,
                   title: 'Breakie',
+                }}
+              />
+              <Stack.Screen
+                name="MealSnack"
+                component={MealSnack}
+                options={{
+                  headerShown: true,
+                  title: 'Snack',
+                }}
+              />
+              <Stack.Screen
+                name="MealDinner"
+                component={MealDinner}
+                options={{
+                  headerShown: true,
+                  title: 'Dinner',
                 }}
               />
             </>

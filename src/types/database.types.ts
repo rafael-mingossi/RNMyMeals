@@ -547,7 +547,7 @@ export type Database = {
       snacks: {
         Row: {
           created_at: string;
-          dataAdded: string | null;
+          dateAdded: string | null;
           id: number;
           tCalories: number | null;
           tCarbs: number | null;
@@ -559,7 +559,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
-          dataAdded?: string | null;
+          dateAdded?: string | null;
           id?: number;
           tCalories?: number | null;
           tCarbs?: number | null;
@@ -571,7 +571,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
-          dataAdded?: string | null;
+          dateAdded?: string | null;
           id?: number;
           tCalories?: number | null;
           tCarbs?: number | null;

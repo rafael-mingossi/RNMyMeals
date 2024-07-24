@@ -2,11 +2,11 @@ import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {InsertTables} from '@types';
 import {supabase} from '@services';
 
-export const useInsertBreakfastItems = () => {
+export const useInsertSnackItems = () => {
   return useMutation({
-    async mutationFn(userInput: InsertTables<'breakfast_items'>[]) {
+    async mutationFn(userInput: InsertTables<'snack_items'>[]) {
       const {data, error} = await supabase
-        .from('breakfast_items')
+        .from('snack_items')
         .insert(userInput)
         .select();
 
@@ -19,34 +19,32 @@ export const useInsertBreakfastItems = () => {
   });
 };
 
-export const useDeleteBreakfastItems = () => {
+export const useDeleteSnackItems = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     async mutationFn(itemIds: number[]) {
       const {data, error} = await supabase
-        .from('breakfast_items')
+        .from('snack_items')
         .delete()
         .in('id', itemIds)
         .select();
 
       if (error) {
-        throw new Error(`Error deleting breakie items: ${error.message}`);
+        throw new Error(`Error deleting snack items: ${error.message}`);
       }
 
       return data;
     },
     onSuccess: data => {
-      const affectedLunchIds = [
-        ...new Set(data.map(item => item.breakfast_id)),
-      ];
+      const affectedLunchIds = [...new Set(data.map(item => item.snack_id))];
 
       affectedLunchIds.forEach((lunchId, id) => {
         queryClient
-          .invalidateQueries({queryKey: ['breakfasts', id]})
+          .invalidateQueries({queryKey: ['snacks', id]})
           .then(() => {});
         queryClient
-          .invalidateQueries({queryKey: ['breakfast_items', lunchId]})
+          .invalidateQueries({queryKey: ['snack_items', lunchId]})
           .then(() => {});
       });
     },

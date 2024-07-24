@@ -25,6 +25,14 @@ import {
   useInsertBreakfastItems,
   useDeleteBreakfastItems,
   useUpdateBreakfast,
+  useInsertSnack,
+  useInsertSnackItems,
+  useUpdateSnack,
+  useDeleteSnackItems,
+  useInsertDinner,
+  useInsertDinnerItems,
+  useUpdateDinner,
+  useDeleteDinnerItems,
 } from '@api';
 import {
   handleTotalLists,
@@ -73,7 +81,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
   const [mealsItems, setMealsItems] = useState<AddedMeal[]>([]);
   const [isChecked, setIsChecked] = useState<ListsType['isChecked']>({});
   const {date} = calendarStore();
-  const {lunchs, breakfasts} = listsStore();
+  const {lunchs, breakfasts, snacks, dinners} = listsStore();
   // console.log('mealsItems =>>', mealsItems);
   //
   // mealsItems.map(f => console.log('FOODS =>>', f.food?.itemFood));
@@ -91,6 +99,18 @@ const ListsProvider = ({children}: PropsWithChildren) => {
   const {mutate: addBreakieItems} = useInsertBreakfastItems();
   const {mutate: updateBreakies} = useUpdateBreakfast();
   const {mutate: deleteBreakieItemsApi} = useDeleteBreakfastItems();
+
+  /// SNACKS
+  const {mutate: addSnackToDb} = useInsertSnack();
+  const {mutate: addSnackItems} = useInsertSnackItems();
+  const {mutate: updateSnacks} = useUpdateSnack();
+  const {mutate: deleteSnackItemsApi} = useDeleteSnackItems();
+
+  /// DINNERS
+  const {mutate: addDinnerToDb} = useInsertDinner();
+  const {mutate: addDinnerItems} = useInsertDinnerItems();
+  const {mutate: updateDinners} = useUpdateDinner();
+  const {mutate: deleteDinnerItemsApi} = useDeleteDinnerItems();
 
   function generateRandomId() {
     const randomDecimal = Math.random();
@@ -137,6 +157,14 @@ const ListsProvider = ({children}: PropsWithChildren) => {
           return breakfasts?.filter(
             item => item.dateAdded === date.format('YYYY-MM-DD'),
           );
+        case 'dinner':
+          return dinners?.filter(
+            item => item.dateAdded === date.format('YYYY-MM-DD'),
+          );
+        case 'snack':
+          return snacks?.filter(
+            item => item.dateAdded === date.format('YYYY-MM-DD'),
+          );
       }
     };
 
@@ -174,6 +202,24 @@ const ListsProvider = ({children}: PropsWithChildren) => {
         );
       case 'breakfast':
         return updateBreakies(
+          {id, userInput: combinedInputs},
+          {
+            onSuccess: data => {
+              saveLunchItems(data, onSuccess, meal);
+            },
+          },
+        );
+      case 'snack':
+        return updateSnacks(
+          {id, userInput: combinedInputs},
+          {
+            onSuccess: data => {
+              saveLunchItems(data, onSuccess, meal);
+            },
+          },
+        );
+      case 'dinner':
+        return updateDinners(
           {id, userInput: combinedInputs},
           {
             onSuccess: data => {
@@ -221,6 +267,24 @@ const ListsProvider = ({children}: PropsWithChildren) => {
             },
           },
         );
+      case 'dinner':
+        return updateDinners(
+          {id, userInput: combinedInputs},
+          {
+            onSuccess: () => {
+              handleDeleteLunchItems(onSuccess, Ids, meal);
+            },
+          },
+        );
+      case 'snack':
+        return updateSnacks(
+          {id, userInput: combinedInputs},
+          {
+            onSuccess: () => {
+              handleDeleteLunchItems(onSuccess, Ids, meal);
+            },
+          },
+        );
     }
   };
 
@@ -244,6 +308,20 @@ const ListsProvider = ({children}: PropsWithChildren) => {
           },
           onError: e => console.log('ERROR DELETING BREAKIE ITEMS=>>', e),
         });
+      case 'snack':
+        return deleteSnackItemsApi(Ids, {
+          onSuccess: () => {
+            onSuccess();
+          },
+          onError: e => console.log('ERROR DELETING SNACK ITEMS=>>', e),
+        });
+      case 'dinner':
+        return deleteDinnerItemsApi(Ids, {
+          onSuccess: () => {
+            onSuccess();
+          },
+          onError: e => console.log('ERROR DELETING DINNER ITEMS=>>', e),
+        });
     }
   };
 
@@ -266,7 +344,7 @@ const ListsProvider = ({children}: PropsWithChildren) => {
           {
             onSuccess: data =>
               saveLunchItems<ItemWithTotals>(data, onSuccess, meal),
-            onError: er => console.log('ERROR LUNCH =>', er),
+            onError: er => console.log('ERROR ADD LUNCH =>', er),
           },
         );
       case 'breakfast':
@@ -276,7 +354,27 @@ const ListsProvider = ({children}: PropsWithChildren) => {
           {
             onSuccess: data =>
               saveLunchItems<ItemWithTotals>(data, onSuccess, meal),
-            onError: er => console.log('ERROR LUNCH =>', er),
+            onError: er => console.log('ERROR ADD BREAKIE =>', er),
+          },
+        );
+      case 'snack':
+        return addSnackToDb(
+          variables,
+
+          {
+            onSuccess: data =>
+              saveLunchItems<ItemWithTotals>(data, onSuccess, meal),
+            onError: er => console.log('ERROR ADD SNACK =>', er),
+          },
+        );
+      case 'dinner':
+        return addDinnerToDb(
+          variables,
+
+          {
+            onSuccess: data =>
+              saveLunchItems<ItemWithTotals>(data, onSuccess, meal),
+            onError: er => console.log('ERROR ADD DINNER =>', er),
           },
         );
     }
@@ -309,6 +407,22 @@ const ListsProvider = ({children}: PropsWithChildren) => {
       recipeQuantity: lu?.recipe?.recipeQuantity,
     }));
 
+    const snackItems = mealsItems.map(lu => ({
+      snack_id: lunch?.id,
+      food_id: lu?.food?.food_id,
+      foodQuantity: lu?.food?.foodQuantity,
+      recipe_id: lu?.recipe?.recipe_id,
+      recipeQuantity: lu?.recipe?.recipeQuantity,
+    }));
+
+    const dinnerItems = mealsItems.map(lu => ({
+      dinner_id: lunch?.id,
+      food_id: lu?.food?.food_id,
+      foodQuantity: lu?.food?.foodQuantity,
+      recipe_id: lu?.recipe?.recipe_id,
+      recipeQuantity: lu?.recipe?.recipeQuantity,
+    }));
+
     switch (meal) {
       case 'lunch':
         return addLunchItems(luItems, {
@@ -324,7 +438,23 @@ const ListsProvider = ({children}: PropsWithChildren) => {
             clearCart();
             onSuccess();
           },
-          onError: e => console.log('ERROR INSERT LUNCH ITEM=>>', e),
+          onError: e => console.log('ERROR INSERT BREAKIE ITEM=>>', e),
+        });
+      case 'snack':
+        return addSnackItems(snackItems, {
+          onSuccess: () => {
+            clearCart();
+            onSuccess();
+          },
+          onError: e => console.log('ERROR INSERT SNACK ITEM=>>', e),
+        });
+      case 'dinner':
+        return addDinnerItems(dinnerItems, {
+          onSuccess: () => {
+            clearCart();
+            onSuccess();
+          },
+          onError: e => console.log('ERROR INSERT DINNER ITEM=>>', e),
         });
     }
   };

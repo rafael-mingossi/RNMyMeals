@@ -15,7 +15,7 @@ import {Colours} from '@constants';
 import {ScreenStack} from '@config';
 
 const AllMeals = ({navigation}: ScreenStack) => {
-  const {lunchs, breakfasts} = listsStore();
+  const {lunchs, breakfasts, snacks, dinners} = listsStore();
   const {date} = calendarStore();
 
   const lunchFiltered = lunchs?.filter(
@@ -25,6 +25,15 @@ const AllMeals = ({navigation}: ScreenStack) => {
   const breakiesFiltered = breakfasts?.filter(
     item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
   );
+
+  const snacksFiltered = snacks?.filter(
+    item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
+  );
+
+  const dinnersFiltered = dinners?.filter(
+    item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
+  );
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
@@ -65,7 +74,9 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.calsTxt}>cals</Text>
             </Text>
           </TouchableOpacity>
-          <View style={styles.rowItem}>
+          <TouchableOpacity
+            style={styles.rowItem}
+            onPress={() => navigation.navigate('MealSnack')}>
             <View style={styles.iconAndText}>
               <View style={styles.iconWrapper}>
                 <Image
@@ -76,10 +87,13 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.iconTxt}>Snacks</Text>
             </View>
             <Text style={styles.calValTxt}>
-              0 <Text style={styles.calsTxt}>cals</Text>
+              {snacksFiltered?.length ? snacksFiltered[0]?.tCalories : 0}{' '}
+              <Text style={styles.calsTxt}>cals</Text>
             </Text>
-          </View>
-          <View style={styles.rowItem}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.rowItem}
+            onPress={() => navigation.navigate('MealDinner')}>
             <View style={styles.iconAndText}>
               <View style={styles.iconWrapper}>
                 <Image
@@ -90,41 +104,72 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.iconTxt}>Dinner</Text>
             </View>
             <Text style={styles.calValTxt}>
-              0 <Text style={styles.calsTxt}>cals</Text>
+              {dinnersFiltered?.length ? dinnersFiltered[0]?.tCalories : 0}{' '}
+              <Text style={styles.calsTxt}>cals</Text>
             </Text>
-          </View>
+          </TouchableOpacity>
         </Surface>
         <Surface style={styles.surface}>
           <Text style={styles.dayTotalsTitle}>Day Totals</Text>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Cals</Text>
             <Text style={styles.dayTotalsTxt}>
-              {' '}
-              {lunchFiltered?.length && breakiesFiltered?.length
-                ? lunchFiltered[0]?.tCalories! + breakiesFiltered[0]?.tCalories!
-                : 0}{' '}
+              {lunchFiltered[0]?.tCalories! +
+                breakiesFiltered[0]?.tCalories! +
+                snacksFiltered[0]?.tCalories! +
+                dinnersFiltered[0]?.tCalories! || 0}{' '}
               cals
             </Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Protein</Text>
-            <Text style={styles.dayTotalsTxt}>200 grams</Text>
+            <Text style={styles.dayTotalsTxt}>
+              {lunchFiltered[0]?.tProtein! +
+                breakiesFiltered[0]?.tProtein! +
+                snacksFiltered[0]?.tProtein! +
+                dinnersFiltered[0]?.tProtein! || 0}{' '}
+              grams
+            </Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Carbs</Text>
-            <Text style={styles.dayTotalsTxt}>50 grams</Text>
+            <Text style={styles.dayTotalsTxt}>
+              {lunchFiltered[0]?.tCarbs! +
+                breakiesFiltered[0]?.tCarbs! +
+                snacksFiltered[0]?.tCarbs! +
+                dinnersFiltered[0]?.tCarbs! || 0}{' '}
+              grams
+            </Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Fat</Text>
-            <Text style={styles.dayTotalsTxt}>10 grams</Text>
+            <Text style={styles.dayTotalsTxt}>
+              {lunchFiltered[0]?.tFat! +
+                breakiesFiltered[0]?.tFat! +
+                snacksFiltered[0]?.tFat! +
+                dinnersFiltered[0]?.tFat! || 0}{' '}
+              grams
+            </Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Sodium</Text>
-            <Text style={styles.dayTotalsTxt}>0.2 grams</Text>
+            <Text style={styles.dayTotalsTxt}>
+              {lunchFiltered[0]?.tSodium! +
+                breakiesFiltered[0]?.tSodium! +
+                snacksFiltered[0]?.tSodium! +
+                dinnersFiltered[0]?.tSodium! || 0}{' '}
+              grams
+            </Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Fibre</Text>
-            <Text style={styles.dayTotalsTxt}>20 grams</Text>
+            <Text style={styles.dayTotalsTxt}>
+              {lunchFiltered[0]?.tFibre! +
+                breakiesFiltered[0]?.tFibre! +
+                snacksFiltered[0]?.tFibre! +
+                dinnersFiltered[0]?.tFibre! || 0}{' '}
+              grams
+            </Text>
           </View>
         </Surface>
       </ScrollView>

@@ -1,6 +1,6 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import {Colours} from '@constants';
-import {mS} from '@utils';
+import {mS, vS} from '@utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -9,12 +9,6 @@ const styles = StyleSheet.create({
   },
   scrollViewWrapper: {
     padding: mS(15),
-  },
-  loadingView: {
-    flex: 1,
-    backgroundColor: Colours.white,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 

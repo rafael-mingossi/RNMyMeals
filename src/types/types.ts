@@ -58,7 +58,7 @@ export type ItemWithTotals = {
   user_id: string | null;
 };
 
-export type MealTypes = 'breakfast' | 'lunch';
+export type MealTypes = 'breakfast' | 'lunch' | 'snack' | 'dinner';
 
 export type LunchDetails = {
   created_at: string;
