@@ -365,27 +365,39 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null;
+          cal_goal: number | null;
+          dob: string | null;
           full_name: string | null;
+          gender: string | null;
+          height: number | null;
           id: string;
           updated_at: string | null;
           username: string | null;
-          website: string | null;
+          weight: number | null;
         };
         Insert: {
           avatar_url?: string | null;
+          cal_goal?: number | null;
+          dob?: string | null;
           full_name?: string | null;
+          gender?: string | null;
+          height?: number | null;
           id: string;
           updated_at?: string | null;
           username?: string | null;
-          website?: string | null;
+          weight?: number | null;
         };
         Update: {
           avatar_url?: string | null;
+          cal_goal?: number | null;
+          dob?: string | null;
           full_name?: string | null;
+          gender?: string | null;
+          height?: number | null;
           id?: string;
           updated_at?: string | null;
           username?: string | null;
-          website?: string | null;
+          weight?: number | null;
         };
         Relationships: [
           {

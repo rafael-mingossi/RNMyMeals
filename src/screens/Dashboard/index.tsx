@@ -1,13 +1,5 @@
-import React, {useCallback, useMemo} from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  Text,
-  View,
-} from 'react-native';
+import React, {useEffect, useMemo} from 'react';
+import {SafeAreaView, ScrollView, StatusBar, Text, View} from 'react-native';
 import {PieChart} from 'react-native-gifted-charts';
 import {
   useGetFoodsById,
@@ -16,20 +8,32 @@ import {
   useMyLunchsList,
   useMyRecipesList,
   useMySnacksList,
+  useGetUserById,
 } from '@api';
-import {Calendar, AnimatedSemicircle, Loader} from '@components';
+import {
+  Calendar,
+  AnimatedSemicircle,
+  Loader,
+  ButtonText,
+  Surface,
+} from '@components';
 import {Colours} from '@constants';
 import styles from './dashboard.styles.ts';
 import {BottomScreenStack} from '../../config/BottomNavigator.tsx';
-import {calendarStore, listsStore} from '@stores';
-import {ItemWithTotals} from '@types';
+import {calendarStore} from '@stores';
+import {useSharedValue, withTiming} from 'react-native-reanimated';
+import {useFont} from '@shopify/react-native-skia';
+import {mS, useAllMealsTotals} from '@utils';
+import {useAuth} from '@providers';
 
 const MAX_CALORIES = 2000;
 
 const Dashboard = ({navigation}: BottomScreenStack) => {
-  // const data = [{value: 50}, {value: 80}, {value: 90}];
   const {date} = calendarStore();
-  const {lunchs, breakfasts, snacks, dinners} = listsStore();
+  const {profile} = useAuth();
+  const {totalCalories, mealCalories} = useAllMealsTotals();
+  const animatedProgress = useSharedValue(0);
+  const animatedTotalCal = useSharedValue(0);
 
   const {data: ingredientsApi, isLoading: loadFoods} = useGetFoodsById();
   const {data: recipesApi, isLoading: loadRecipes} = useMyRecipesList();
@@ -37,52 +41,34 @@ const Dashboard = ({navigation}: BottomScreenStack) => {
   const {data: breakfastsApi, isLoading: loadBreakies} = useMyBreakfastList();
   const {data: dinnersApi, isLoading: loadDinners} = useMyDinnersList();
   const {data: snacksApi, isLoading: loadSnacks} = useMySnacksList();
-
-  const filterMealsByDate = useCallback(
-    (meals: ItemWithTotals[] | undefined) =>
-      meals?.filter(
-        item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
-      ) || [],
-    [date],
-  );
-
-  const {totalCalories, mealCalories} = useMemo(() => {
-    const filteredMeals = {
-      lunchs: filterMealsByDate(lunchs),
-      breakfasts: filterMealsByDate(breakfasts),
-      snacks: filterMealsByDate(snacks),
-      dinners: filterMealsByDate(dinners),
-    };
-
-    const calculatedMealCalories = {
-      lunchs: filteredMeals.lunchs[0]?.tCalories || 0,
-      breakfasts: filteredMeals.breakfasts[0]?.tCalories || 0,
-      snacks: filteredMeals.snacks[0]?.tCalories || 0,
-      dinners: filteredMeals.dinners[0]?.tCalories || 0,
-    };
-
-    const calculatedTotalCalories = Object.values(
-      calculatedMealCalories,
-    ).reduce((sum, cal) => sum + cal, 0);
-
-    return {
-      totalCalories: calculatedTotalCalories,
-      mealCalories: calculatedMealCalories,
-    };
-  }, [lunchs, breakfasts, snacks, dinners, date, filterMealsByDate]);
+  const {data: userApi, isLoading: loadUser} = useGetUserById();
+  const font = useFont(require('../../assets/fonts/Mulish-Bold.ttf'), mS(30));
 
   const currentProgress = useMemo(
-    () => (totalCalories / MAX_CALORIES) * 100,
+    () => Number(totalCalories) / (userApi?.cal_goal || MAX_CALORIES),
     [totalCalories],
   );
 
+  useEffect(() => {
+    animatedProgress.value = withTiming(currentProgress, {duration: 800});
+    animatedTotalCal.value = withTiming(totalCalories, {duration: 800});
+  }, [
+    currentProgress,
+    date,
+    totalCalories,
+    animatedProgress,
+    animatedTotalCal,
+  ]);
+
   if (
+    !font ||
     loadFoods ||
     loadRecipes ||
     loadLunchs ||
     loadBreakies ||
     loadDinners ||
-    loadSnacks
+    loadSnacks ||
+    loadUser
   ) {
     return <Loader />;
   }
@@ -94,20 +80,47 @@ const Dashboard = ({navigation}: BottomScreenStack) => {
       <ScrollView contentContainerStyle={styles.scrollViewWrapper}>
         {/*<PieChart data={data} donut />*/}
         <AnimatedSemicircle
-          maxValue={2000}
-          progress={currentProgress / 100}
-          minValue={totalCalories}
+          maxValue={userApi?.cal_goal || MAX_CALORIES}
+          progress={animatedProgress}
+          totalCals={animatedTotalCal}
+          font={font}
         />
-        <Pressable onPress={() => navigation.navigate('AllMeals')}>
-          <Text>ALL MEALS</Text>
-        </Pressable>
-        <View>
-          <Text>Total Calories: {totalCalories}</Text>
-          <Text>Lunch: {mealCalories.lunchs}</Text>
-          <Text>Breakfast: {mealCalories.breakfasts}</Text>
-          <Text>Snacks: {mealCalories.snacks}</Text>
-          <Text>Dinner: {mealCalories.dinners}</Text>
-        </View>
+        <Surface>
+          <ButtonText
+            children={'MANAGE MY MEALS'}
+            onPress={() => {
+              navigation.navigate('AllMeals');
+            }}
+          />
+          <View style={styles.mealRowWrapper}>
+            <View style={styles.singleMealWrapper}>
+              <Text style={styles.mealTitle}>Lunch</Text>
+              <Text style={styles.mealValueTxt}>
+                {mealCalories.lunchs.toFixed(0)}
+              </Text>
+            </View>
+            <View style={styles.singleMealWrapper}>
+              <Text style={styles.mealTitle}>Breakfast</Text>
+              <Text style={styles.mealValueTxt}>
+                {mealCalories.breakfasts.toFixed(0)}
+              </Text>
+            </View>
+          </View>
+          <View style={[styles.mealRowWrapper]}>
+            <View style={styles.singleMealWrapper}>
+              <Text style={styles.mealTitle}>Snacks</Text>
+              <Text style={styles.mealValueTxt}>
+                {mealCalories.snacks.toFixed(0)}
+              </Text>
+            </View>
+            <View style={[styles.singleMealWrapper]}>
+              <Text style={styles.mealTitle}>Dinner</Text>
+              <Text style={styles.mealValueTxt}>
+                {mealCalories.dinners.toFixed(0)}
+              </Text>
+            </View>
+          </View>
+        </Surface>
       </ScrollView>
     </SafeAreaView>
   );

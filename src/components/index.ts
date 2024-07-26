@@ -11,7 +11,7 @@ export {default as MacrosChart} from './MacrosChart';
 export {default as BaseMeal} from './BaseMeal';
 export {default as Loader} from './Loader';
 export {default as AnimatedSemicircle} from './AnimatedSemicircle';
-export {default as CaloriesBar} from './CaloriesBar';
+export {default as Surface} from './Surface';
 
 //BUTTONS
 export {default as ButtonRound} from './ButtonRound';

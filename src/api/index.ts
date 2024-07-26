@@ -9,3 +9,4 @@ export * from './snacks.ts';
 export * from './snack-items.ts';
 export * from './dinners.ts';
 export * from './dinner-items.ts';
+export * from './profile.ts';

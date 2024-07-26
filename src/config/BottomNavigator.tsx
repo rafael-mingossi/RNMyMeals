@@ -93,7 +93,7 @@ const bottomTabHome = {
     <BottomIconWrapper focused={focused} icon={'chart-line'} label={'HOME'} />
   ),
 };
-const bottomTabGoals = {
+const bottomTabRecipes = {
   tabBarIcon: (focused: FocusedProps) => (
     <BottomIconWrapper
       focused={focused}
@@ -133,7 +133,7 @@ const BottomNavigator = () => {
       <Bottom.Screen
         name="Recipes"
         component={Recipes}
-        options={bottomTabGoals}
+        options={bottomTabRecipes}
       />
       <Bottom.Screen
         name="Profile"
