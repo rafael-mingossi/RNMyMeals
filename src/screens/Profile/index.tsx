@@ -33,6 +33,12 @@ const Profile = () => {
     username: null,
     weight: profile?.weight ? profile?.weight : 0,
   });
+  const [errors, setErrors] = useState({
+    dob: false,
+    height: false,
+    weight: false,
+    cal_goal: false,
+  });
 
   const dobRef = useRef<TI | null>(null);
   const sexRef = useRef<TI | null>(null);
@@ -40,18 +46,84 @@ const Profile = () => {
   const calsRef = useRef<TI | null>(null);
   const weightRef = useRef<TI | null>(null);
 
-  const handleTextInput = (name: string, value: string | number) => {
-    setFormData({...formData, [name]: value});
-  };
-
   const handleEdit = () => {
     setIsEditing(true);
   };
 
+  const validateDOB = (value: string): boolean => {
+    const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    if (!value) {
+      return true;
+    }
+    const match = value.match(regex);
+    if (!match) {
+      return false;
+    }
+    const [, day, month, year] = match;
+    const date = new Date(
+      parseInt(year, 10),
+      parseInt(month, 10) - 1,
+      parseInt(day, 10),
+    );
+    return (
+      date.getDate() === parseInt(day, 10) &&
+      date.getMonth() === parseInt(month, 10) - 1 &&
+      date.getFullYear() === parseInt(year, 10)
+    );
+  };
+
+  const formatDOB = (value: string) => {
+    if (!value) {
+      return value;
+    }
+    const numbers = value.replace(/[^\d]/g, '');
+    if (numbers.length <= 2) {
+      return numbers;
+    }
+    if (numbers.length <= 4) {
+      return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
+    }
+    return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(
+      4,
+      8,
+    )}`;
+  };
+
+  const validateNumber = (value: string) => {
+    return !value || /^\d+$/.test(value);
+  };
+
+  const handleTextInput = (name: string, value: string) => {
+    let formattedValue: number | string = value;
+    let isValid = true;
+
+    if (name === 'dob') {
+      formattedValue = formatDOB(value);
+      isValid = validateDOB(formattedValue);
+    } else if (['height', 'weight', 'cal_goal'].includes(name)) {
+      isValid = validateNumber(value);
+      formattedValue = isValid ? Number(value) : value;
+    }
+
+    setFormData({...formData, [name]: formattedValue});
+    setErrors({...errors, [name]: !isValid});
+  };
+
   const handleSave = () => {
+    const isValid = Object.values(errors).every(error => !error);
+    if (!isValid) {
+      return;
+    }
+
     setIsLoading(true);
+    const saveData = {...formData};
+    if (saveData.dob) {
+      const [day, month, year] = saveData.dob.split('/');
+      saveData.dob = `${month}/${day}/${year}`;
+    }
+
     updateUserApi(
-      {id: formData?.id, userInput: formData},
+      {id: formData?.id, userInput: saveData},
       {
         onSuccess: () => {
           setIsEditing(false);
@@ -71,12 +143,20 @@ const Profile = () => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
         {isEditing ? (
-          <Pressable
-            onPress={handleSave}
-            style={styles.btnSave}
-            disabled={isLoading}>
-            <Text style={styles.save}>Save</Text>
-          </Pressable>
+          <View style={styles.btnWrapper}>
+            <Pressable onPress={() => setIsEditing(false)}>
+              <Text style={styles.save}>Cancel</Text>
+            </Pressable>
+            <Text style={styles.btnCancel}>/</Text>
+            <Pressable
+              onPress={handleSave}
+              // style={styles.btnSave}
+              disabled={
+                isLoading || !Object.values(errors).every(error => !error)
+              }>
+              <Text style={styles.save}>Save</Text>
+            </Pressable>
+          </View>
         ) : (
           <Pressable
             onPress={handleEdit}
@@ -93,7 +173,7 @@ const Profile = () => {
             <View style={styles.rowWrapper}>
               <View style={styles.iconWrapper}>
                 <Icon
-                  size={hS(28)}
+                  size={hS(32)}
                   source={'label-outline'}
                   color={Colours.blue}
                 />
@@ -121,7 +201,7 @@ const Profile = () => {
             <View style={styles.rowWrapper}>
               <View style={styles.iconWrapper}>
                 <Icon
-                  size={hS(28)}
+                  size={hS(32)}
                   source={'cake-variant-outline'}
                   color={Colours.blue}
                 />
@@ -139,6 +219,16 @@ const Profile = () => {
                   onSubmitEditing={() => {
                     sexRef.current?.focus();
                   }}
+                  keyboardType={'numeric'}
+                  maxLength={10}
+                  right={
+                    errors.dob ? (
+                      <TextInput.Icon
+                        icon="alert-circle"
+                        color={Colours.midRed}
+                      />
+                    ) : null
+                  }
                 />
               ) : (
                 <Text style={styles.sectionTxt}>{formData?.dob || 'N/A'}</Text>
@@ -148,7 +238,7 @@ const Profile = () => {
             <View style={styles.rowWrapper}>
               <View style={styles.iconWrapper}>
                 <Icon
-                  size={hS(28)}
+                  size={hS(32)}
                   source={'gender-male-female'}
                   color={Colours.blue}
                 />
@@ -176,7 +266,7 @@ const Profile = () => {
             <View style={styles.rowWrapper}>
               <View style={styles.iconWrapper}>
                 <Icon
-                  size={hS(28)}
+                  size={hS(32)}
                   source={'human-male-height'}
                   color={Colours.blue}
                 />
@@ -185,15 +275,25 @@ const Profile = () => {
               {isEditing ? (
                 <TextInput
                   ref={heightRef}
-                  value={String(formData.height)}
+                  value={formData.height ? String(formData.height) : ''}
                   enterKeyHint={'next'}
                   returnKeyType={'done'}
                   mode={'flat'}
                   style={styles.input}
-                  onChangeText={val => handleTextInput('height', Number(val))}
+                  maxLength={3}
+                  keyboardType={'numeric'}
+                  onChangeText={val => handleTextInput('height', val)}
                   onSubmitEditing={() => {
                     calsRef.current?.focus();
                   }}
+                  right={
+                    errors.height ? (
+                      <TextInput.Icon
+                        icon="alert-circle"
+                        color={Colours.midRed}
+                      />
+                    ) : null
+                  }
                 />
               ) : (
                 <Text style={styles.sectionTxt}>
@@ -209,7 +309,7 @@ const Profile = () => {
             <View style={styles.rowWrapper}>
               <View style={styles.iconWrapper}>
                 <Icon
-                  size={hS(28)}
+                  size={hS(32)}
                   source={'food-apple-outline'}
                   color={Colours.blue}
                 />
@@ -223,7 +323,7 @@ const Profile = () => {
                   returnKeyType={'done'}
                   mode={'flat'}
                   style={styles.input}
-                  onChangeText={val => handleTextInput('cal_goal', Number(val))}
+                  onChangeText={val => handleTextInput('cal_goal', val)}
                   onSubmitEditing={() => {
                     weightRef.current?.focus();
                   }}
@@ -237,7 +337,7 @@ const Profile = () => {
 
             <View style={styles.rowWrapper}>
               <View style={styles.iconWrapper}>
-                <Icon size={hS(28)} source={'scale'} color={Colours.blue} />
+                <Icon size={hS(32)} source={'scale'} color={Colours.blue} />
                 <Text style={styles.iconLabel}>Body Weight</Text>
               </View>
               {isEditing ? (
@@ -248,7 +348,7 @@ const Profile = () => {
                   returnKeyType={'done'}
                   mode={'flat'}
                   style={styles.input}
-                  onChangeText={val => handleTextInput('weight', Number(val))}
+                  onChangeText={val => handleTextInput('weight', val)}
                   onSubmitEditing={handleSave}
                 />
               ) : (

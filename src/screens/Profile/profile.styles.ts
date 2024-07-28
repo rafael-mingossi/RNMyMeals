@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   btnSave: {
     position: 'absolute',
     right: hS(20),
-    bottom: vS(20),
+    bottom: vS(22),
   },
   scrollWrapper: {
     padding: mS(10),
@@ -69,10 +69,22 @@ const styles = StyleSheet.create({
   },
   input: {
     height: vS(30),
-    width: hS(100),
+    width: hS(110),
     backgroundColor: Colours.white,
   },
   btn: {color: Colours.darkRed},
+  btnWrapper: {
+    flexDirection: 'row',
+    position: 'absolute',
+    right: hS(20),
+    bottom: vS(22),
+  },
+  btnCancel: {
+    marginHorizontal: 5,
+    fontFamily: Fonts.semiBold,
+    fontSize: hS(15),
+    color: Colours.white,
+  },
 });
 
 export default styles;
