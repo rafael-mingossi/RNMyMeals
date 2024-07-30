@@ -31,7 +31,7 @@ export const useDeleteBreakfastItems = () => {
         .select();
 
       if (error) {
-        throw new Error(`Error deleting lunch items: ${error.message}`);
+        throw new Error(`Error deleting breakie items: ${error.message}`);
       }
 
       return data;

@@ -8,29 +8,28 @@ import {
   View,
 } from 'react-native';
 import styles from './allMeals.styles.ts';
-import {Surface} from 'react-native-paper';
-import {Calendar} from '@components';
-import {calendarStore, listsStore} from '@stores';
+import {Calendar, Surface} from '@components';
 import {Colours} from '@constants';
 import {ScreenStack} from '@config';
+import {useAllMealsTotals} from '@utils';
 
 const AllMeals = ({navigation}: ScreenStack) => {
-  const {lunchs, breakfasts} = listsStore();
-  const {date} = calendarStore();
+  const {
+    totalCalories,
+    totalProtein,
+    totalCarbs,
+    totalFibre,
+    totalFat,
+    totalSodium,
+    mealCalories,
+  } = useAllMealsTotals();
 
-  const lunchFiltered = lunchs?.filter(
-    item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
-  );
-
-  const breakiesFiltered = breakfasts?.filter(
-    item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
-  );
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
       <Calendar />
       <ScrollView contentContainerStyle={styles.scrollView}>
-        <Surface style={styles.surface} elevation={3}>
+        <Surface stylesExtra={styles.surface}>
           <TouchableOpacity
             style={styles.rowItem}
             onPress={() => navigation.navigate('MealBreakie')}>
@@ -44,7 +43,7 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.iconTxt}>Breakie</Text>
             </View>
             <Text style={styles.calValTxt}>
-              {breakiesFiltered?.length ? breakiesFiltered[0]?.tCalories : 0}{' '}
+              {mealCalories.breakfasts.toFixed(0)}{' '}
               <Text style={styles.calsTxt}>cals</Text>
             </Text>
           </TouchableOpacity>
@@ -61,11 +60,13 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.iconTxt}>Lunch</Text>
             </View>
             <Text style={styles.calValTxt}>
-              {lunchFiltered?.length ? lunchFiltered[0]?.tCalories : 0}{' '}
+              {mealCalories.lunchs.toFixed(0)}{' '}
               <Text style={styles.calsTxt}>cals</Text>
             </Text>
           </TouchableOpacity>
-          <View style={styles.rowItem}>
+          <TouchableOpacity
+            style={styles.rowItem}
+            onPress={() => navigation.navigate('MealSnack')}>
             <View style={styles.iconAndText}>
               <View style={styles.iconWrapper}>
                 <Image
@@ -76,10 +77,13 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.iconTxt}>Snacks</Text>
             </View>
             <Text style={styles.calValTxt}>
-              0 <Text style={styles.calsTxt}>cals</Text>
+              {mealCalories.snacks.toFixed(0)}{' '}
+              <Text style={styles.calsTxt}>cals</Text>
             </Text>
-          </View>
-          <View style={styles.rowItem}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.rowItem}
+            onPress={() => navigation.navigate('MealDinner')}>
             <View style={styles.iconAndText}>
               <View style={styles.iconWrapper}>
                 <Image
@@ -90,41 +94,35 @@ const AllMeals = ({navigation}: ScreenStack) => {
               <Text style={styles.iconTxt}>Dinner</Text>
             </View>
             <Text style={styles.calValTxt}>
-              0 <Text style={styles.calsTxt}>cals</Text>
+              {mealCalories.dinners} <Text style={styles.calsTxt}>cals</Text>
             </Text>
-          </View>
+          </TouchableOpacity>
         </Surface>
-        <Surface style={styles.surface}>
+        <Surface stylesExtra={styles.surface}>
           <Text style={styles.dayTotalsTitle}>Day Totals</Text>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Cals</Text>
-            <Text style={styles.dayTotalsTxt}>
-              {' '}
-              {lunchFiltered?.length && breakiesFiltered?.length
-                ? lunchFiltered[0]?.tCalories! + breakiesFiltered[0]?.tCalories!
-                : 0}{' '}
-              cals
-            </Text>
+            <Text style={styles.dayTotalsTxt}>{totalCalories} calories</Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Protein</Text>
-            <Text style={styles.dayTotalsTxt}>200 grams</Text>
+            <Text style={styles.dayTotalsTxt}>{totalProtein} grams</Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Carbs</Text>
-            <Text style={styles.dayTotalsTxt}>50 grams</Text>
+            <Text style={styles.dayTotalsTxt}>{totalCarbs} grams</Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Fat</Text>
-            <Text style={styles.dayTotalsTxt}>10 grams</Text>
+            <Text style={styles.dayTotalsTxt}>{totalFat} grams</Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Sodium</Text>
-            <Text style={styles.dayTotalsTxt}>0.2 grams</Text>
+            <Text style={styles.dayTotalsTxt}>{totalSodium} grams</Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={styles.dayTotalsTxt}>Fibre</Text>
-            <Text style={styles.dayTotalsTxt}>20 grams</Text>
+            <Text style={styles.dayTotalsTxt}>{totalFibre} grams</Text>
           </View>
         </Surface>
       </ScrollView>

@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import {Colours} from '@constants';
-import {mS} from '@utils';
+import {Colours, Fonts} from '@constants';
+import {mS, vS} from '@utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -8,13 +8,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollViewWrapper: {
-    padding: mS(15),
-  },
-  loadingView: {
+    padding: mS(10),
+    rowGap: vS(15),
+    backgroundColor: Colours.lightGray,
     flex: 1,
-    backgroundColor: Colours.white,
+  },
+  mealTitle: {
+    fontFamily: Fonts.semiBold,
+    fontSize: mS(18),
+  },
+  mealRowWrapper: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-evenly',
+    marginTop: vS(10),
+  },
+  singleMealWrapper: {
     alignItems: 'center',
-    justifyContent: 'center',
+  },
+  mealValueTxt: {
+    fontFamily: Fonts.semiBold,
+    fontSize: mS(18),
+    color: Colours.blue,
   },
 });
 

@@ -23,13 +23,20 @@ import {
   AllMeals,
   MealLunch,
   MealBreakie,
+  MealDinner,
+  MealSnack,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth, FilteredItemsProvider} from '@providers';
-import {ActivityIndicator, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  ActivityIndicator,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import {SingleFoodType} from '@types';
 import {Colours, Fonts} from '@constants';
-import {hS} from '@utils';
+import {hS, mS} from '@utils';
 import {Icon} from 'react-native-paper';
 
 export type StackNavigatorParams = {
@@ -50,6 +57,8 @@ export type StackNavigatorParams = {
   AllMeals: undefined;
   MealLunch: undefined;
   MealBreakie: undefined;
+  MealDinner: undefined;
+  MealSnack: undefined;
 };
 
 //Navigation to screens only, using Navigation prop
@@ -138,8 +147,8 @@ const ScreenNavigator = () => {
           screenOptions={{
             headerShown: false,
             headerTitleAlign: 'center',
-            headerBackVisible: false,
-            headerLeft: () => HeaderLeft(),
+            headerBackVisible: Platform.OS !== 'ios' && true,
+            headerLeft: () => Platform.OS === 'ios' && HeaderLeft(),
             headerStyle: {
               backgroundColor: Colours.green,
             },
@@ -189,6 +198,7 @@ const ScreenNavigator = () => {
                   headerTitleAlign: 'center',
                   headerTintColor: Colours.white,
                   title: 'Add Recipe',
+                  headerBackTitleVisible: false,
                 }}
               />
               <Stack.Screen
@@ -205,12 +215,13 @@ const ScreenNavigator = () => {
                 name="IngredientView"
                 component={IngredientView}
                 options={{
-                  headerLeft: () => HeaderLeftRounded(),
+                  headerLeft: () =>
+                    Platform.OS === 'ios' && HeaderLeftRounded(),
                   headerShown: true,
                   headerTitleAlign: 'center',
                   headerTintColor: Colours.white,
                   title: '',
-                  headerBackVisible: false,
+                  headerBackVisible: Platform.OS !== 'ios' && true,
                   headerTransparent: true,
                   headerStyle: {
                     backgroundColor: 'transparent',
@@ -222,11 +233,11 @@ const ScreenNavigator = () => {
                 component={RecipeDetails}
                 options={{
                   headerShown: true,
-                  headerLeft: () => HeaderLeftRounded(),
+                  // headerLeft: () => HeaderLeftRounded(),
                   headerTitleAlign: 'center',
                   headerTintColor: Colours.white,
                   title: '',
-                  headerBackVisible: false,
+                  headerBackVisible: true,
                   headerTransparent: true,
                   headerStyle: {
                     backgroundColor: 'transparent',
@@ -265,6 +276,22 @@ const ScreenNavigator = () => {
                   title: 'Breakie',
                 }}
               />
+              <Stack.Screen
+                name="MealSnack"
+                component={MealSnack}
+                options={{
+                  headerShown: true,
+                  title: 'Snack',
+                }}
+              />
+              <Stack.Screen
+                name="MealDinner"
+                component={MealDinner}
+                options={{
+                  headerShown: true,
+                  title: 'Dinner',
+                }}
+              />
             </>
           ) : (
             <>
@@ -295,7 +322,7 @@ const styles = StyleSheet.create({
   leftRounded: {
     backgroundColor: Colours.white,
     borderRadius: 300,
-    padding: 5,
+    padding: mS(5),
   },
 });
 

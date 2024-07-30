@@ -5,7 +5,7 @@ import {
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {AddFood, AddNutrients} from '@screens';
-import {TouchableOpacity} from 'react-native';
+import {Platform, TouchableOpacity} from 'react-native';
 import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
 import {RouteProp, useNavigation} from '@react-navigation/native';
@@ -60,8 +60,9 @@ const AddFoodNavigator = () => {
       // initialRouteName={'AddFood'}
       screenOptions={{
         headerTitleAlign: 'center',
-        headerBackVisible: false,
-        headerLeft: () => HeaderLeft(),
+        headerBackVisible: true,
+        headerBackTitle: '',
+        headerLeft: () => Platform.OS === 'ios' && HeaderLeft(),
         headerStyle: {
           backgroundColor: Colours.green,
         },

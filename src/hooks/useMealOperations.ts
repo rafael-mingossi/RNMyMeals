@@ -23,12 +23,15 @@ export function useMealOperations<T extends MealDetails>({
   const {date} = calendarStore();
   const meals = listsStore()[`${mealType}s`];
   const {deleteMealItems} = useLists();
+
   const mealId = useMemo(() => {
     return meals.find(
       item => item.dateAdded?.toString() === date.format('YYYY-MM-DD'),
     )?.id;
   }, [date]);
+
   const {data, isLoading} = useMealDetails(mealId!);
+
   useEffect(() => {
     if (data && data[`${mealType}_items`]) {
       dispatch({type: 'SET_ITEMS', payload: data[`${mealType}_items`]});

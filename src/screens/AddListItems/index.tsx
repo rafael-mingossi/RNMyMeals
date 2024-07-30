@@ -28,7 +28,7 @@ import {hS, vS} from '@utils';
 const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
   const insets = useSafeAreaInsets();
   const {searchQuery, setSearchQuery} = useFiltered();
-  const {lunchs, breakfasts} = listsStore();
+  const {lunchs, breakfasts, snacks, dinners} = listsStore();
   const {date} = calendarStore();
   const {addMeal, mealsItems, updateMeal, clearCart} = useLists();
   const sheetRef = useRef<BottomSheetMethods>(null);
@@ -86,6 +86,13 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
         return breakfasts.find(
           item => item.dateAdded === date.format('YYYY-MM-DD'),
         )?.id;
+      case 'snack':
+        return snacks.find(item => item.dateAdded === date.format('YYYY-MM-DD'))
+          ?.id;
+      case 'dinner':
+        return dinners.find(
+          item => item.dateAdded === date.format('YYYY-MM-DD'),
+        )?.id;
     }
   };
 
@@ -95,9 +102,16 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
         return lunchs?.filter(
           item => item.dateAdded === date.format('YYYY-MM-DD'),
         );
-
       case 'breakfast':
         return breakfasts?.filter(
+          item => item.dateAdded === date.format('YYYY-MM-DD'),
+        );
+      case 'dinner':
+        return dinners?.filter(
+          item => item.dateAdded === date.format('YYYY-MM-DD'),
+        );
+      case 'snack':
+        return snacks?.filter(
           item => item.dateAdded === date.format('YYYY-MM-DD'),
         );
     }
@@ -125,6 +139,34 @@ const AddListItems = ({route, navigation}: ListItemsPropsNavigation) => {
               clearCart();
             }, mealName);
       case 'breakfast':
+        return mealToFilter.length
+          ? updateMeal(
+              getIdToUpdateMeal()!,
+              () => {
+                navigation.goBack();
+                clearCart();
+              },
+              mealName,
+            )
+          : addMeal(() => {
+              navigation.goBack();
+              clearCart();
+            }, mealName);
+      case 'dinner':
+        return mealToFilter.length
+          ? updateMeal(
+              getIdToUpdateMeal()!,
+              () => {
+                navigation.goBack();
+                clearCart();
+              },
+              mealName,
+            )
+          : addMeal(() => {
+              navigation.goBack();
+              clearCart();
+            }, mealName);
+      case 'snack':
         return mealToFilter.length
           ? updateMeal(
               getIdToUpdateMeal()!,
