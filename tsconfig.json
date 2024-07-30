@@ -2,6 +2,9 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "strict": true,
+    "types": [
+      "react-native-reanimated"
+    ],
     "baseUrl": ".",
     "paths": {
       "@screens": [
@@ -9,6 +12,9 @@
       ],
       "@api": [
         "src/api"
+      ],
+      "@hooks": [
+        "src/hooks"
       ],
       "@types": [
         "src/types"

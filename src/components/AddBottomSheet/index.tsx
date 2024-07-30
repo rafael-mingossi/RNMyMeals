@@ -54,7 +54,11 @@ const AddBottomSheet = () => {
             style={styles.contentContainer}
             ref={layoutRef}
             onLayout={handleLayout}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                onModalClose();
+                navigation.navigate('AddListItems', {listItem: 'breakfast'});
+              }}>
               <View style={styles.iconWrapper}>
                 <Image
                   source={require('../../assets/images/img_breakie.png')}
@@ -76,7 +80,11 @@ const AddBottomSheet = () => {
               </View>
               <Text style={styles.bottomSheetTitle}>Lunch</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                onModalClose();
+                navigation.navigate('AddListItems', {listItem: 'dinner'});
+              }}>
               <View style={styles.iconWrapper}>
                 <Image
                   source={require('../../assets/images/img_dinner.png')}
@@ -86,7 +94,11 @@ const AddBottomSheet = () => {
               <Text style={styles.bottomSheetTitle}>Dinner</Text>
             </TouchableOpacity>
             <View style={styles.bottomIcons}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  onModalClose();
+                  navigation.navigate('AddListItems', {listItem: 'snack'});
+                }}>
                 <View style={styles.iconWrapper}>
                   <Image
                     source={require('../../assets/images/img_snack.png')}

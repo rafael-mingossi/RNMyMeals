@@ -11,7 +11,10 @@ type TextInputIconProps = {
 } & TextInputProps;
 
 const TextInputLabel = forwardRef<TI, TextInputIconProps>(
-  ({label, unit = 'g', error, ...rest}, ref) => {
+  (
+    {label, unit = 'g', error, returnKeyType, onSubmitEditing, ...rest},
+    ref,
+  ) => {
     return (
       <View style={styles.inputWrapper}>
         <Text style={styles.label}>{label}</Text>
@@ -23,7 +26,8 @@ const TextInputLabel = forwardRef<TI, TextInputIconProps>(
             mode={'flat'}
             autoCapitalize="none"
             style={styles.input}
-            returnKeyType={'go'}
+            returnKeyType={returnKeyType}
+            onSubmitEditing={onSubmitEditing}
             enterKeyHint={'next'}
             right={
               error ? (

@@ -20,13 +20,23 @@ import {
   IngredientView,
   RecipeDetails,
   AddListItems,
+  AllMeals,
+  MealLunch,
+  MealBreakie,
+  MealDinner,
+  MealSnack,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth, FilteredItemsProvider} from '@providers';
-import {ActivityIndicator, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  ActivityIndicator,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import {SingleFoodType} from '@types';
 import {Colours, Fonts} from '@constants';
-import {hS} from '@utils';
+import {hS, mS} from '@utils';
 import {Icon} from 'react-native-paper';
 
 export type StackNavigatorParams = {
@@ -43,7 +53,12 @@ export type StackNavigatorParams = {
   IngredientView: {item: SingleFoodType};
   Recipes: undefined;
   RecipeDetails: {recipeId: number};
-  AddListItems: {listItem: 'breakie' | 'snack' | 'lunch' | 'dinner'};
+  AddListItems: {listItem: 'breakfast' | 'snack' | 'lunch' | 'dinner'};
+  AllMeals: undefined;
+  MealLunch: undefined;
+  MealBreakie: undefined;
+  MealDinner: undefined;
+  MealSnack: undefined;
 };
 
 //Navigation to screens only, using Navigation prop
@@ -70,14 +85,11 @@ export type RecipeDetailsPropsNavigation = {
   route: RecipesDetailsRouteProp;
 };
 
-type IngredientsViewRouteProp = RouteProp<
-  StackNavigatorParams,
-  'IngredientView'
->;
-export type IngredientsViewPropsNavigation = {
-  navigation: NavigationScreenProp;
-  route: IngredientsViewRouteProp;
-};
+// type SingleMealRouteProp = RouteProp<StackNavigatorParams, 'SingleMealLunch'>;
+// export type SingleMealPropsNavigation = {
+//   navigation: NavigationScreenProp;
+//   route: SingleMealRouteProp;
+// };
 
 type SingleFoodRouteProp = RouteProp<StackNavigatorParams, 'SingleFoodScreen'>;
 export type SingleFoodPropsNavigation = {
@@ -97,7 +109,7 @@ export type SingleFoodEditPropsNavigation = {
 const Stack = createNativeStackNavigator<StackNavigatorParams>();
 
 function HeaderLeft() {
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp = useNavigation();
   return (
     <TouchableOpacity onPress={() => navigation.goBack()}>
       <Icon size={hS(22)} source={'keyboard-backspace'} color={Colours.white} />
@@ -106,7 +118,7 @@ function HeaderLeft() {
 }
 
 function HeaderLeftRounded() {
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp = useNavigation();
   return (
     <TouchableOpacity
       onPress={() => navigation.goBack()}
@@ -133,9 +145,10 @@ const ScreenNavigator = () => {
         <Stack.Navigator
           initialRouteName={'Initial'}
           screenOptions={{
+            headerShown: false,
             headerTitleAlign: 'center',
-            headerBackVisible: false,
-            headerLeft: () => HeaderLeft(),
+            headerBackVisible: Platform.OS !== 'ios' && true,
+            headerLeft: () => Platform.OS === 'ios' && HeaderLeft(),
             headerStyle: {
               backgroundColor: Colours.green,
             },
@@ -185,6 +198,7 @@ const ScreenNavigator = () => {
                   headerTitleAlign: 'center',
                   headerTintColor: Colours.white,
                   title: 'Add Recipe',
+                  headerBackTitleVisible: false,
                 }}
               />
               <Stack.Screen
@@ -201,12 +215,13 @@ const ScreenNavigator = () => {
                 name="IngredientView"
                 component={IngredientView}
                 options={{
-                  headerLeft: () => HeaderLeftRounded(),
+                  headerLeft: () =>
+                    Platform.OS === 'ios' && HeaderLeftRounded(),
                   headerShown: true,
                   headerTitleAlign: 'center',
                   headerTintColor: Colours.white,
                   title: '',
-                  headerBackVisible: false,
+                  headerBackVisible: Platform.OS !== 'ios' && true,
                   headerTransparent: true,
                   headerStyle: {
                     backgroundColor: 'transparent',
@@ -218,11 +233,11 @@ const ScreenNavigator = () => {
                 component={RecipeDetails}
                 options={{
                   headerShown: true,
-                  headerLeft: () => HeaderLeftRounded(),
+                  // headerLeft: () => HeaderLeftRounded(),
                   headerTitleAlign: 'center',
                   headerTintColor: Colours.white,
                   title: '',
-                  headerBackVisible: false,
+                  headerBackVisible: true,
                   headerTransparent: true,
                   headerStyle: {
                     backgroundColor: 'transparent',
@@ -234,6 +249,47 @@ const ScreenNavigator = () => {
                 component={AddListItems}
                 options={{
                   headerShown: false,
+                  gestureEnabled: false,
+                }}
+              />
+              <Stack.Screen
+                name="AllMeals"
+                component={AllMeals}
+                options={{
+                  headerShown: true,
+                  title: 'All Meals',
+                }}
+              />
+              <Stack.Screen
+                name="MealLunch"
+                component={MealLunch}
+                options={{
+                  headerShown: true,
+                  title: 'Lunch',
+                }}
+              />
+              <Stack.Screen
+                name="MealBreakie"
+                component={MealBreakie}
+                options={{
+                  headerShown: true,
+                  title: 'Breakie',
+                }}
+              />
+              <Stack.Screen
+                name="MealSnack"
+                component={MealSnack}
+                options={{
+                  headerShown: true,
+                  title: 'Snack',
+                }}
+              />
+              <Stack.Screen
+                name="MealDinner"
+                component={MealDinner}
+                options={{
+                  headerShown: true,
+                  title: 'Dinner',
                 }}
               />
             </>
@@ -266,7 +322,7 @@ const styles = StyleSheet.create({
   leftRounded: {
     backgroundColor: Colours.white,
     borderRadius: 300,
-    padding: 5,
+    padding: mS(5),
   },
 });
 

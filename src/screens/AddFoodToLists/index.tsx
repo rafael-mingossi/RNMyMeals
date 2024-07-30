@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import {SingleFood} from '@components';
 import styles from './addFoodToLists.styles.ts';
 import {ScreenTopStack} from '@config';
@@ -20,15 +20,19 @@ const AddFoodToLists = ({navigation}: ScreenTopStack) => {
         <SingleFood
           hasCheckBox
           item={item}
+          items={filteredFoodsContext}
+          isFood
           index={index}
-          onPress={() => navigation.navigate('IngredientView', {item: item})}
+          onPress={() =>
+            navigation.navigate('IngredientView', {item: item, isFood: true})
+          }
         />
       )}
-      // ListEmptyComponent={
-      //   <View style={styles.noResults}>
-      //     <Text style={styles.noResultsTxt}>No results found...</Text>
-      //   </View>
-      // }
+      ListEmptyComponent={
+        <View style={styles.noResults}>
+          <Text style={styles.noResultsTxt}>No results found...</Text>
+        </View>
+      }
       ListFooterComponent={<View />}
       ListFooterComponentStyle={{height: 90}}
     />

@@ -9,6 +9,204 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      breakfast_items: {
+        Row: {
+          breakfast_id: number | null;
+          created_at: string;
+          food_id: number | null;
+          foodQuantity: number | null;
+          id: number;
+          recipe_id: number | null;
+          recipeQuantity: number | null;
+        };
+        Insert: {
+          breakfast_id?: number | null;
+          created_at?: string;
+          food_id?: number | null;
+          foodQuantity?: number | null;
+          id?: number;
+          recipe_id?: number | null;
+          recipeQuantity?: number | null;
+        };
+        Update: {
+          breakfast_id?: number | null;
+          created_at?: string;
+          food_id?: number | null;
+          foodQuantity?: number | null;
+          id?: number;
+          recipe_id?: number | null;
+          recipeQuantity?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'breakfast_items_breakfast_id_fkey';
+            columns: ['breakfast_id'];
+            isOneToOne: false;
+            referencedRelation: 'breakfasts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'breakfast_items_food_id_fkey';
+            columns: ['food_id'];
+            isOneToOne: false;
+            referencedRelation: 'foods';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'breakfast_items_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipes';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      breakfasts: {
+        Row: {
+          created_at: string;
+          dateAdded: string;
+          id: number;
+          tCalories: number | null;
+          tCarbs: number | null;
+          tFat: number | null;
+          tFibre: number | null;
+          tProtein: number | null;
+          tSodium: number | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          dateAdded: string;
+          id?: number;
+          tCalories?: number | null;
+          tCarbs?: number | null;
+          tFat?: number | null;
+          tFibre?: number | null;
+          tProtein?: number | null;
+          tSodium?: number | null;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          dateAdded?: string;
+          id?: number;
+          tCalories?: number | null;
+          tCarbs?: number | null;
+          tFat?: number | null;
+          tFibre?: number | null;
+          tProtein?: number | null;
+          tSodium?: number | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'breakfasts_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      dinner_items: {
+        Row: {
+          created_at: string;
+          dinner_id: number | null;
+          food_id: number | null;
+          foodQuantity: number | null;
+          id: number;
+          recipe_id: number | null;
+          recipeQuantity: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          dinner_id?: number | null;
+          food_id?: number | null;
+          foodQuantity?: number | null;
+          id?: number;
+          recipe_id?: number | null;
+          recipeQuantity?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          dinner_id?: number | null;
+          food_id?: number | null;
+          foodQuantity?: number | null;
+          id?: number;
+          recipe_id?: number | null;
+          recipeQuantity?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'dinner_items_dinner_id_fkey';
+            columns: ['dinner_id'];
+            isOneToOne: false;
+            referencedRelation: 'dinners';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'dinner_items_food_id_fkey';
+            columns: ['food_id'];
+            isOneToOne: false;
+            referencedRelation: 'foods';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'dinner_items_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipes';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      dinners: {
+        Row: {
+          created_at: string;
+          dateAdded: string | null;
+          id: number;
+          tCalories: number | null;
+          tCarbs: number | null;
+          tFat: number | null;
+          tFibre: number | null;
+          tProtein: number | null;
+          tSodium: number | null;
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          dateAdded?: string | null;
+          id?: number;
+          tCalories?: number | null;
+          tCarbs?: number | null;
+          tFat?: number | null;
+          tFibre?: number | null;
+          tProtein?: number | null;
+          tSodium?: number | null;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          dateAdded?: string | null;
+          id?: number;
+          tCalories?: number | null;
+          tCarbs?: number | null;
+          tFat?: number | null;
+          tFibre?: number | null;
+          tProtein?: number | null;
+          tSodium?: number | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'dinners_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       foods: {
         Row: {
           calories: number;
@@ -167,27 +365,39 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null;
+          cal_goal: number | null;
+          dob: string | null;
           full_name: string | null;
+          gender: string | null;
+          height: number | null;
           id: string;
           updated_at: string | null;
           username: string | null;
-          website: string | null;
+          weight: number | null;
         };
         Insert: {
           avatar_url?: string | null;
+          cal_goal?: number | null;
+          dob?: string | null;
           full_name?: string | null;
+          gender?: string | null;
+          height?: number | null;
           id: string;
           updated_at?: string | null;
           username?: string | null;
-          website?: string | null;
+          weight?: number | null;
         };
         Update: {
           avatar_url?: string | null;
+          cal_goal?: number | null;
+          dob?: string | null;
           full_name?: string | null;
+          gender?: string | null;
+          height?: number | null;
           id?: string;
           updated_at?: string | null;
           username?: string | null;
-          website?: string | null;
+          weight?: number | null;
         };
         Relationships: [
           {
@@ -287,6 +497,105 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'recipes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      snack_items: {
+        Row: {
+          created_at: string;
+          food_id: number | null;
+          foodQuantity: number | null;
+          id: number;
+          recipe_id: number | null;
+          recipeQuantity: number | null;
+          snack_id: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          food_id?: number | null;
+          foodQuantity?: number | null;
+          id?: number;
+          recipe_id?: number | null;
+          recipeQuantity?: number | null;
+          snack_id?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          food_id?: number | null;
+          foodQuantity?: number | null;
+          id?: number;
+          recipe_id?: number | null;
+          recipeQuantity?: number | null;
+          snack_id?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'snack_items_food_id_fkey';
+            columns: ['food_id'];
+            isOneToOne: false;
+            referencedRelation: 'foods';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'snack_items_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'snack_items_snack_id_fkey';
+            columns: ['snack_id'];
+            isOneToOne: false;
+            referencedRelation: 'snacks';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      snacks: {
+        Row: {
+          created_at: string;
+          dateAdded: string | null;
+          id: number;
+          tCalories: number | null;
+          tCarbs: number | null;
+          tFat: number | null;
+          tFibre: number | null;
+          tProtein: number | null;
+          tSodium: number | null;
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          dateAdded?: string | null;
+          id?: number;
+          tCalories?: number | null;
+          tCarbs?: number | null;
+          tFat?: number | null;
+          tFibre?: number | null;
+          tProtein?: number | null;
+          tSodium?: number | null;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          dateAdded?: string | null;
+          id?: number;
+          tCalories?: number | null;
+          tCarbs?: number | null;
+          tFat?: number | null;
+          tFibre?: number | null;
+          tProtein?: number | null;
+          tSodium?: number | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'snacks_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';

@@ -11,6 +11,8 @@ import {Dashboard, Profile, Foods, Recipes} from '@screens';
 import {AddBottomSheet} from '../components';
 import {hS, mS, vS} from '@utils';
 import {Colours, Fonts} from '@constants';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {SingleFoodType} from '@types';
 
 export type BottomStackParams = {
   Dashboard: undefined;
@@ -19,6 +21,9 @@ export type BottomStackParams = {
   Profile: undefined;
   Foods: undefined;
   AddScreenComponent: undefined;
+  SingleFoodScreen: {item: SingleFoodType};
+  RecipeDetails: {recipeId: number};
+  AllMeals: undefined;
 };
 
 type FocusedProps = {
@@ -32,6 +37,11 @@ type IconWrapperProps = {
   icon: string;
   label: string;
 };
+
+export type BottomScreenStack = NativeStackScreenProps<
+  BottomStackParams,
+  keyof BottomStackParams
+>;
 
 const Bottom = createBottomTabNavigator<BottomStackParams>();
 
@@ -83,7 +93,7 @@ const bottomTabHome = {
     <BottomIconWrapper focused={focused} icon={'chart-line'} label={'HOME'} />
   ),
 };
-const bottomTabGoals = {
+const bottomTabRecipes = {
   tabBarIcon: (focused: FocusedProps) => (
     <BottomIconWrapper
       focused={focused}
@@ -123,7 +133,7 @@ const BottomNavigator = () => {
       <Bottom.Screen
         name="Recipes"
         component={Recipes}
-        options={bottomTabGoals}
+        options={bottomTabRecipes}
       />
       <Bottom.Screen
         name="Profile"

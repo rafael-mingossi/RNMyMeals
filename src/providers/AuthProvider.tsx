@@ -8,17 +8,13 @@ import {
 } from 'react';
 import {Session} from '@supabase/supabase-js';
 import {supabase} from '@services';
+import {Tables} from '@types';
 
 type AuthData = {
   session: Session | null;
   loading: boolean;
-  profile: Profile | null;
+  profile: Tables<'profiles'> | null;
   userLogOut: () => void;
-};
-
-export type Profile = {
-  id: string;
-  group: string;
 };
 
 const AuthContext = createContext<AuthData>({
@@ -31,7 +27,7 @@ const AuthContext = createContext<AuthData>({
 const AuthProvider = ({children}: PropsWithChildren) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<Tables<'profiles'> | null>(null);
 
   async function userLogOut() {
     setSession(null);
@@ -55,6 +51,7 @@ const AuthProvider = ({children}: PropsWithChildren) => {
           .eq('id', session.user.id)
           .single();
         setProfile(data || null);
+        console.log('USER API CALLED AUTH PROVIDER');
       }
 
       setLoading(false);

@@ -8,6 +8,16 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.bold,
     color: Colours.blue,
   },
+  disabledStyle: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 5,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
 });
 
 export default styles;

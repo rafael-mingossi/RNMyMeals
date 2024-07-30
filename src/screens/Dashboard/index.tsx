@@ -1,128 +1,129 @@
-import React from 'react';
-import {
-  Text,
-  StyleSheet,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-} from 'react-native';
-import {useAuth} from '@providers';
+import React, {useEffect, useMemo} from 'react';
+import {SafeAreaView, ScrollView, StatusBar, Text, View} from 'react-native';
 import {PieChart} from 'react-native-gifted-charts';
-import {useGetFoodsById, useLunchDetails, useMyRecipesList} from '@api';
-import {useLists} from '../../providers/ListsProvider.tsx';
-import {Calendar} from '@components';
+import {
+  useGetFoodsById,
+  useMyBreakfastList,
+  useMyDinnersList,
+  useMyLunchsList,
+  useMyRecipesList,
+  useMySnacksList,
+  useGetUserById,
+} from '@api';
+import {
+  Calendar,
+  AnimatedSemicircle,
+  Loader,
+  ButtonText,
+  Surface,
+} from '@components';
+import {Colours} from '@constants';
+import styles from './dashboard.styles.ts';
+import {BottomScreenStack} from '../../config/BottomNavigator.tsx';
+import {calendarStore} from '@stores';
+import {useSharedValue, withTiming} from 'react-native-reanimated';
+import {useFont} from '@shopify/react-native-skia';
+import {mS, useAllMealsTotals} from '@utils';
+import {useAuth} from '@providers';
 
-const Dashboard = () => {
-  const data = [{value: 50}, {value: 80}, {value: 90}];
-  const {userLogOut} = useAuth();
-  const {data: ingredients} = useGetFoodsById();
-  const {data: recipes} = useMyRecipesList();
-  const {addLunchItem, lunchItems, addLunch, removeLunchItem} = useLists();
-  // const {data: details} = useLunchDetails(3);
-  // console.log('LUNCH', lunchItems);
-  // console.log('LUNCH LENGTH =>>', lunchItems?.length);
-  // console.log(
-  //   'LUNCH REC =>',
-  //   lunchItems.map(item => {
-  //     return item.recipe;
-  //   }),
-  // );
-  // console.log(
-  //   'LUNCH FOOD =>',
-  //   lunchItems.map(item => {
-  //     return item.food;
-  //   }),
-  // );
-  // console.log('LU =>', details?.lunch_items);
-  // const getInfo = () => {
-  //   if (isLoading || !ingredients?.length) {
-  //     return;
-  //   }
-  //   setFoods(ingredients);
-  //   console.log('ONE MORE CALL TO THE API');
-  // };
-  //
-  // useEffect(() => {
-  //   getInfo();
-  // }, [isLoading]);
-  const foo = {
-    calories: 250,
-    carbs: 3,
-    created_at: '2024-06-27T23:21:16.485825+00:00',
-    fat: 2,
-    fibre: 0,
-    food_img:
-      'https://lzvknmgwnxlojtpfprid.supabase.co/storage/v1/object/public/food-images/ef8a9472-c96e-477e-8f75-27636da5d500.png',
-    id: 53,
-    label: 'Xup',
-    protein: 4,
-    serv_size: 20,
-    serv_unit: 'G',
-    sodium: 5,
-    user_id: 'f5072b71-3672-47e0-bd14-a0a0cb4b2a85',
-  };
+const MAX_CALORIES = 2000;
 
-  const rec = {
-    created_at: '2024-06-28T21:34:01.763156+00:00',
-    id: 7,
-    img: null,
-    name: 'X Z 22',
-    serv_unit: 'serv',
-    serving: 1,
-    tCalories: 100,
-    tCarbs: 7,
-    tFat: 10,
-    tFibre: 2,
-    tProtein: 7,
-    tSodium: 2,
-    user_id: 'f5072b71-3672-47e0-bd14-a0a0cb4b2a85',
-  };
+const Dashboard = ({navigation}: BottomScreenStack) => {
+  const {date} = calendarStore();
+  const {profile} = useAuth();
+  const {totalCalories, mealCalories} = useAllMealsTotals();
+  const animatedProgress = useSharedValue(0);
+  const animatedTotalCal = useSharedValue(0);
 
-  const handleAdd = () => {
-    addLunchItem(foo, null, foo.serv_size, null);
-  };
+  const {data: ingredientsApi, isLoading: loadFoods} = useGetFoodsById();
+  const {data: recipesApi, isLoading: loadRecipes} = useMyRecipesList();
+  const {data: lunchsApi, isLoading: loadLunchs} = useMyLunchsList();
+  const {data: breakfastsApi, isLoading: loadBreakies} = useMyBreakfastList();
+  const {data: dinnersApi, isLoading: loadDinners} = useMyDinnersList();
+  const {data: snacksApi, isLoading: loadSnacks} = useMySnacksList();
+  const {data: userApi, isLoading: loadUser} = useGetUserById();
+  const font = useFont(require('../../assets/fonts/Mulish-Bold.ttf'), mS(30));
 
-  const remove = () => {
-    removeLunchItem(String(662));
-  };
+  const currentProgress = useMemo(
+    () => Number(totalCalories) / (userApi?.cal_goal || MAX_CALORIES),
+    [totalCalories],
+  );
 
-  const handleAddL = () => {
-    addLunch();
-  };
+  useEffect(() => {
+    animatedProgress.value = withTiming(currentProgress, {duration: 800});
+    animatedTotalCal.value = withTiming(totalCalories, {duration: 800});
+  }, [
+    currentProgress,
+    date,
+    totalCalories,
+    animatedProgress,
+    animatedTotalCal,
+  ]);
+
+  if (
+    !font ||
+    loadFoods ||
+    loadRecipes ||
+    loadLunchs ||
+    loadBreakies ||
+    loadDinners ||
+    loadSnacks ||
+    loadUser
+  ) {
+    return <Loader />;
+  }
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={Colours.green} />
       <Calendar />
-      <ScrollView>
-        <Pressable
-          onPress={async () => {
-            userLogOut();
-          }}>
-          <Text>DASH</Text>
-        </Pressable>
-        <Pressable onPress={handleAdd}>
-          <Text>ADD</Text>
-        </Pressable>
-        <Pressable onPress={handleAddL}>
-          <Text>ADD TO DB</Text>
-        </Pressable>
-        <Pressable onPress={remove}>
-          <Text>REMOVE FROM LIST</Text>
-        </Pressable>
-
-        <PieChart data={data} donut />
+      <ScrollView contentContainerStyle={styles.scrollViewWrapper}>
+        {/*<PieChart data={data} donut />*/}
+        <AnimatedSemicircle
+          maxValue={userApi?.cal_goal || MAX_CALORIES}
+          progress={animatedProgress}
+          totalCals={animatedTotalCal}
+          font={font}
+        />
+        <Surface>
+          <ButtonText
+            children={'MANAGE MY MEALS'}
+            onPress={() => {
+              navigation.navigate('AllMeals');
+            }}
+          />
+          <View style={styles.mealRowWrapper}>
+            <View style={styles.singleMealWrapper}>
+              <Text style={styles.mealTitle}>Lunch</Text>
+              <Text style={styles.mealValueTxt}>
+                {mealCalories.lunchs.toFixed(0)}
+              </Text>
+            </View>
+            <View style={styles.singleMealWrapper}>
+              <Text style={styles.mealTitle}>Breakfast</Text>
+              <Text style={styles.mealValueTxt}>
+                {mealCalories.breakfasts.toFixed(0)}
+              </Text>
+            </View>
+          </View>
+          <View style={[styles.mealRowWrapper]}>
+            <View style={styles.singleMealWrapper}>
+              <Text style={styles.mealTitle}>Snacks</Text>
+              <Text style={styles.mealValueTxt}>
+                {mealCalories.snacks.toFixed(0)}
+              </Text>
+            </View>
+            <View style={[styles.singleMealWrapper]}>
+              <Text style={styles.mealTitle}>Dinner</Text>
+              <Text style={styles.mealValueTxt}>
+                {mealCalories.dinners.toFixed(0)}
+              </Text>
+            </View>
+          </View>
+        </Surface>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    height: 300,
-    width: 300,
-    borderRadius: 10,
-    backgroundColor: 'white',
-  },
-});
 
 export default Dashboard;

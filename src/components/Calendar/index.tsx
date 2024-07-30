@@ -3,21 +3,24 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   FlatList,
   Pressable,
   Modal,
 } from 'react-native';
-import dayjs, {Dayjs} from 'dayjs';
+import dayjs from 'dayjs';
 import localeData from 'dayjs/plugin/localeData';
-import {Colours, Fonts} from '@constants';
-import {vS, mS, hS} from '@utils';
+import utc from 'dayjs/plugin/utc';
+// import timezone from 'dayjs/plugin/timezone';
+import {getDaysInMonth, hS, renderMonthName, renderWeekDay} from '@utils';
+import styles from './calendar.styles.ts';
+import {Icon} from 'react-native-paper';
 
+dayjs.extend(utc);
 dayjs.extend(localeData);
+// dayjs.extend(timezone);
+// dayjs.tz.guess();
 
-//// ICONS
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faChevronLeft, faChevronRight} from '@fortawesome/free-solid-svg-icons';
+import {calendarStore} from '@stores';
 
 type SingleDayList = {
   item: {date: dayjs.Dayjs};
@@ -25,8 +28,14 @@ type SingleDayList = {
 };
 
 const Calendar = () => {
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [lIndex, setLIndex] = useState(dayjs().date() - 1);
+  const {date, setDate} = calendarStore();
+  const daysInMonth = getDaysInMonth(date);
+
+  const [lIndex, setLIndex] = useState(() =>
+    daysInMonth.findIndex(day => {
+      return day.date.date() === date.date();
+    }),
+  );
   const [showMonthModal, setShowMonthModal] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(dayjs().month());
   const [selectedMonthModal, setSelectedMonthModal] = useState(dayjs().month());
@@ -34,7 +43,7 @@ const Calendar = () => {
   const ref = useRef<FlatList>(null);
 
   const handlePrevDay = () => {
-    setSelectedDate(selectedDate.subtract(1, 'day'));
+    setDate(date.subtract(1, 'day'));
     if (lIndex === 0) {
       return;
     }
@@ -42,98 +51,47 @@ const Calendar = () => {
   };
 
   const handleNextDay = () => {
-    setSelectedDate(selectedDate.add(1, 'day'));
+    setDate(date.add(1, 'day'));
     if (lIndex === daysInMonth.length - 1) {
       return;
     }
     setLIndex(lIndex + 1);
   };
 
-  const getDaysInMonth = (date: Dayjs) => {
-    const days = [];
-
-    // Add actual days in the month
-    for (let i = 1; i <= date.daysInMonth(); i++) {
-      days.push({date: dayjs(date).date(i)});
-    }
-
-    return days;
+  const handleSetMonth = (targetMonth: number) => {
+    const newDate = date.set('month', targetMonth); // Month values in day.js are 0-indexed
+    setDate(newDate);
   };
-
-  const renderWeekDay = (weekDay: number) => {
-    switch (weekDay) {
-      case 0:
-        return 'Sun';
-      case 1:
-        return 'Mon';
-      case 2:
-        return 'Tue';
-      case 3:
-        return 'Wed';
-      case 4:
-        return 'Thu';
-      case 5:
-        return 'Fri';
-      case 6:
-        return 'Sat';
-    }
-  };
-
-  const renderMonthName = (month: number) => {
-    switch (month) {
-      case 0:
-        return 'Jan';
-      case 1:
-        return 'Feb';
-      case 2:
-        return 'Mar';
-      case 3:
-        return 'Apr';
-      case 4:
-        return 'May';
-      case 5:
-        return 'Jun';
-      case 6:
-        return 'Jul';
-      case 7:
-        return 'Aug';
-      case 8:
-        return 'Sep';
-      case 9:
-        return 'Oct';
-      case 10:
-        return 'Nov';
-      case 11:
-        return 'Dec';
-    }
-  };
-
-  const daysInMonth = getDaysInMonth(selectedDate);
 
   const renderDaysList = ({item, index}: SingleDayList) => {
     const dayShort = item.date;
-    // const isSelected = dayShort?.isSame(selectedDate, 'day');
+    // const isSelected = dayShort?.isSame(date, 'day');
     return (
       <TouchableOpacity
         key={index}
         style={lIndex === index && styles.selectedDay}
         onPress={() => {
           setLIndex(index);
-          setSelectedDate(dayShort);
+          setDate(dayShort);
         }}>
-        <Text style={styles.dayText}>{dayShort?.date()}</Text>
+        <Text
+          style={[styles.dayText, lIndex === index && styles.selectedDayTxt]}>
+          {dayShort?.date()}
+        </Text>
       </TouchableOpacity>
     );
   };
-
   useEffect(() => {
-    ref?.current?.scrollToIndex({
-      index: lIndex,
-      animated: true,
-      viewOffset: 10,
-      viewPosition: 0.5,
-    });
-  }, [lIndex]);
+    // daysInMonth.filter(day => console.log(day.date.date() === date.date()));
+    setTimeout(() => {
+      ref?.current?.scrollToIndex({
+        index: lIndex,
+        animated: true,
+        viewOffset: 10, //this is in pixels, 10px from the edges works like a margin
+        viewPosition: 0.4, //0.5 middle of screen
+      });
+    }, 800);
+  }, [lIndex, daysInMonth]);
 
   const handleOnCloseModal = () => {
     setShowMonthModal(false);
@@ -145,8 +103,22 @@ const Calendar = () => {
 
   const handleModalConfirm = () => {
     setSelectedMonth(selectedMonthModal);
+    handleSetMonth(selectedMonthModal);
     handleOnCloseModal();
   };
+
+  // const handleScrollToIndexFailed = (error: {
+  //   averageItemLength: number;
+  //   index: number;
+  // }) => {
+  //   const centeredOffset =
+  //     error.index * error.averageItemLength -
+  //     ((daysInMonth.length - 1) * hS(50)) / 2;
+  //   ref.current?.scrollToOffset({
+  //     offset: centeredOffset,
+  //     animated: true,
+  //   });
+  // };
 
   return (
     <View style={styles.calendarContainer}>
@@ -197,28 +169,33 @@ const Calendar = () => {
       </Modal>
       <View style={styles.header}>
         <TouchableOpacity onPress={handlePrevDay}>
-          <FontAwesomeIcon icon={faChevronLeft} />
+          <Icon size={hS(22)} source={'chevron-left'} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setShowMonthModal(!showMonthModal)}>
           <Text style={styles.headerText}>
-            {renderWeekDay(selectedDate.day())} - {selectedDate.format('DD')}{' '}
-            {renderMonthName(selectedMonth)} {selectedDate.format('YYYY')}
+            {renderWeekDay(date.day())} - {date.format('DD')}{' '}
+            {renderMonthName(selectedMonth)} {date.format('YYYY')}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleNextDay}>
-          <FontAwesomeIcon icon={faChevronRight} />
+          <Icon size={hS(22)} source={'chevron-right'} />
         </TouchableOpacity>
       </View>
+
       <FlatList
         ref={ref}
         horizontal
+        bounces={false}
+        showsHorizontalScrollIndicator={false}
+        // initialScrollIndex={lIndex}
         getItemLayout={_ => ({
           length: daysInMonth.length,
           offset: daysInMonth.length * lIndex,
           index: lIndex,
         })}
-        style={{flexGrow: 0}}
+        // onScrollToIndexFailed={handleScrollToIndexFailed}
+        style={styles.flatList}
         keyExtractor={(_, index) => index.toString()}
         contentContainerStyle={styles.flatListStyles}
         data={daysInMonth}
@@ -227,97 +204,5 @@ const Calendar = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  calendarContainer: {
-    flex: 1,
-    backgroundColor: Colours.white,
-  },
-  selectedDay: {
-    backgroundColor: Colours.green,
-    borderRadius: 100,
-    color: Colours.black,
-    width: hS(38),
-    aspectRatio: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: mS(20),
-    alignItems: 'center',
-  },
-  dayText: {
-    color: Colours.black,
-    marginHorizontal: hS(10),
-    fontFamily: Fonts.black,
-  },
-  daysContainer: {
-    padding: mS(15),
-  },
-  headerText: {
-    fontSize: hS(17),
-    fontFamily: Fonts.semiBold,
-  },
-  selected: {
-    backgroundColor: Colours.green,
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  textSelected: {
-    color: Colours.white,
-    fontWeight: 'bold',
-  },
-  nonSelected: {
-    padding: mS(7),
-  },
-  monthsList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: mS(20),
-    justifyContent: 'center',
-  },
-  singleMonth: {
-    padding: mS(7),
-  },
-  outerView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Set outer view opacity
-  },
-  innerView: {
-    backgroundColor: Colours.white, // No opacity for inner view
-    padding: mS(20),
-    borderRadius: 10,
-    width: '87%',
-  },
-  bottomModalButtons: {
-    marginTop: vS(25),
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  buttons: {
-    backgroundColor: Colours.green,
-    borderRadius: 7,
-    padding: mS(7),
-  },
-  buttonCancel: {
-    borderRadius: 7,
-    padding: mS(7),
-    backgroundColor: Colours.darkRed,
-  },
-  modalBtnTxt: {
-    color: Colours.white,
-    fontFamily: Fonts.semiBold,
-  },
-  flatListStyles: {
-    justifyContent: 'center',
-    backgroundColor: Colours.gray,
-    paddingVertical: vS(10),
-    alignItems: 'center',
-  },
-});
 
 export default Calendar;

@@ -8,11 +8,12 @@ import {
 import {Colours, Fonts} from '@constants';
 import {mS} from '@utils';
 import {SingleFoodType} from '@types';
+import {RouteProp} from '@react-navigation/native';
 
 export type StackTopNavigatorParams = {
   AddFoodToLists: undefined;
   AddRecipeToLists: undefined;
-  IngredientView: {item: SingleFoodType};
+  IngredientView: {item: SingleFoodType; isFood?: boolean};
 };
 
 export type ScreenTopStack = NativeStackScreenProps<
@@ -24,6 +25,16 @@ export type NavigationScreenTopProp = NativeStackNavigationProp<
   StackTopNavigatorParams,
   keyof StackTopNavigatorParams
 >;
+
+type IngredientsViewRouteProp = RouteProp<
+  StackTopNavigatorParams,
+  'IngredientView'
+>;
+
+export type IngredientsViewPropsTopNavigation = {
+  navigation: NavigationScreenTopProp;
+  route: IngredientsViewRouteProp;
+};
 
 const Tab = createMaterialTopTabNavigator<StackTopNavigatorParams>();
 
