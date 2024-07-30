@@ -2,12 +2,12 @@ import React, {useEffect, useMemo} from 'react';
 import {SafeAreaView, ScrollView, StatusBar, Text, View} from 'react-native';
 import {PieChart} from 'react-native-gifted-charts';
 import {
-  useGetFoodsById,
-  useMyBreakfastList,
-  useMyDinnersList,
-  useMyLunchsList,
-  useMyRecipesList,
-  useMySnacksList,
+  // useGetFoodsById,
+  // useMyBreakfastList,
+  // useMyDinnersList,
+  // useMyLunchsList,
+  // useMyRecipesList,
+  // useMySnacksList,
   useGetUserById,
 } from '@api';
 import {
@@ -18,6 +18,7 @@ import {
   Surface,
 } from '@components';
 import {Colours} from '@constants';
+import {Tooltip} from 'react-native-paper';
 import styles from './dashboard.styles.ts';
 import {BottomScreenStack} from '../../config/BottomNavigator.tsx';
 import {calendarStore} from '@stores';
@@ -35,12 +36,12 @@ const Dashboard = ({navigation}: BottomScreenStack) => {
   const animatedProgress = useSharedValue(0);
   const animatedTotalCal = useSharedValue(0);
 
-  const {data: ingredientsApi, isLoading: loadFoods} = useGetFoodsById();
-  const {data: recipesApi, isLoading: loadRecipes} = useMyRecipesList();
-  const {data: lunchsApi, isLoading: loadLunchs} = useMyLunchsList();
-  const {data: breakfastsApi, isLoading: loadBreakies} = useMyBreakfastList();
-  const {data: dinnersApi, isLoading: loadDinners} = useMyDinnersList();
-  const {data: snacksApi, isLoading: loadSnacks} = useMySnacksList();
+  // const {data: ingredientsApi, isLoading: loadFoods} = useGetFoodsById();
+  // const {data: recipesApi, isLoading: loadRecipes} = useMyRecipesList();
+  // const {data: lunchsApi, isLoading: loadLunchs} = useMyLunchsList();
+  // const {data: breakfastsApi, isLoading: loadBreakies} = useMyBreakfastList();
+  // const {data: dinnersApi, isLoading: loadDinners} = useMyDinnersList();
+  // const {data: snacksApi, isLoading: loadSnacks} = useMySnacksList();
   const {data: userApi, isLoading: loadUser} = useGetUserById();
   const font = useFont(require('../../assets/fonts/Mulish-Bold.ttf'), mS(30));
 
@@ -62,13 +63,14 @@ const Dashboard = ({navigation}: BottomScreenStack) => {
 
   if (
     !font ||
-    loadFoods ||
-    loadRecipes ||
-    loadLunchs ||
-    loadBreakies ||
-    loadDinners ||
-    loadSnacks ||
     loadUser
+    // loadFoods ||
+    // loadRecipes ||
+    // loadLunchs ||
+    // loadBreakies ||
+    // loadDinners ||
+    // loadSnacks ||
+    // loadUser
   ) {
     return <Loader />;
   }
