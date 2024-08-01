@@ -9,10 +9,10 @@ module.exports = {
   },
   project: {
     android: {
-      unstable_reactLegacyComponentNames: ['Video'],
+      unstable_reactLegacyComponentNames: ['Video', 'CameraView'],
     },
     ios: {
-      unstable_reactLegacyComponentNames: ['Video'],
+      unstable_reactLegacyComponentNames: ['Video', 'CameraView'],
     },
   },
 };

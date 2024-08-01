@@ -38,7 +38,21 @@ const styles = StyleSheet.create({
     paddingRight: hS(25),
     height: vS(70),
   },
-  imgLabel: {fontSize: mS(14), fontFamily: Fonts.medium, marginBottom: vS(10)},
+  imgLabel: {
+    fontSize: mS(14),
+    fontFamily: Fonts.medium,
+    marginBottom: vS(10),
+    marginTop: vS(15),
+  },
+  imgLabelScan: {
+    fontSize: mS(14),
+    fontFamily: Fonts.medium,
+    marginBottom: vS(10),
+    paddingHorizontal: hS(15),
+  },
+  buttonScan: {
+    fontSize: mS(20),
+  },
   imgCameraWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-around',

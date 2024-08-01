@@ -7,7 +7,7 @@ import {
   TextInput as TI,
   Image,
 } from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {TextInput, Snackbar} from 'react-native-paper';
 import {ScreenStack} from '@config';
 import {supabase} from '@services';
 import styles from './register.styles.ts';
@@ -19,16 +19,22 @@ const Register: FC<ScreenStack> = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [revealPass, setRevealPass] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   const passwordRef = useRef<TI | null>(null);
+
+  const onDismissSnackBar = () => {
+    navigation.navigate('Login');
+    setVisible(false);
+  };
 
   async function signUpWithEmail() {
     setLoading(true);
     const {error, data} = await supabase.auth.signUp({email, password});
 
     if (data) {
-      console.log('SUCCESS =>>', data);
-      navigation.navigate('Login');
+      console.log('SUCCESS!');
+      setVisible(true);
     }
 
     if (error) {
@@ -81,6 +87,17 @@ const Register: FC<ScreenStack> = ({navigation}) => {
           left={<TextInput.Icon icon="lock" color={Colours.brown} />}
         />
       </View>
+      <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        action={{
+          label: 'GO!',
+          onPress: () => {
+            onDismissSnackBar();
+          },
+        }}>
+        Check your email to validate your account!
+      </Snackbar>
       <ButtonRound
         btnColour={'green'}
         onPress={signUpWithEmail}
