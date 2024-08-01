@@ -13,7 +13,13 @@ import styles from './profile.styles.ts';
 import {ButtonText, Surface} from '@components';
 import {Colours} from '@constants';
 import {Icon, TextInput} from 'react-native-paper';
-import {formatNumberWithCommas, hS} from '@utils';
+import {
+  formatDOB,
+  formatNumberWithCommas,
+  hS,
+  validateDOB,
+  formatDOBProfile,
+} from '@utils';
 import {InsertTables} from '@types';
 import {useUpdateUser} from '@api';
 
@@ -24,8 +30,8 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<InsertTables<'profiles'>>({
     avatar_url: null,
-    cal_goal: profile?.cal_goal,
-    dob: profile?.dob,
+    cal_goal: profile?.cal_goal || 0,
+    dob: formatDOBProfile(profile?.dob!),
     full_name: profile?.full_name,
     id: profile?.id!,
     gender: profile?.gender,
@@ -39,7 +45,6 @@ const Profile = () => {
     weight: false,
     cal_goal: false,
   });
-
   const dobRef = useRef<TI | null>(null);
   const sexRef = useRef<TI | null>(null);
   const heightRef = useRef<TI | null>(null);
@@ -48,45 +53,6 @@ const Profile = () => {
 
   const handleEdit = () => {
     setIsEditing(true);
-  };
-
-  const validateDOB = (value: string): boolean => {
-    const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-    if (!value) {
-      return true;
-    }
-    const match = value.match(regex);
-    if (!match) {
-      return false;
-    }
-    const [, day, month, year] = match;
-    const date = new Date(
-      parseInt(year, 10),
-      parseInt(month, 10) - 1,
-      parseInt(day, 10),
-    );
-    return (
-      date.getDate() === parseInt(day, 10) &&
-      date.getMonth() === parseInt(month, 10) - 1 &&
-      date.getFullYear() === parseInt(year, 10)
-    );
-  };
-
-  const formatDOB = (value: string) => {
-    if (!value) {
-      return value;
-    }
-    const numbers = value.replace(/[^\d]/g, '');
-    if (numbers.length <= 2) {
-      return numbers;
-    }
-    if (numbers.length <= 4) {
-      return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
-    }
-    return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(
-      4,
-      8,
-    )}`;
   };
 
   const validateNumber = (value: string) => {
@@ -330,7 +296,9 @@ const Profile = () => {
                 />
               ) : (
                 <Text style={styles.sectionTxt}>
-                  {formatNumberWithCommas(Number(formData.cal_goal)) || 'N/A'}
+                  {formatNumberWithCommas(Number(formData.cal_goal)) === 'NaN'
+                    ? 'N/A'
+                    : formatNumberWithCommas(Number(formData.cal_goal))}
                 </Text>
               )}
             </View>
