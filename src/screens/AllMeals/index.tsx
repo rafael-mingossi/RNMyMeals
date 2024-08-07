@@ -28,6 +28,9 @@ const AllMeals = ({navigation}: ScreenStack) => {
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
       <Calendar />
+      <TouchableOpacity onPress={() => navigation.navigate('Onboarding')}>
+        <Text>ONB</Text>
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Surface stylesExtra={styles.surface}>
           <TouchableOpacity

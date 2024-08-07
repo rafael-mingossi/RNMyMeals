@@ -25,15 +25,11 @@ import {
   MealBreakie,
   MealDinner,
   MealSnack,
+  Onboarding,
 } from '@screens';
 import {BottomNavigator, AddFoodNavigator} from '@config';
 import {useAuth, FilteredItemsProvider} from '@providers';
-import {
-  ActivityIndicator,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import {Platform, StyleSheet, TouchableOpacity} from 'react-native';
 import {SingleFoodType} from '@types';
 import {Colours, Fonts} from '@constants';
 import {hS, mS} from '@utils';
@@ -41,7 +37,6 @@ import {Icon} from 'react-native-paper';
 import BootSplash from 'react-native-bootsplash';
 import {
   useGetFoodsById,
-  useGetUserById,
   useMyBreakfastList,
   useMyDinnersList,
   useMyLunchsList,
@@ -70,6 +65,7 @@ export type StackNavigatorParams = {
   MealBreakie: undefined;
   MealDinner: undefined;
   MealSnack: undefined;
+  Onboarding: undefined;
 };
 
 //Navigation to screens only, using Navigation prop
@@ -321,6 +317,14 @@ const ScreenNavigator = () => {
                 options={{
                   headerShown: true,
                   title: 'Dinner',
+                }}
+              />
+              <Stack.Screen
+                name="Onboarding"
+                component={Onboarding}
+                options={{
+                  headerShown: false,
+                  title: '',
                 }}
               />
             </>

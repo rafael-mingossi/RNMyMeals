@@ -23,3 +23,4 @@ export {default as MealLunch} from './MealLunch/index.tsx';
 export {default as MealBreakie} from './MealBreakie/index.tsx';
 export {default as MealSnack} from './MealSnack/index.tsx';
 export {default as MealDinner} from './MealDinner/index.tsx';
+export {default as Onboarding} from './Onboarding/index.tsx';

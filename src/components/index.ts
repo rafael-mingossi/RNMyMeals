@@ -12,6 +12,12 @@ export {default as Loader} from './Loader';
 export {default as AnimatedSemicircle} from './AnimatedSemicircle';
 export {default as Surface} from './Surface';
 
+//ONBOARDING
+export {default as CustomButton} from './CustomButton';
+export {default as Dot} from './Dot';
+export {default as Pagination} from './Pagination';
+export {default as RenderItem} from './RenderItem';
+
 //BUTTONS
 export {default as ButtonRound} from './ButtonRound';
 export {default as ButtonText} from './ButtonText';

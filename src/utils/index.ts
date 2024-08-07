@@ -6,3 +6,4 @@ export * from './calendarUtils.ts';
 export * from './formatNumberWithComma.ts';
 export * from './allMealsTotals.ts';
 export * from './profileUtils.ts';
+export * from './data.ts';
