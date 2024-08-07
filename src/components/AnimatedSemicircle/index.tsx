@@ -11,6 +11,7 @@ import {Colours, Fonts} from '@constants';
 import {SharedValue, useDerivedValue} from 'react-native-reanimated';
 import {formatNumberWithCommas, hS, mS, vS} from '@utils';
 import {Surface} from '@components';
+import {Icon, IconButton, Tooltip} from 'react-native-paper';
 
 interface AnimatedProgressProps {
   progress: SharedValue<number>;
@@ -54,7 +55,12 @@ const AnimatedSemicircle = forwardRef<View, AnimatedProgressProps>(
     return (
       <Surface>
         <View ref={ref} style={[styles.container]}>
-          <Text style={styles.mealHeader}>Calorie Budget</Text>
+          <View style={styles.tooltip}>
+            <Text style={styles.mealHeader}>Calorie Budget</Text>
+            <Tooltip title="Update your goal at 'ME' section">
+              <Icon source="information-outline" size={hS(20)} />
+            </Tooltip>
+          </View>
           <Text style={styles.mealValue}>
             {formatNumberWithCommas(maxValue)}
           </Text>
@@ -110,9 +116,14 @@ const styles = StyleSheet.create({
   canvasContainer: {
     // backgroundColor: 'blue',
   },
+  tooltip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   mealHeader: {
     fontFamily: Fonts.semiBold,
     fontSize: mS(20),
+    marginRight: hS(5),
   },
   mealValue: {
     fontFamily: Fonts.bold,

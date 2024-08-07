@@ -1,4 +1,4 @@
-package com.mymeals
+package com.mingossi.mymeals
 
 import android.app.Application
 import com.facebook.react.PackageList

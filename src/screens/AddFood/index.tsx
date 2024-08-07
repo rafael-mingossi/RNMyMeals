@@ -13,7 +13,7 @@ import {Colours} from '@constants';
 import {ButtonText, CustomModal} from '@components';
 import {AddFoodStack} from '@config';
 import styles from './addFood.styles.ts';
-import {handleCamera, handleImagePicker} from '@utils';
+import {handleCamera, handleImagePicker, hS} from '@utils';
 
 type ErrorsType = {
   name: boolean;
@@ -133,9 +133,21 @@ const AddFood: FC<AddFoodStack> = ({navigation}) => {
       setErrors({name: false, calories: false, serving: false, unit: false});
     }
   }, [formData]);
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colours.green} />
+      <Text style={styles.imgLabelScan}>
+        Speed up the process by scanning a food barcode:
+      </Text>
+      <ButtonText
+        children={'Scan Barcode'}
+        icon={'barcode-scan'}
+        labelStyles={styles.buttonScan}
+        onPress={() => {
+          navigation.navigate('AddFoodBarcode');
+        }}
+      />
       <ScrollView style={styles.scrollWrapper}>
         <Text style={styles.imgLabel}>
           You can select an image for your food:

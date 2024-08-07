@@ -38,6 +38,17 @@ import {SingleFoodType} from '@types';
 import {Colours, Fonts} from '@constants';
 import {hS, mS} from '@utils';
 import {Icon} from 'react-native-paper';
+import BootSplash from 'react-native-bootsplash';
+import {
+  useGetFoodsById,
+  useGetUserById,
+  useMyBreakfastList,
+  useMyDinnersList,
+  useMyLunchsList,
+  useMyRecipesList,
+  useMySnacksList,
+} from '@api';
+import Loader from '../components/Loader';
 
 export type StackNavigatorParams = {
   Login: undefined;
@@ -130,9 +141,29 @@ function HeaderLeftRounded() {
 
 const ScreenNavigator = () => {
   const {session, loading} = useAuth();
+  const {data: ingredientsApi, isLoading: loadFoods} = useGetFoodsById();
+  const {data: recipesApi, isLoading: loadRecipes} = useMyRecipesList();
+  const {data: lunchsApi, isLoading: loadLunchs} = useMyLunchsList();
+  const {data: breakfastsApi, isLoading: loadBreakies} = useMyBreakfastList();
+  const {data: dinnersApi, isLoading: loadDinners} = useMyDinnersList();
+  const {data: snacksApi, isLoading: loadSnacks} = useMySnacksList();
+  // const {data: userApi, isLoading: loadUser} = useGetUserById();
 
-  if (loading) {
-    return <ActivityIndicator />;
+  if (
+    loading ||
+    loadFoods ||
+    loadRecipes ||
+    loadLunchs ||
+    loadBreakies ||
+    loadDinners ||
+    loadSnacks
+    // || loadUser
+  ) {
+    return <Loader />;
+  } else {
+    BootSplash.hide({fade: true}).then(() =>
+      console.log('<<<<FINISH LOADING APIS>>>>'),
+    );
   }
 
   // if (!session) {

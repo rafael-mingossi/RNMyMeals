@@ -52,7 +52,6 @@ const AddNutrients: FC<AddNutrientsStack> = ({navigation, route}) => {
     sodium: useRef<TI | null>(null),
     fibre: useRef<TI | null>(null),
   };
-
   const handleNextInput = (key: keyof typeof inputRefs) => {
     inputRefs[key]?.current?.focus();
   };

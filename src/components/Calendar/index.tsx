@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -42,30 +42,27 @@ const Calendar = () => {
 
   const ref = useRef<FlatList>(null);
 
-  const handlePrevDay = () => {
+  const handlePrevDay = useCallback(() => {
     setDate(date.subtract(1, 'day'));
-    if (lIndex === 0) {
-      return;
+    if (lIndex > 0) {
+      setLIndex(prevIndex => prevIndex - 1);
     }
-    setLIndex(lIndex - 1);
-  };
+  }, [date, lIndex, setDate]);
 
-  const handleNextDay = () => {
+  const handleNextDay = useCallback(() => {
     setDate(date.add(1, 'day'));
-    if (lIndex === daysInMonth.length - 1) {
-      return;
+    if (lIndex < daysInMonth.length - 1) {
+      setLIndex(prevIndex => prevIndex + 1);
     }
-    setLIndex(lIndex + 1);
-  };
+  }, [date, lIndex, daysInMonth.length, setDate]);
 
   const handleSetMonth = (targetMonth: number) => {
     const newDate = date.set('month', targetMonth); // Month values in day.js are 0-indexed
     setDate(newDate);
   };
 
-  const renderDaysList = ({item, index}: SingleDayList) => {
+  const MemoizedDayItem = React.memo(({item, index}: SingleDayList) => {
     const dayShort = item.date;
-    // const isSelected = dayShort?.isSame(date, 'day');
     return (
       <TouchableOpacity
         key={index}
@@ -80,18 +77,24 @@ const Calendar = () => {
         </Text>
       </TouchableOpacity>
     );
-  };
+  });
+
+  const renderDaysList = ({item, index}: SingleDayList) => (
+    <MemoizedDayItem item={item} index={index} />
+  );
+
   useEffect(() => {
-    // daysInMonth.filter(day => console.log(day.date.date() === date.date()));
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       ref?.current?.scrollToIndex({
         index: lIndex,
         animated: true,
-        viewOffset: 10, //this is in pixels, 10px from the edges works like a margin
-        viewPosition: 0.4, //0.5 middle of screen
+        viewOffset: 10,
+        viewPosition: 0.1,
       });
     }, 800);
-  }, [lIndex, daysInMonth]);
+
+    return () => clearTimeout(timer);
+  }, [lIndex, ref]);
 
   const handleOnCloseModal = () => {
     setShowMonthModal(false);

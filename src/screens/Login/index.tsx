@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {ScreenStack} from '@config';
 import {supabase} from '@services';
-import {ButtonRound, ScreenTitle, TextInputIcon} from '@components';
+import {ButtonRound, ScreenTitle} from '@components';
 import styles from './login.styles.ts';
 import {TextInput} from 'react-native-paper';
 import {Colours} from '@constants';
@@ -45,20 +45,27 @@ const Login: FC<ScreenStack> = ({navigation}) => {
     <View style={styles.container}>
       <ScreenTitle title={'Sign in'} />
       <View>
-        <TextInputIcon
+        <TextInput
           mode="flat"
-          label="E-mail"
+          // label="E-mail"
+          placeholder="E-mail"
           value={email}
           left={<TextInput.Icon icon="email" color={Colours.brown} />}
           keyboardType={'email-address'}
+          style={styles.input}
           onChangeText={setEmail}
           onSubmitEditing={() => passwordRef.current?.focus()}
+          underlineColorAndroid={Colours.brown}
+          underlineColor={Colours.brown}
+          activeUnderlineColor={Colours.blue}
         />
-        <TextInputIcon
+        <TextInput
           mode="flat"
-          label="Password"
+          placeholder="Password"
+          // label="Password"
           ref={passwordRef}
           value={password}
+          style={styles.input}
           onChangeText={setPassword}
           secureTextEntry={revealPass}
           onSubmitEditing={() => signInWithEmail()}
@@ -72,6 +79,9 @@ const Login: FC<ScreenStack> = ({navigation}) => {
             ) : null
           }
           left={<TextInput.Icon icon="lock" color={Colours.brown} />}
+          underlineColorAndroid={Colours.brown}
+          underlineColor={Colours.brown}
+          activeUnderlineColor={Colours.blue}
         />
       </View>
       <ButtonRound
