@@ -18,7 +18,6 @@ import {
   Surface,
 } from '@components';
 import {Colours} from '@constants';
-import {Tooltip} from 'react-native-paper';
 import styles from './dashboard.styles.ts';
 import {BottomScreenStack} from '../../config/BottomNavigator.tsx';
 import {calendarStore} from '@stores';
@@ -43,6 +42,7 @@ const Dashboard = ({navigation}: BottomScreenStack) => {
   // const {data: dinnersApi, isLoading: loadDinners} = useMyDinnersList();
   // const {data: snacksApi, isLoading: loadSnacks} = useMySnacksList();
   const {data: userApi, isLoading: loadUser} = useGetUserById();
+
   const font = useFont(require('../../assets/fonts/Mulish-Bold.ttf'), mS(30));
 
   const currentProgress = useMemo(

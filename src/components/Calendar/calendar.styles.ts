@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Colours.white,
     paddingVertical: vS(10),
+    paddingHorizontal: hS(10),
     alignItems: 'center',
     borderTopColor: Colours.gray,
     borderTopWidth: 1,

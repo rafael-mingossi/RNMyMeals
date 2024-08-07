@@ -7,6 +7,7 @@ export {default as Login} from './Login/index.tsx';
 export {default as Register} from './Register/index.tsx';
 export {default as Initial} from './Initial/index.tsx';
 export {default as AddFood} from './AddFood/index.tsx';
+export {default as AddFoodBarcode} from './AddFoodBarcode/index.tsx';
 export {default as AddNutrients} from './AddNutrients/index.tsx';
 export {default as SingleFoodScreen} from './SingleFoodScreen/index.tsx';
 export {default as SingleFoodEdit} from './SingleFoodEdit/index.tsx';
