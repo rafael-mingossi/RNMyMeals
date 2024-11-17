@@ -7,11 +7,11 @@ import {
   TextInput as TI,
   Image,
 } from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {TextInput, Snackbar} from 'react-native-paper';
 import {ScreenStack} from '@config';
 import {supabase} from '@services';
 import styles from './register.styles.ts';
-import {ButtonRound, ScreenTitle, TextInputIcon} from '@components';
+import {ButtonRound, ScreenTitle} from '@components';
 import {Colours} from '@constants';
 
 const Register: FC<ScreenStack> = ({navigation}) => {
@@ -19,16 +19,22 @@ const Register: FC<ScreenStack> = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [revealPass, setRevealPass] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   const passwordRef = useRef<TI | null>(null);
+
+  const onDismissSnackBar = () => {
+    navigation.navigate('Login');
+    setVisible(false);
+  };
 
   async function signUpWithEmail() {
     setLoading(true);
     const {error, data} = await supabase.auth.signUp({email, password});
 
-    if (data) {
-      console.log('SUCCESS =>>', data);
-      navigation.navigate('Login');
+    if (data.user !== null) {
+      // console.log('data =>>>', data);
+      // setVisible(true);
     }
 
     if (error) {
@@ -52,19 +58,26 @@ const Register: FC<ScreenStack> = ({navigation}) => {
         </View>
       </View>
       <View>
-        <TextInputIcon
+        <TextInput
           mode="flat"
-          label="E-mail"
+          // label="E-mail"
+          placeholder="E-mail"
           value={email}
+          style={styles.input}
           left={<TextInput.Icon icon="email" color={Colours.brown} />}
           keyboardType={'email-address'}
           onChangeText={setEmail}
           onSubmitEditing={() => passwordRef.current?.focus()}
+          underlineColorAndroid={Colours.brown}
+          underlineColor={Colours.brown}
+          activeUnderlineColor={Colours.blue}
         />
-        <TextInputIcon
+        <TextInput
           mode="flat"
-          label="Password"
+          // label="Password"
+          placeholder="Password"
           value={password}
+          style={styles.input}
           ref={passwordRef}
           secureTextEntry={revealPass}
           onChangeText={setPassword}
@@ -79,12 +92,26 @@ const Register: FC<ScreenStack> = ({navigation}) => {
             ) : null
           }
           left={<TextInput.Icon icon="lock" color={Colours.brown} />}
+          underlineColorAndroid={Colours.brown}
+          underlineColor={Colours.brown}
+          activeUnderlineColor={Colours.blue}
         />
       </View>
+      <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        action={{
+          label: 'GO!',
+          onPress: () => {
+            onDismissSnackBar();
+          },
+        }}>
+        Check your email to validate your account!
+      </Snackbar>
       <ButtonRound
         btnColour={'green'}
         onPress={signUpWithEmail}
-        disabled={loading}>
+        disabled={loading || !password || !email}>
         Create
       </ButtonRound>
 

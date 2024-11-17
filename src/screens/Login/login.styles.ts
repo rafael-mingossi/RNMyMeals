@@ -21,6 +21,10 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: Fonts.bold,
   },
+  input: {
+    backgroundColor: 'white',
+    marginBottom: 10,
+  },
 });
 
 export default styles;

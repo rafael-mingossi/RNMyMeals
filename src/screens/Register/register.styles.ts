@@ -44,6 +44,10 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.bold,
     color: Colours.greenDark,
   },
+  input: {
+    backgroundColor: 'white',
+    marginBottom: 10,
+  },
 });
 
 export default styles;

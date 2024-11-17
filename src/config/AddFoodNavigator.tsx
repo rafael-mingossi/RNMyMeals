@@ -4,7 +4,7 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {AddFood, AddNutrients} from '@screens';
+import {AddFood, AddNutrients, AddFoodBarcode} from '@screens';
 import {Platform, TouchableOpacity} from 'react-native';
 import {Colours, Fonts} from '@constants';
 import {hS} from '@utils';
@@ -13,6 +13,7 @@ import {Icon} from 'react-native-paper';
 
 export type AddFoodStackNavigatorParams = {
   AddFood: undefined;
+  AddFoodBarcode: undefined;
   AddNutrients: {
     foodName: string | null;
     calories: number | null;
@@ -75,6 +76,11 @@ const AddFoodNavigator = () => {
       <Stack.Screen
         name={'AddFood'}
         component={AddFood}
+        options={{headerTitle: 'New Food'}}
+      />
+      <Stack.Screen
+        name={'AddFoodBarcode'}
+        component={AddFoodBarcode}
         options={{headerTitle: 'New Food'}}
       />
       <Stack.Screen
